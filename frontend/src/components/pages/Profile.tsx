@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../services/api";
 import { UserLanguage, UserSkill } from "./ProfileTypes";
 import { useAuthStore } from "../../state/authStore";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 // Define interfaces for user data
 interface UserRole {
@@ -46,6 +48,8 @@ export const Profile: React.FC = () => {
 
         setUserProfile(response.data);
         setError(null); // Reset any previous errors
+
+        console.log("User Profile Data:", response.data);
       } catch (err) {
         setError("Error fetching user data.");
         console.error("Error fetching user data:", err);
@@ -98,7 +102,12 @@ export const Profile: React.FC = () => {
 
       {/* Acerca de Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
-        <h2 className="text-xl font-semibold">Acerca de...</h2>
+        <section className="flex justify-between">
+          <h2 className="text-xl font-semibold">Acerca de...</h2>
+          <button>
+            <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
+          </button>
+        </section>
         <p className="mt-2">
           {userProfile.bio
             ? userProfile.bio
@@ -108,17 +117,52 @@ export const Profile: React.FC = () => {
 
       {/* Estudios Profesionales Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
-        <h2 className="text-xl font-semibold">Estudios Profesionales</h2>
-        <ul className="list-disc list-inside mt-2">
+        <section className="flex justify-between">
+          <h2 className="text-xl font-semibold mb-4">Estudios Profesionales</h2>
+
+          <button>
+            <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
+          </button>
+        </section>
+
+        <ul className="space-y-4">
           {userProfile.userProfessionalStudies &&
           userProfile.userProfessionalStudies.length > 0 ? (
             userProfile.userProfessionalStudies.map((study, index) => (
-              <li key={index}>{study}</li>
+              <li key={index} className="bg-white p-4 shadow-sm rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {study.degree}
+                    </h3>
+                    <p className="text-gray-500">{study.institution}</p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {study.description}
+                    </p>
+                  </div>
+                  <div className="ml-4 text-right">
+                    <p className="text-xs font-medium text-blue-600">
+                      {new Date(study.start_date).toLocaleDateString()} -{" "}
+                      {new Date(study.end_date).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              </li>
             ))
           ) : (
             <>
-              <li>Ingeniería de sistemas y computación</li>
-              <li>Técnico en sistemas</li>
+              <li className="bg-white p-4 shadow-sm rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Ingeniería de sistemas y computación
+                </h3>
+                <p className="text-gray-500">Institución Ejemplo</p>
+              </li>
+              <li className="bg-white p-4 shadow-sm rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-800">
+                  Técnico en sistemas
+                </h3>
+                <p className="text-gray-500">Institución Ejemplo</p>
+              </li>
             </>
           )}
         </ul>
@@ -126,7 +170,13 @@ export const Profile: React.FC = () => {
 
       {/* Lenguajes de Programación Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
-        <h2 className="text-xl font-semibold">Lenguajes de Programación</h2>
+        <section className="flex justify-between">
+          <h2 className="text-xl font-semibold">Lenguajes de Programación</h2>
+
+          <button>
+            <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
+          </button>
+        </section>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
           {userProfile.userLanguages.map((language, index) => (
             <label key={index} className="flex items-center space-x-2">
@@ -134,12 +184,26 @@ export const Profile: React.FC = () => {
               <span>{language.language.languageName}</span>
             </label>
           ))}
+          {userProfile.userLanguages.length === 0 && (
+            <>
+              <label className="flex items-center space-x-2">
+                <span>Sin Lenguajes </span>
+              </label>
+            </>
+          )}
         </div>
       </div>
 
       {/* Habilidades y Conocimientos Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
-        <h2 className="text-xl font-semibold">Habilidades y Conocimientos</h2>
+        <section className="flex justify-between">
+          <h2 className="text-xl font-semibold">Habilidades y Conocimientos</h2>
+
+          <button>
+            <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
+          </button>
+        </section>
+
         <div className="space-y-2 mt-4">
           {userProfile.userSkills && userProfile.userSkills.length > 0 ? (
             userProfile.userSkills.map((skill, index) => (
