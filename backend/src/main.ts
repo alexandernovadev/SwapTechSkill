@@ -13,6 +13,7 @@ import seederRoutes from './app/routes/seederRoutes';
 import authRoutes from './app/routes/AuthRoutes';
 import userRoutes from './app/routes/UserRoutes';
 import languagesRoutes from './app/routes/LanguagesRoutes';
+import skillCategoryRoutes from './app/routes/SkillCategoryRoutes';
 import { connectDatabase } from './config/database';
 import passport from './infrastructure/auth/PassportStrategies';
 // import { authMiddleware } from './shared/middlewares/auth';
@@ -51,6 +52,7 @@ app.get('/', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/languages', languagesRoutes);
+app.use('/api/skill-categories', skillCategoryRoutes);
 // app.use('/api/users', authMiddleware, userRoutes);
 // app.use('/api/notifications', authMiddleware, notificationRoutes);
 // app.use('/api/chats', authMiddleware, chatRoutes);

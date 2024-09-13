@@ -12,15 +12,25 @@ export class SkillCategoryRepository {
     return await this.skillCategoryRepository.save(category);
   }
 
-  // Leer todas las categorías de habilidades
-  async findAllCategories(): Promise<SkillCategory[]> {
-    return await this.skillCategoryRepository.find({ relations: ['skills'] });
+  // Leer todas las categorías de habilidades con paginación
+  async findAllCategories(page: number = 1, perPage: number = 10): Promise<{ data: SkillCategory[], total: number }> {
+    const take = perPage;
+    const skip = (page - 1) * take;
+
+    const [categories, total] = await this.skillCategoryRepository.findAndCount({
+      relations: ['skills'],
+      order: { id: 'ASC' }, // Ordenar por ID ascendente
+      skip,
+      take,
+    });
+
+    return { data: categories, total };
   }
 
   // Leer una categoría de habilidades por ID
   async findCategoryById(id: number): Promise<SkillCategory | undefined> {
     return await this.skillCategoryRepository.findOne({
-      where: { id }, // Se usa 'id' porque así se define en la entidad SkillCategory
+      where: { id },
       relations: ['skills'],
     });
   }
