@@ -9,5 +9,6 @@ router.put('/update/:id', UserController.update);
 router.delete('/delete/:id', UserController.delete);
 router.get('/search', UserController.searchAdvanced); // Búsqueda avanzada
 router.get('/getById/:id', UserController.getById); // Buscar por ID
+router.get('/searchByJustWordAllData', UserController.searchByJustWordAllData); // Búsqueda por palabra en todos los campos
 
 export default router;

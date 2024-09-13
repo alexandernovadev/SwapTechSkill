@@ -130,6 +130,29 @@ export class UserRepository {
     return await query.getMany();
   }
 
+  // Método que realiza la búsqueda por palabra clave en todos los datos
+  public async searchByJustWordAllData(keyword: string): Promise<User[]> {
+    // Aseguramos que la palabra clave esté en minúsculas y con % para coincidencias parciales
+    const searchValue = `%${keyword.toLowerCase()}%`;
+
+    return await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.userRoles', 'userRole')
+      .leftJoinAndSelect('userRole.role', 'role')
+      .leftJoinAndSelect('user.userSkills', 'userSkill')
+      .leftJoinAndSelect('userSkill.skill', 'skill')
+      .leftJoinAndSelect('user.userLanguages', 'userLanguage')
+      .leftJoinAndSelect('userLanguage.language', 'language')
+      // Búsqueda por firstName o lastName o skillName o languageName
+      .where('LOWER(user.firstName) LIKE :keyword', { keyword: searchValue })
+      .orWhere('LOWER(user.lastName) LIKE :keyword', { keyword: searchValue })
+      .orWhere('LOWER(skill.skillName) LIKE :keyword', { keyword: searchValue })
+      .orWhere('LOWER(language.languageName) LIKE :keyword', {
+        keyword: searchValue,
+      })
+      .getMany();
+  }
+  
   // Método para actualizar un usuario
   async update(
     id: number,

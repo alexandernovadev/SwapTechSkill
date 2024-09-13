@@ -74,4 +74,27 @@ export class UserController {
       return res.status(500).json({ message: 'Error searching users', error });
     }
   }
+
+  // Método para buscar usuarios por una palabra clave en todos los datos
+  static async searchByJustWordAllData(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const { keyword } = req.query as { keyword: string };
+
+    if (!keyword) {
+      return res
+        .status(400)
+        .json({ message: 'Se necesita una palabra clave para la búsqueda' });
+    }
+
+    try {
+      const users = await userRepository.searchByJustWordAllData(keyword);
+      return res.status(200).json(users);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error al buscar usuarios', error });
+    }
+  }
 }
