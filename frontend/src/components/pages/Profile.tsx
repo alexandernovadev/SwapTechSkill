@@ -3,7 +3,7 @@ import axiosInstance from "../../services/api";
 import { UserLanguage, UserSkill } from "./ProfileTypes";
 import { useAuthStore } from "../../state/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 
 // Define interfaces for user data
 interface UserRole {
@@ -27,12 +27,25 @@ interface IUserProfile {
   userProfessionalStudies: Array<any>;
 }
 
+interface IStudy {
+  id?: number;
+  degree: string;
+  institution: string;
+  start_date: string;
+  end_date: string;
+  description: string;
+}
+
 export const Profile: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isBioModalOpen, setIsBioModalOpen] = useState<boolean>(false); // Modal state
   const [newBio, setNewBio] = useState<string>("");
+
+  const [studyModalOpen, setStudyModalOpen] = useState<boolean>(false); // Modal state
+  const [currentStudy, setCurrentStudy] = useState<IStudy | null>(null); // For edit or create
+  const [isEditMode, setIsEditMode] = useState<boolean>(false); // Edit mode flag
 
   const { user } = useAuthStore(); // Get the user object from zustand store
 
@@ -47,6 +60,8 @@ export const Profile: React.FC = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await axiosInstance.get(`/users/getById/${user.id}`);
+
+        console.log(response);
 
         setUserProfile(response.data);
         setError(null); // Reset any previous errors
@@ -79,6 +94,45 @@ export const Profile: React.FC = () => {
       setIsBioModalOpen(false); // Close the modal on success
     } catch (error) {
       console.error("Error updating bio:", error);
+    }
+  };
+
+  // Handle the creation of a new study or update an existing one
+  const handleSaveStudy = async () => {
+    try {
+      if (isEditMode && currentStudy && currentStudy.id) {
+        // If it's edit mode, update the study
+        await axiosInstance.put(
+          `/userprofesions/${currentStudy.id}`,
+          currentStudy
+        );
+      } else {
+        // If it's create mode, create a new study
+        await axiosInstance.post(`/userprofesions`, {
+          ...currentStudy,
+          user: { id: userProfile?.id },
+        });
+      }
+      setStudyModalOpen(false);
+      setCurrentStudy(null);
+      setIsEditMode(false);
+      // Refresh profile data
+      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
+      setUserProfile(response.data);
+    } catch (error) {
+      console.error("Error saving study:", error);
+    }
+  };
+
+  // Handle deletion of a study
+  const handleDeleteStudy = async (studyId: number) => {
+    try {
+      await axiosInstance.delete(`/userprofesions/${studyId}`);
+      // Refresh profile data
+      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
+      setUserProfile(response.data);
+    } catch (error) {
+      console.error("Error deleting study:", error);
     }
   };
 
@@ -129,20 +183,28 @@ export const Profile: React.FC = () => {
             <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
           </button>
         </section>
-        <p className="mt-2">
-          {userProfile.bio
-            ? userProfile.bio
-            : "NULL : Estudiante de ingeniería de sistemas y computación, actualmente en el décimo semestre, con un sólido interés y formación en desarrollo de software y bases de datos"}
-        </p>
+        <p className="mt-2">{userProfile.bio ? userProfile.bio : "Sin B"}</p>
       </div>
 
       {/* Estudios Profesionales Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Estudios Profesionales</h2>
-
-          <button>
-            <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
+          <button
+            onClick={() => {
+              setCurrentStudy({
+                degree: "",
+                institution: "",
+                start_date: "",
+                end_date: "",
+                description: "",
+              });
+              setIsEditMode(false);
+              setStudyModalOpen(true);
+            }}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          >
+            + Agregar Estudio
           </button>
         </section>
 
@@ -166,28 +228,115 @@ export const Profile: React.FC = () => {
                       {new Date(study.start_date).toLocaleDateString()} -{" "}
                       {new Date(study.end_date).toLocaleDateString()}
                     </p>
+                    <button
+                      onClick={() => {
+                        setCurrentStudy(study);
+                        setIsEditMode(true);
+                        setStudyModalOpen(true);
+                      }}
+                      className="text-gray-600 hover:text-gray-800 mr-2"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteStudy(study.study_id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
                   </div>
                 </div>
               </li>
             ))
           ) : (
-            <>
-              <li className="bg-white p-4 shadow-sm rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Ingeniería de sistemas y computación
-                </h3>
-                <p className="text-gray-500">Institución Ejemplo</p>
-              </li>
-              <li className="bg-white p-4 shadow-sm rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800">
-                  Técnico en sistemas
-                </h3>
-                <p className="text-gray-500">Institución Ejemplo</p>
-              </li>
-            </>
+            <li>No studies available</li>
           )}
         </ul>
       </div>
+
+      {/* Modal for adding or editing studies */}
+      {studyModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4">
+              {isEditMode ? "Editar Estudio" : "Agregar Estudio"}
+            </h3>
+            <div>
+              <input
+                type="text"
+                placeholder="Degree"
+                value={currentStudy?.degree || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    degree: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              />
+              <input
+                type="text"
+                placeholder="Institution"
+                value={currentStudy?.institution || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    institution: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              />
+              <input
+                type="date"
+                value={currentStudy?.start_date || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    start_date: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              />
+              <input
+                type="date"
+                value={currentStudy?.end_date || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    end_date: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              />
+              <textarea
+                placeholder="Description"
+                value={currentStudy?.description || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    description: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              />
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setStudyModalOpen(false)}
+                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveStudy}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Lenguajes de Programación Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
