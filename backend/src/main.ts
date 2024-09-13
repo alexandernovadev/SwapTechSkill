@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
-import { logger, stream } from "./infrastructure/logging/Logger";
+import { logger, stream } from './infrastructure/logging/Logger';
 import dotenv from 'dotenv';
 // import { chatSocket } from './application/sockets/chatSocket';
 // import { notificationSocket } from './application/sockets/notificationSocket';
@@ -15,10 +15,12 @@ import userRoutes from './app/routes/UserRoutes';
 import languagesRoutes from './app/routes/LanguagesRoutes';
 import skillCategoryRoutes from './app/routes/SkillCategoryRoutes';
 import skillRoutes from './app/routes/SkillRoutes';
+import userProfessionalStudyRoutes from './app/routes/UserProfessionalStudyRoutes';
+import userSkillsRoutes from './app/routes/UserSkillsRoutes';
+import userLanguagesRoutes from './app/routes/UserLanguagesRoutes';
 import { connectDatabase } from './config/database';
 import passport from './infrastructure/auth/PassportStrategies';
 // import { authMiddleware } from './shared/middlewares/auth';
-
 
 dotenv.config();
 // Express application initialization
@@ -55,13 +57,17 @@ app.use('/api/users', userRoutes);
 app.use('/api/languages', languagesRoutes);
 app.use('/api/skill-categories', skillCategoryRoutes);
 app.use('/api/skills', skillRoutes);
+app.use('/api/userprofesions', userProfessionalStudyRoutes);
+app.use('/api/userskills', userSkillsRoutes);
+app.use('/api/userlanguages', userLanguagesRoutes);
+
 // app.use('/api/users', authMiddleware, userRoutes);
 // app.use('/api/notifications', authMiddleware, notificationRoutes);
 // app.use('/api/chats', authMiddleware, chatRoutes);
 
 // hacer un miidleware para solo admin y mentor
 // Seeding routes
-app.use('/api', seederRoutes); // Only for development 
+app.use('/api', seederRoutes); // Only for development
 
 // Global error handling
 app.use(errorHandler);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import axiosInstance from "../../services/api";
 import { UserLanguage, UserSkill } from "./ProfileTypes";
+import { useAuthStore } from "../../state/authStore";
 
 // Define interfaces for user data
 interface UserRole {
@@ -30,12 +30,19 @@ export const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const { user } = useAuthStore(); // Get the user object from zustand store
+
   // Fetch user profile data with async/await and error handling
   useEffect(() => {
+    if (!user || !user.id) {
+      setError("User not authenticated or ID not available.");
+      setLoading(false);
+      return;
+    }
+
     const fetchUserProfile = async () => {
       try {
-        const response = await axiosInstance.get("/users/getById/2");
-        console.log("response", response.data);
+        const response = await axiosInstance.get(`/users/getById/${user.id}`);
 
         setUserProfile(response.data);
         setError(null); // Reset any previous errors
@@ -48,7 +55,7 @@ export const Profile: React.FC = () => {
     };
 
     fetchUserProfile();
-  }, []);
+  }, [user]); // Dependency array includes user to re-fetch if the user changes
 
   if (loading) {
     return <div>Loading...</div>;

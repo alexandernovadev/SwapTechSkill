@@ -9,18 +9,37 @@ export class UserSkillRepository {
     return await this.userSkillRepository.save(userSkill);
   }
 
-  // Método para obtener todos los userSkills
-  async findAll(): Promise<UserSkill[]> {
-    return await this.userSkillRepository.find();
+  // Método para obtener todos los userSkills con paginación
+  async findAll(
+    page: number = 1,
+    perPage: number = 10,
+  ): Promise<{ data: UserSkill[]; total: number }> {
+    const take = perPage;
+    const skip = (page - 1) * take;
+
+    const [skills, total] = await this.userSkillRepository.findAndCount({
+      relations: ['user', 'skill'],
+      skip,
+      take,
+      order: { id: 'ASC' }, // Orden por ID ascendente
+    });
+
+    return { data: skills, total };
   }
 
   // Método para buscar un userSkill por ID (Leer)
   async findById(id: number): Promise<UserSkill | undefined> {
-    return await this.userSkillRepository.findOne({ where: { id } });
+    return await this.userSkillRepository.findOne({
+      where: { id },
+      relations: ['user', 'skill'],
+    });
   }
 
   // Método para actualizar un userSkill
-  async update(id: number, updatedUserSkill: Partial<UserSkill>): Promise<UserSkill | undefined> {
+  async update(
+    id: number,
+    updatedUserSkill: Partial<UserSkill>,
+  ): Promise<UserSkill | undefined> {
     await this.userSkillRepository.update(id, updatedUserSkill);
     return this.findById(id);
   }

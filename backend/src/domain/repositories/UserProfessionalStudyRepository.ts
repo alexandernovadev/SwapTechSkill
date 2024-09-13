@@ -4,32 +4,52 @@ import { UserProfessionalStudy } from '../entity/UserProfessionalStudy';
 export class UserProfessionalStudyRepository {
   private studyRepository = AppDataSource.getRepository(UserProfessionalStudy);
 
-  // Método para guardar un estudio (Crear o Actualizar)
-  async save(study: UserProfessionalStudy): Promise<UserProfessionalStudy> {
+  // Crear un nuevo estudio profesional
+  async createStudy(
+    studyData: Partial<UserProfessionalStudy>,
+  ): Promise<UserProfessionalStudy> {
+    const study = this.studyRepository.create(studyData);
     return await this.studyRepository.save(study);
   }
 
-  // Método para obtener todos los estudios de un usuario
-  async findAllByUser(userId: number): Promise<UserProfessionalStudy[]> {
-    return await this.studyRepository.find({ where: { user: { id: userId } } });
+  // Obtener todos los estudios profesionales con paginación
+  async findAllStudies(
+    page: number = 1,
+    perPage: number = 10,
+  ): Promise<{ data: UserProfessionalStudy[]; total: number }> {
+    const take = perPage;
+    const skip = (page - 1) * take;
+
+    const [studies, total] = await this.studyRepository.findAndCount({
+      relations: ['user'],
+      skip,
+      take,
+    });
+
+    return { data: studies, total };
   }
 
-  // Método para buscar un estudio por ID
-  async findById(studyId: number): Promise<UserProfessionalStudy | undefined> {
-    return await this.studyRepository.findOne({ where: { study_id: studyId } });
-  }
-
-  // Método para actualizar un estudio
-  async update(
-    studyId: number,
-    updatedStudy: Partial<UserProfessionalStudy>,
+  // Obtener un estudio profesional por ID
+  async findStudyById(
+    study_id: number,
   ): Promise<UserProfessionalStudy | undefined> {
-    await this.studyRepository.update(studyId, updatedStudy);
-    return this.findById(studyId);
+    return await this.studyRepository.findOne({
+      where: { study_id },
+      relations: ['user'],
+    });
   }
 
-  // Método para eliminar un estudio
-  async delete(studyId: number): Promise<void> {
-    await this.studyRepository.delete(studyId);
+  // Actualizar un estudio profesional por ID
+  async updateStudy(
+    study_id: number,
+    updatedStudyData: Partial<UserProfessionalStudy>,
+  ): Promise<UserProfessionalStudy | undefined> {
+    await this.studyRepository.update(study_id, updatedStudyData);
+    return this.findStudyById(study_id);
+  }
+
+  // Eliminar un estudio profesional por ID
+  async deleteStudy(study_id: number): Promise<void> {
+    await this.studyRepository.delete(study_id);
   }
 }

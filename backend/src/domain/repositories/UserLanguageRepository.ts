@@ -9,18 +9,37 @@ export class UserLanguageRepository {
     return await this.userLanguageRepository.save(userLanguage);
   }
 
-  // Método para obtener todos los userLanguages
-  async findAll(): Promise<UserLanguage[]> {
-    return await this.userLanguageRepository.find();
+  // Método para obtener todos los userLanguages con paginación
+  async findAll(
+    page: number = 1,
+    perPage: number = 10,
+  ): Promise<{ data: UserLanguage[]; total: number }> {
+    const take = perPage;
+    const skip = (page - 1) * take;
+
+    const [languages, total] = await this.userLanguageRepository.findAndCount({
+      relations: ['user', 'language'],
+      skip,
+      take,
+      order: { id: 'ASC' }, // Orden por ID ascendente
+    });
+
+    return { data: languages, total };
   }
 
   // Método para buscar un userLanguage por ID (Leer)
   async findById(id: number): Promise<UserLanguage | undefined> {
-    return await this.userLanguageRepository.findOne({ where: { id } });
+    return await this.userLanguageRepository.findOne({
+      where: { id },
+      relations: ['user', 'language'],
+    });
   }
 
   // Método para actualizar un userLanguage
-  async update(id: number, updatedUserLanguage: Partial<UserLanguage>): Promise<UserLanguage | undefined> {
+  async update(
+    id: number,
+    updatedUserLanguage: Partial<UserLanguage>,
+  ): Promise<UserLanguage | undefined> {
     await this.userLanguageRepository.update(id, updatedUserLanguage);
     return this.findById(id);
   }
