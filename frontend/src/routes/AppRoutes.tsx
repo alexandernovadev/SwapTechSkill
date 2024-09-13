@@ -1,0 +1,66 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Home } from "../components/pages/Home";
+import { Login } from "../components/pages/Login";
+import { Register } from "../components/pages/Register";
+import { Dashboard } from "../components/pages/Dashboard";
+import { Users } from "../components/pages/Users";
+import { Admin } from "../components/pages/Admin";
+import PublicRoute from "./PublicRoute"; // Importamos PublicRoute
+import PrivateRoute from "./PrivateRoutes";
+import LoginSuccess from "../components/pages/LoginSuccess";
+import { HomeDash } from "../components/pages/HomeDash";
+import { Profile } from "../components/pages/Profile";
+import { Search } from "../components/pages/Search";
+import { Messages } from "../components/pages/Messages";
+import { Notifications } from "../components/pages/Notifications";
+
+const AppRoutes: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+
+        {/* Rutas públicas */}
+        <Route
+          path="/auth/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/auth/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+
+        <Route path="/auth/login/success" element={<LoginSuccess />} />
+
+        {/* Rutas protegidas */}
+        <Route
+          path="/dash/*"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        >
+          <Route path="" element={<HomeDash />} />
+          <Route path="users" element={<Users />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="search" element={<Search />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="notifications" element={<Notifications />} />
+          <Route path="admin" element={<Admin />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+};
+
+export default AppRoutes;
