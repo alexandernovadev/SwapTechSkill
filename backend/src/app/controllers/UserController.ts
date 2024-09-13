@@ -80,12 +80,11 @@ export class UserController {
     req: Request,
     res: Response,
   ): Promise<Response> {
-    const { keyword } = req.query as { keyword: string };
+    let { keyword } = req.query as { keyword: string };
 
+    // Put keyword default if not provided
     if (!keyword) {
-      return res
-        .status(400)
-        .json({ message: 'Se necesita una palabra clave para la búsqueda' });
+      keyword = 'a';
     }
 
     try {

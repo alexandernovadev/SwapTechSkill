@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useParams } from "react-router-dom"; // Import useParams
 import axiosInstance from "../../services/api";
 import { UserLanguage, UserSkill } from "./ProfileTypes";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 // Define interfaces for user data
 interface UserRole {
@@ -25,7 +27,8 @@ interface IUserProfile {
   userProfessionalStudies: Array<any>;
 }
 
-export const Profile: React.FC = () => {
+export const UserProfile: React.FC = () => {
+  const { id } = useParams(); // Extract id from URL
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,11 +37,13 @@ export const Profile: React.FC = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axiosInstance.get("/users/getById/2");
-        console.log("response", response.data);
+        if (id) {
+          const response = await axiosInstance.get(`/users/getById/${id}`);
+          console.log("response", response.data);
 
-        setUserProfile(response.data);
-        setError(null); // Reset any previous errors
+          setUserProfile(response.data);
+          setError(null); // Reset any previous errors
+        }
       } catch (err) {
         setError("Error fetching user data.");
         console.error("Error fetching user data:", err);
@@ -48,7 +53,7 @@ export const Profile: React.FC = () => {
     };
 
     fetchUserProfile();
-  }, []);
+  }, [id]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -64,8 +69,21 @@ export const Profile: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6">
+      {/* Btn return back */}
+      <div className="sticky top-0 z-10">
+        {" "}
+        {/* Make the button sticky */}
+        <button
+          onClick={() => window.history.back()}
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+        >
+          <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
+          Volver
+        </button>
+      </div>
+
       {/* Profile Header */}
-      <div className="flex items-center border border-gray-300 rounded-lg p-6 mb-6">
+      <div className="mt-2 flex items-center border border-gray-300 rounded-lg p-6 mb-6">
         <div className="w-24 h-24 rounded-full bg-gray-300 flex-shrink-0 mr-6">
           {/* Placeholder for Profile Picture */}
           <img
@@ -140,15 +158,31 @@ export const Profile: React.FC = () => {
                 key={index}
                 className="flex justify-between items-center bg-gray-100 p-2 rounded-lg"
               >
-                <span>{skill.skill.skillName}</span>
+                <section>
+                    <h2 className="text-2xl font-bold text-blue-600 mb-2">
+                      {skill.skill.skillName}
+                    </h2>{" "}
+                    {/* Habilidad en texto grande y negrita */}
+                    <div className="flex items-center mb-2">
+                      <span className="font-semibold text-md text-gray-700">
+                        Proficiency:
+                      </span>
+                      <span className="text-lg text-gray-800 ml-2">
+                        {skill.proficiencyLevel} / 100
+                      </span>{" "}
+                      {/* Nivel de proficiencia */}
+                    </div>
+                    <hr className="" />
+                    <div className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full inline-block">
+                      <span className="font-light text-sm">
+                        Años de experiencia: {skill.yearsOfExperience}
+                      </span>{" "}
+                      {/* Banner para los años de experiencia */}
+                    </div>
+                </section>
                 <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    {/* Edit Icon */}
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    {/* Delete Icon */}
-                    🗑️
+                  <button className=" bg-blue-500 text-white px-2 py-1 rounded-lg">
+                    Conectar
                   </button>
                 </div>
               </div>
@@ -156,58 +190,15 @@ export const Profile: React.FC = () => {
           ) : (
             <>
               <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Análisis de datos Python</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Microservicios Java</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Bases de Datos SQL y NoSQL</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Arquitectura de Software</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
+                <span>SIN Skills</span>
+                <div className="flex space-x-2"></div>
               </div>
             </>
           )}
         </div>
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg">
-          + Agregar Habilidad
-        </button>
       </div>
     </div>
   );
 };
 
-export default Profile;
+export default UserProfile;

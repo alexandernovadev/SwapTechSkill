@@ -14,6 +14,7 @@ import { Profile } from "../components/pages/Profile";
 import { Search } from "../components/pages/Search";
 import { Messages } from "../components/pages/Messages";
 import { Notifications } from "../components/pages/Notifications";
+import UserProfile from "../components/pages/UserProfile";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -52,6 +53,7 @@ const AppRoutes: React.FC = () => {
         >
           <Route path="" element={<HomeDash />} />
           <Route path="users" element={<Users />} />
+          <Route path="user/:id" element={<UserProfile />} />
           <Route path="profile" element={<Profile />} />
           <Route path="search" element={<Search />} />
           <Route path="messages" element={<Messages />} />
