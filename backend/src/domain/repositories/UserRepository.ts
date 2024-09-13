@@ -66,6 +66,18 @@ export class UserRepository {
       .getOne();
   }
 
+  // Update user bio
+  async updateBio(userId: number, bio: string): Promise<User | null> {
+    const user = await this.findById(userId);
+    if (!user) {
+      return null;
+    }
+    // Update bio
+    user.bio = bio;
+    await this.userRepository.save(user);
+    return user;
+  }
+
   // Método para búsqueda avanzada por nombre de usuario, rol, habilidad y lenguaje
   async searchAdvanced(filters: {
     userName?: string;
@@ -152,7 +164,7 @@ export class UserRepository {
       })
       .getMany();
   }
-  
+
   // Método para actualizar un usuario
   async update(
     id: number,

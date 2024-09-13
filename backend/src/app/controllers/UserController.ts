@@ -14,6 +14,28 @@ export class UserController {
     }
   }
 
+  // Método para actualizar solo la bio de un usuario
+  static async updateBio(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    const { bio } = req.body;
+
+    if (!bio) {
+      return res.status(400).json({ message: 'Bio is required' });
+    }
+
+    try {
+      const updatedUser = await userRepository.updateBio(Number(id), bio);
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      return res
+        .status(200)
+        .json({ message: 'Bio updated', user: updatedUser });
+    } catch (error) {
+      return res.status(500).json({ message: 'Error updating bio', error });
+    }
+  }
+
   // Método para actualizar un usuario
   static async update(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;

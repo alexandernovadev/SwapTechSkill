@@ -31,6 +31,8 @@ export const Profile: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [isBioModalOpen, setIsBioModalOpen] = useState<boolean>(false); // Modal state
+  const [newBio, setNewBio] = useState<string>("");
 
   const { user } = useAuthStore(); // Get the user object from zustand store
 
@@ -60,6 +62,25 @@ export const Profile: React.FC = () => {
 
     fetchUserProfile();
   }, [user]); // Dependency array includes user to re-fetch if the user changes
+
+  const handleEditBio = async () => {
+    if (!userProfile) return;
+
+    try {
+      const updatedProfile = {
+        ...userProfile,
+        bio: newBio,
+      };
+
+      await axiosInstance.put(`/users/updateBio/${userProfile.id}`, {
+        bio: newBio,
+      });
+      setUserProfile(updatedProfile);
+      setIsBioModalOpen(false); // Close the modal on success
+    } catch (error) {
+      console.error("Error updating bio:", error);
+    }
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -104,7 +125,7 @@ export const Profile: React.FC = () => {
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold">Acerca de...</h2>
-          <button>
+          <button onClick={() => setIsBioModalOpen(true)}>
             <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
           </button>
         </section>
@@ -193,6 +214,35 @@ export const Profile: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Bio Modal */}
+      {isBioModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4">Edit Bio</h3>
+            <textarea
+              value={newBio}
+              onChange={(e) => setNewBio(e.target.value)}
+              rows={5}
+              className="w-full p-2 border rounded-lg"
+            />
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setIsBioModalOpen(false)}
+                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditBio}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Habilidades y Conocimientos Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
