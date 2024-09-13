@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { LanguagesTable } from "../organisms/LanguagesTable";
 import { SkillCategoriesTable } from "../organisms/SkillCategoryTable";
+import { SkillTable } from "../organisms/SkillTable";
 
 // Componente Admin que maneja las Tabs
 export const Admin: React.FC = () => {
@@ -55,7 +56,7 @@ export const Admin: React.FC = () => {
       <div>
         {activeTab === "languages" && <LanguagesTable />}
         {activeTab === "skillcategory" && <SkillCategoriesTable />}
-        {activeTab === "skills" && <div>Skills content</div>}
+        {activeTab === "skills" && <SkillTable/>}
         {activeTab === "users" && <div>Users content</div>}
       </div>
     </div>
