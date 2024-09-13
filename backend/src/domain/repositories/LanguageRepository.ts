@@ -9,12 +9,24 @@ export class LanguageRepository {
     return await this.languageRepository.save(language);
   }
 
-  // Método para obtener todos los languages
-  async findAll(): Promise<Language[]> {
-    return await this.languageRepository.find();
+  // Método para obtener todos los languages con paginación o sin paginación
+  async findAll(
+    page?: number,
+    perPage?: number,
+  ): Promise<{ data: Language[]; total: number }> {
+    const take = perPage || 0; // Si no se especifica perPage, se obtendrán todos
+    const skip = page ? (page - 1) * take : 0; // Si no se especifica página, no se salta ningún registro
+
+    // Si page no está definido, no hacemos paginación (retornamos todos)
+    const [languages, total] = await this.languageRepository.findAndCount({
+      skip: page ? skip : undefined, // Solo se hace skip si se especifica page
+      take: page ? take : undefined, // Solo se limita el número de resultados si se especifica perPage
+    });
+
+    return { data: languages, total };
   }
 
-  // En LanguageRepository
+  // Método para buscar un language por nombre
   async findByName(name: string): Promise<Language | undefined> {
     return await this.languageRepository.findOne({
       where: { languageName: name },
