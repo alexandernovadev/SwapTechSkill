@@ -21,6 +21,9 @@ export class LanguageRepository {
     const [languages, total] = await this.languageRepository.findAndCount({
       skip: page ? skip : undefined, // Solo se hace skip si se especifica page
       take: page ? take : undefined, // Solo se limita el número de resultados si se especifica perPage
+      order: {
+        id: 'ASC', // Ordenar por ID ascendente
+      },
     });
 
     return { data: languages, total };
