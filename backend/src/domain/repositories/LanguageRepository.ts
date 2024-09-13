@@ -4,6 +4,10 @@ import { Language } from '../entity/Language';
 export class LanguageRepository {
   private languageRepository = AppDataSource.getRepository(Language);
 
+  async findAllList(): Promise<Language[]> {
+    return await this.languageRepository.find();
+  }
+  
   // Método para guardar un language (Crear o Actualizar)
   async save(language: Language): Promise<Language> {
     return await this.languageRepository.save(language);

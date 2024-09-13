@@ -4,6 +4,18 @@ import { Language } from '../../domain/entity/Language';
 
 const languageRepository = new LanguageRepository();
 export class LanguageController {
+
+  static async findAllList(req: Request, res: Response) {
+    try {
+      const languages = await languageRepository.findAllList();
+      return res.status(200).json(languages);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error al listar los lenguajes', error });
+    }
+  }
+  
   // Crear un nuevo language
   static async create(req: Request, res: Response) {
     const { languageName } = req.body;
