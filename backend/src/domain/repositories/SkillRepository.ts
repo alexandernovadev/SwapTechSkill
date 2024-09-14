@@ -9,6 +9,10 @@ export class SkillRepository {
     return await this.skillRepository.save(skill);
   }
 
+  async findAllList(): Promise<Skill[]> {
+    return await this.skillRepository.find();
+  }
+
   // Método para obtener todos los skills con paginación y relación a SkillCategory
   async findAll(
     page: number = 1,

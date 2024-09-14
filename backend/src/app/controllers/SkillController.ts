@@ -17,6 +17,17 @@ export class SkillController {
     }
   }
 
+  static async findAllList(req: Request, res: Response) {
+    try {
+      const languages = await skillRepository.findAllList();
+      return res.status(200).json(languages);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error al listar los lenguajes', error });
+    }
+  }
+
   // Listar todos los skills con paginación y relación con SkillCategory
   static async findAll(req: Request, res: Response) {
     const page = parseInt(req.query.page as string, 10) || 1;
@@ -27,7 +38,7 @@ export class SkillController {
         page,
         perPage,
       );
-      
+
       return res.status(200).json({
         data: skills,
         total,
@@ -53,8 +64,8 @@ export class SkillController {
       }
       return res.status(200).json(skill);
     } catch (error) {
-      console.log("error", JSON.stringify(error));
-      
+      console.log('error', JSON.stringify(error));
+
       return res
         .status(500)
         .json({ message: 'Error al obtener el skill', error });

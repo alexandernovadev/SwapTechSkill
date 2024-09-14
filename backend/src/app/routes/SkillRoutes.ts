@@ -18,4 +18,5 @@ router.put('/:id', SkillController.update);
 // Eliminar un skill por ID
 router.delete('/:id', SkillController.delete);
 
+router.get('/getall', SkillController.findAllList);
 export default router;

@@ -51,6 +51,21 @@ interface ILanguage {
   languageName: string;
 }
 
+interface IUserSkill {
+  id?: number;
+  skill: {
+    id: number;
+    skillName: string;
+  };
+  proficiencyLevel: string;
+  yearsOfExperience: number;
+}
+
+interface ISkill {
+  id: number;
+  skillName: string;
+}
+
 export const Profile: React.FC = () => {
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -64,9 +79,14 @@ export const Profile: React.FC = () => {
   const [languageModalOpen, setLanguageModalOpen] = useState<boolean>(false); // Modal state
   const [currentLanguage, setCurrentLanguage] = useState<IUserLanguage | null>(
     null
-  ); // For edit or create
-  const [isEditMode, setIsEditMode] = useState<boolean>(false); // Edit mode flag
+  );
+  // For edit or create
   const [availableLanguages, setAvailableLanguages] = useState<ILanguage[]>([]);
+
+  const [skillModalOpen, setSkillModalOpen] = useState<boolean>(false); // Modal state
+  const [currentSkill, setCurrentSkill] = useState<IUserSkill | null>(null); // For edit or create
+  const [isEditMode, setIsEditMode] = useState<boolean>(false); // Edit mode flag
+  const [availableSkills, setAvailableSkills] = useState<ISkill[]>([]); // Available skills for selection
 
   const { user } = useAuthStore(); // Get the user object from zustand store
 
@@ -89,6 +109,10 @@ export const Profile: React.FC = () => {
         const responseLang = await axiosInstance.get(`/languages/getall`);
         setAvailableLanguages(responseLang.data);
 
+        // Fetch available skills for selection
+        const skillsResponse = await axiosInstance.get("/skills/getall"); // Adjust the endpoint as necessary
+        setAvailableSkills(skillsResponse.data);
+
         console.log("User Profile Data:", response.data);
       } catch (err) {
         setError("Error fetching user data.");
@@ -100,6 +124,42 @@ export const Profile: React.FC = () => {
 
     fetchUserProfile();
   }, [user]); // Dependency array includes user to re-fetch if the user changes
+
+  // Handle saving a skill (create or update)
+  const handleSaveSkill = async () => {
+    try {
+      if (isEditMode && currentSkill && currentSkill.id) {
+        // If it's edit mode, update the skill
+        await axiosInstance.put(`/userskills/${currentSkill.id}`, currentSkill);
+      } else {
+        // If it's create mode, add a new skill
+        await axiosInstance.post(`/userskills`, {
+          ...currentSkill,
+          user: { id: userProfile?.id },
+        });
+      }
+      setSkillModalOpen(false);
+      setCurrentSkill(null);
+      setIsEditMode(false);
+      // Refresh profile data
+      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
+      setUserProfile(response.data);
+    } catch (error) {
+      console.error("Error saving skill:", error);
+    }
+  };
+
+  // Handle deletion of a skill
+  const handleDeleteSkill = async (skillId: number) => {
+    try {
+      await axiosInstance.delete(`/userskills/${skillId}`);
+      // Refresh profile data
+      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
+      setUserProfile(response.data);
+    } catch (error) {
+      console.error("Error deleting skill:", error);
+    }
+  };
 
   const handleEditBio = async () => {
     if (!userProfile) return;
@@ -571,86 +631,143 @@ export const Profile: React.FC = () => {
       {/* Habilidades y Conocimientos Section */}
       <div className="border border-gray-300 rounded-lg p-4 mb-6">
         <section className="flex justify-between">
-          <h2 className="text-xl font-semibold">Habilidades y Conocimientos</h2>
-
-          <button>
-            <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
+          <h2 className="text-xl font-semibold mb-4">
+            Habilidades del Usuario
+          </h2>
+          <button
+            onClick={() => {
+              setCurrentSkill({
+                skill: { id: 0, skillName: "" },
+                proficiencyLevel: "",
+                yearsOfExperience: 0,
+              });
+              setIsEditMode(false);
+              setSkillModalOpen(true);
+            }}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          >
+            + Agregar Habilidad
           </button>
         </section>
 
-        <div className="space-y-2 mt-4">
+        <ul className="space-y-4">
           {userProfile.userSkills && userProfile.userSkills.length > 0 ? (
             userProfile.userSkills.map((skill, index) => (
-              <div
-                key={index}
-                className="flex justify-between items-center bg-gray-100 p-2 rounded-lg"
-              >
-                <span>{skill.skill.skillName}</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    {/* Edit Icon */}
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    {/* Delete Icon */}
-                    🗑️
-                  </button>
+              <li key={index} className="bg-white p-4 shadow-sm rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {skill.skill.skillName}
+                    </h3>
+                    <p className="text-gray-500">
+                      Nivel de competencia: {skill.proficiencyLevel}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Años de experiencia: {skill.yearsOfExperience}
+                    </p>
+                  </div>
+                  <div className="ml-4 text-right">
+                    <button
+                      onClick={() => {
+                        setCurrentSkill(skill);
+                        setIsEditMode(true);
+                        setSkillModalOpen(true);
+                      }}
+                      className="text-gray-600 hover:text-gray-800 mr-2"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSkill(skill.id!)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
+                  </div>
                 </div>
-              </div>
+              </li>
             ))
           ) : (
-            <>
-              <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Análisis de datos Python</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Microservicios Java</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Bases de Datos SQL y NoSQL</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center bg-gray-100 p-2 rounded-lg">
-                <span>Arquitectura de Software</span>
-                <div className="flex space-x-2">
-                  <button className="text-gray-600 hover:text-gray-800">
-                    ✏️
-                  </button>
-                  <button className="text-red-600 hover:text-red-800">
-                    🗑️
-                  </button>
-                </div>
-              </div>
-            </>
+            <li>No hay habilidades disponibles</li>
           )}
-        </div>
-        <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg">
-          + Agregar Habilidad
-        </button>
+        </ul>
       </div>
+
+      {/* Modal for adding or editing skills */}
+      {skillModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4">
+              {isEditMode ? "Editar Habilidad" : "Agregar Habilidad"}
+            </h3>
+            <div>
+              <select
+                value={currentSkill?.skill.id || ""}
+                onChange={(e) =>
+                  setCurrentSkill({
+                    ...currentSkill!,
+                    skill: {
+                      ...currentSkill!.skill,
+                      id: parseInt(e.target.value, 10),
+                      skillName:
+                        availableSkills.find(
+                          (skill) => skill.id === parseInt(e.target.value, 10)
+                        )?.skillName || "",
+                    },
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              >
+                <option value="">Seleccionar Habilidad</option>
+                {availableSkills.map((skill) => (
+                  <option key={skill.id} value={skill.id}>
+                    {skill.skillName}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                placeholder="Nivel de competencia"
+                value={currentSkill?.proficiencyLevel || ""}
+                onChange={(e) =>
+                  setCurrentSkill({
+                    ...currentSkill!,
+                    proficiencyLevel: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              />
+              <input
+                type="number"
+                placeholder="Años de experiencia"
+                value={currentSkill?.yearsOfExperience || 0}
+                onChange={(e) =>
+                  setCurrentSkill({
+                    ...currentSkill!,
+                    yearsOfExperience: parseInt(e.target.value, 10),
+                  })
+                }
+                className="w-full p-2 mb-4 border rounded-lg"
+              />
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setSkillModalOpen(false)}
+                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveSkill}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
