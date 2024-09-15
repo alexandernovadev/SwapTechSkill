@@ -87,10 +87,10 @@ export const Profile: React.FC = () => {
 
   // Estado anidado para manejar los campos de usuario
   const [userData, setUserData] = useState({
-    name: "",
-    lastname: "",
-    label: "",
-    location: "",
+    name: userProfile?.firstName || "",
+    lastname: userProfile?.lastName || "",
+    label: userProfile?.labelProfile || "",
+    location: userProfile?.location || "",
   });
 
   // For edit or create
@@ -138,16 +138,15 @@ export const Profile: React.FC = () => {
     fetchUserProfile();
   }, [user]); // Dependency array includes user to re-fetch if the user changes
 
-    // Maneja los cambios en los campos del formulario
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const { name, value } = e.target;
-      setUserData({
-        ...userData,
-        [name]: value, // Actualiza el campo correspondiente
-      });
-    };
+  // Maneja los cambios en los campos del formulario
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserData({
+      ...userData,
+      [name]: value, // Actualiza el campo correspondiente
+    });
+  };
 
-    
   const handleEditUserData = async () => {
     try {
       const response = await fetch(
@@ -863,7 +862,7 @@ export const Profile: React.FC = () => {
               <input
                 type="text"
                 name="name" // Define el nombre del campo
-                value={userData.name}
+                value={userProfile?.firstName}
                 onChange={handleInputChange}
                 className="w-full p-2 rounded-lg bg-transparent border border-black"
               />
