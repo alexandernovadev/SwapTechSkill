@@ -14,6 +14,44 @@ export class UserController {
     }
   }
 
+  // Método para actualizar solo name label y location de un usuario
+  static async updateNameLabelLocation(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const { id } = req.params;
+    const { name, label, location, lastname } = req.body;
+
+    if (!name || !label || !location) {
+      return res
+        .status(400)
+        .json({ message: 'Name, label and location are required' });
+    }
+
+    try {
+      const updatedUser = await userRepository.updateNameLabelLocation(
+        Number(id),
+        name,
+        label,
+        location,
+        lastname
+      );
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      return res
+        .status(200)
+        .json({
+          message: 'Name, label and location updated',
+          user: updatedUser,
+        });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error updating name, label and location', error });
+    }
+  }
+
   // Método para actualizar solo la bio de un usuario
   static async updateBio(req: Request, res: Response): Promise<Response> {
     const { id } = req.params;

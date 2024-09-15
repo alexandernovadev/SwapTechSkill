@@ -4,6 +4,27 @@ import { User } from '../entity/User';
 export class UserRepository {
   private userRepository = AppDataSource.getRepository(User);
 
+  // Método para actualizar solo name label y location de un usuario
+  async updateNameLabelLocation(
+    id: number,
+    name: string,
+    label: string,
+    location: string,
+    lastName: string,
+  ): Promise<User | null> {
+    const user = await this.findById(id);
+    if (!user) {
+      return null;
+    }
+    // Update name, label and location
+    user.firstName = name;
+    user.labelProfile = label;
+    user.location = location;
+    user.lastName = lastName;
+    await this.userRepository.save(user);
+    return user;
+  }
+
   // Método para buscar un usuario por correo electrónico y cargar los roles
   async findByEmail(email: string): Promise<User | undefined> {
     return await this.userRepository

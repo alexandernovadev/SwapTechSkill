@@ -19,6 +19,8 @@ interface IUserProfile {
   id: number;
   firstName: string;
   lastName: string;
+  labelProfile: string | null;
+  location: string | null;
   email: string;
   profilePictureUrl: string | null;
   bio: string | null;
@@ -72,6 +74,7 @@ export const Profile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isBioModalOpen, setIsBioModalOpen] = useState<boolean>(false); // Modal state
+  const [isMyData, setIsMyData] = useState<boolean>(false); // Modal state
   const [newBio, setNewBio] = useState<string>("");
 
   const [studyModalOpen, setStudyModalOpen] = useState<boolean>(false); // Modal state
@@ -81,6 +84,15 @@ export const Profile: React.FC = () => {
   const [currentLanguage, setCurrentLanguage] = useState<IUserLanguage | null>(
     null
   );
+
+  // Estado anidado para manejar los campos de usuario
+  const [userData, setUserData] = useState({
+    name: "",
+    lastname: "",
+    label: "",
+    location: "",
+  });
+
   // For edit or create
   const [availableLanguages, setAvailableLanguages] = useState<ILanguage[]>([]);
 
@@ -125,6 +137,42 @@ export const Profile: React.FC = () => {
 
     fetchUserProfile();
   }, [user]); // Dependency array includes user to re-fetch if the user changes
+
+    // Maneja los cambios en los campos del formulario
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setUserData({
+        ...userData,
+        [name]: value, // Actualiza el campo correspondiente
+      });
+    };
+
+    
+  const handleEditUserData = async () => {
+    try {
+      const response = await fetch(
+        `{{url}}/api/users/updateNameLabelLocation/${user!.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData), // Envía los datos del estado
+        }
+      );
+
+      const data = await response.json();
+      if (response.ok) {
+        // Actualización exitosa
+        console.log("Datos actualizados:", data);
+        setIsMyData(false); // Cierra el modal
+      } else {
+        console.error("Error al actualizar los datos:", data.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
 
   // Handle saving a skill (create or update)
   const handleSaveSkill = async () => {
@@ -290,11 +338,12 @@ export const Profile: React.FC = () => {
             <div className="flex flex-col gap-3">
               <h1 className="text-3xl ">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
               <p className="text-gray-500">
-                Analista SIT Senior | Ingeniero de sistemas y computación |
-                Técnico en sistemas
+                {userProfile.labelProfile
+                  ? userProfile.labelProfile
+                  : "Sin Label"}
               </p>
               <p className="text-gray-500">
-                Bogotá, Distrito Capital, Colombia
+                {userProfile.location ? userProfile.location : "Sin Ubicación"}
               </p>
               <div className="flex items-center mt-2">
                 <span className="text-black">★★★★★</span>{" "}
@@ -304,7 +353,7 @@ export const Profile: React.FC = () => {
 
             {/* Edit Button in the top-right corner */}
             <button
-              onClick={() => setIsBioModalOpen(true)}
+              onClick={() => setIsMyData(true)}
               className="absolute top-3 right-3"
             >
               <img src={EditBtn} className="w-8 h-8" />
@@ -312,7 +361,6 @@ export const Profile: React.FC = () => {
           </div>
         </div>
       </div>
-
       {/* Acerca de Section */}
       <div className="border border-[#1E2126] rounded-sm  p-4 mb-2 relative">
         <section className="flex justify-between">
@@ -327,7 +375,6 @@ export const Profile: React.FC = () => {
         </section>
         <p className="mt-2">{userProfile.bio ? userProfile.bio : "Sin B"}</p>
       </div>
-
       {/* Estudios Profesionales Section */}
       <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
@@ -395,7 +442,6 @@ export const Profile: React.FC = () => {
           )}
         </ul>
       </div>
-
       {/* Lenguajes de Programación Section */}
       <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
@@ -458,7 +504,6 @@ export const Profile: React.FC = () => {
           )}
         </ul>
       </div>
-
       {/* Habilidades y Conocimientos Section */}
       <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
@@ -523,7 +568,6 @@ export const Profile: React.FC = () => {
           )}
         </ul>
       </div>
-
       {/* Modal for adding or editing studies */}
       {studyModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
@@ -607,7 +651,6 @@ export const Profile: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Modal for adding or editing languages */}
       {languageModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
@@ -683,7 +726,6 @@ export const Profile: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Bio Modal */}
       {isBioModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
@@ -720,7 +762,6 @@ export const Profile: React.FC = () => {
           </div>
         </div>
       )}
-
       {/* Modal for adding or editing skills */}
       {skillModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
@@ -798,6 +839,87 @@ export const Profile: React.FC = () => {
               </button>
               <button
                 onClick={handleSaveSkill}
+                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Name LastName Location LabelProfile Modal */}
+      {isMyData && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
+            <h3 className="text-xl font-semibold mb-4 text-center">
+              Editar Mis datos
+            </h3>
+
+            {/* Campo de Nombre */}
+            <div className="mb-4">
+              <div className="text-[#16191C] font-light text-[13px] my-1">
+                Nombre
+              </div>
+              <input
+                type="text"
+                name="name" // Define el nombre del campo
+                value={userData.name}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded-lg bg-transparent border border-black"
+              />
+            </div>
+
+            {/* Campo de Apellido */}
+            <div className="mb-4">
+              <div className="text-[#16191C] font-light text-[13px] my-1">
+                Apellido
+              </div>
+              <input
+                type="text"
+                name="lastname" // Define el nombre del campo
+                value={userData.lastname}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded-lg bg-transparent border border-black"
+              />
+            </div>
+
+            {/* Campo de Etiqueta */}
+            <div className="mb-4">
+              <div className="text-[#16191C] font-light text-[13px] my-1">
+                Label
+              </div>
+              <input
+                type="text"
+                name="label" // Define el nombre del campo
+                value={userData.label}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded-lg bg-transparent border border-black"
+              />
+            </div>
+
+            {/* Campo de Ubicación */}
+            <div className="mb-4">
+              <div className="text-[#16191C] font-light text-[13px] my-1">
+                Ubicación
+              </div>
+              <input
+                type="text"
+                name="location" // Define el nombre del campo
+                value={userData.location}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded-lg bg-transparent border border-black"
+              />
+            </div>
+
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setIsMyData(false)}
+                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleEditUserData}
                 className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
               >
                 Guardar

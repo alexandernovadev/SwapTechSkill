@@ -6,15 +6,15 @@ docker exec -it my_postgres psql -U test -d test
 
 ## verificar 1 migration
 npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/InitialMigration -d ./src/infrastructure/persistence/typeormSource.ts
-
-## Run migration
-npx typeorm-ts-node-commonjs migration:run -d ./src/infrastructure/persistence/typeormSource.ts
-
-## Run second migrate user mas
+## Make second migrate user mas
 npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/AddLocationAndLabelProfileToUser -d ./src/infrastructure/persistence/typeormSource.ts
-
-## 3 migration 
+## Make migration 
 npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/AddLevelStudyAndStateToUserProfessionalStudy -d ./src/infrastructure/persistence/typeormSource.ts
+
+
+
+## ----- RUN ALL MIGRATIONS -----
+npx typeorm-ts-node-commonjs migration:run -d ./src/infrastructure/persistence/typeormSource.ts
 
 ____POStGREES
 show tables :  \dt
