@@ -61,7 +61,7 @@ const RegisterTemplate: React.FC = () => {
   const password = watch("password");
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen animate__animated animate__fadeIn animate__faster">
       {/* Sección Izquierda: Imagen de fondo */}
       <div
         className="w-[40vw] bg-cover bg-center flex flex-col items-center justify-center"

@@ -10,7 +10,7 @@ const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   // Si el usuario ya está autenticado, redirige al dashboard
-  return isAuthenticated ? <Navigate to="/dash" /> : children;
+  return isAuthenticated ? <Navigate to="/dash/home" /> : children;
 };
 
 export default PublicRoute;

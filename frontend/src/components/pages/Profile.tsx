@@ -109,7 +109,7 @@ export const Profile: React.FC = () => {
         setError(null); // Reset any previous errors
         const responseLang = await axiosInstance.get(`/languages/getall`);
         setAvailableLanguages(responseLang.data);
-
+        setNewBio(response.data.bio || ""); // Set the bio in the modal
         // Fetch available skills for selection
         const skillsResponse = await axiosInstance.get("/skills/getall"); // Adjust the endpoint as necessary
         setAvailableSkills(skillsResponse.data);
@@ -272,7 +272,7 @@ export const Profile: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6 animate__animated animate__fadeIn animate__faster">
       {/* Profile Header */}
       <div className="flex items-center  border border-[#1E2126] rounded-sm p-6 mb-2 relative">
         <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 flex flex-row">
@@ -527,7 +527,7 @@ export const Profile: React.FC = () => {
       {/* Modal for adding or editing studies */}
       {studyModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate__faster">
             <h3 className="text-xl font-semibold mb-4">
               {isEditMode ? "Editar Estudio" : "Agregar Estudio"}
             </h3>
@@ -693,9 +693,9 @@ export const Profile: React.FC = () => {
             </h3>
 
             <div>
-              <label className="text-[#16191C] font-light text-[17px]">
-                Descripción del curso
-              </label>
+              <div className="text-[#16191C] font-light text-[13px] my-1">
+                Descripción
+              </div>
               <textarea
                 value={newBio}
                 onChange={(e) => setNewBio(e.target.value)}
@@ -729,6 +729,9 @@ export const Profile: React.FC = () => {
               {isEditMode ? "Editar Habilidad" : "Agregar Habilidad"}
             </h3>
             <div>
+              <div className="text-[#16191C] font-light text-[13px] mb-1 ml-4">
+                Seleccionar Habilidad
+              </div>
               <select
                 value={currentSkill?.skill.id || ""}
                 onChange={(e) =>
@@ -744,9 +747,9 @@ export const Profile: React.FC = () => {
                     },
                   })
                 }
-                className="w-full p-2 mb-4 border border-black rounded-lg"
+                className="w-full p-2 mb-1 border border-black rounded-lg bg-transparent"
               >
-                <option value="">Seleccionar Habilidad</option>
+                <option value=""></option>
                 {availableSkills.map((skill) => (
                   <option key={skill.id} value={skill.id}>
                     {skill.skillName}
@@ -754,9 +757,12 @@ export const Profile: React.FC = () => {
                 ))}
               </select>
 
-              <input
-                type="text"
+              <div className="text-[#16191C] font-light text-[13px] mb-1 ml-4">
+                Descripcion
+              </div>
+              <textarea
                 placeholder="Nivel de competencia"
+                rows={6}
                 value={currentSkill?.proficiencyLevel || ""}
                 onChange={(e) =>
                   setCurrentSkill({
@@ -764,11 +770,15 @@ export const Profile: React.FC = () => {
                     proficiencyLevel: e.target.value,
                   })
                 }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
+                className="w-full p-2 border border-black rounded-lg bg-transparent"
+              ></textarea>
+
+              <div className="text-[#16191C] font-light text-[13px] mb-1 ml-4">
+                Años de experiencia
+              </div>
               <input
                 type="number"
-                placeholder="Años de experiencia"
+                placeholder="Escriba cuantos años de experiencia tiene  en la habilidad "
                 value={currentSkill?.yearsOfExperience || 0}
                 onChange={(e) =>
                   setCurrentSkill({
@@ -776,7 +786,7 @@ export const Profile: React.FC = () => {
                     yearsOfExperience: parseInt(e.target.value, 10),
                   })
                 }
-                className="w-full p-2 mb-4 border border-black rounded-lg"
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
               />
             </div>
             <div className="flex justify-center mt-4">

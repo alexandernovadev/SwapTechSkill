@@ -90,7 +90,7 @@ export const Search = () => {
   }, [searchTerm]); // Se ejecutará siempre que cambie searchTerm
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8  animate__animated animate__fadeIn animate__faster">
       <h1 className="text-3xl font-semibold text-center mb-6">Búsqueda</h1>
       <div className="border-b border-b-black my-2"></div>
       <form

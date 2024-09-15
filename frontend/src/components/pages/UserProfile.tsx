@@ -68,7 +68,7 @@ export const UserProfile: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6">
+    <div className="max-w-5xl mx-auto p-6 animate__animated animate__fadeIn animate__faster">
       {/* Btn return back */}
       <div className="sticky top-0 z-10">
         {" "}

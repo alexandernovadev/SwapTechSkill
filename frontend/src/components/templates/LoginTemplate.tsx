@@ -51,7 +51,7 @@ const LoginTemplate: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen animate__animated animate__fadeIn animate__faster">
       <div
         className="w-1/2 bg-cover bg-center"
         style={{ backgroundImage: `url(${Image4})` }}

@@ -28,7 +28,7 @@ const LoginSuccess: React.FC = () => {
           login(user, token);
 
           // Redirigir al dashboard
-          navigate("/dash");
+          navigate("/dash/home");
         } catch (error) {
           console.error("Error fetching user:", error);
           // En caso de error, redirigir al login

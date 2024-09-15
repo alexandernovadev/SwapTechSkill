@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Footer from "../organisms/Footer";
 import homeIcon from "../../assets/icons/home.svg";
 import personIcon from "../../assets/icons/perfil.svg";
@@ -6,29 +6,44 @@ import searchIcon from "../../assets/icons/buscar.svg";
 import messageIcon from "../../assets/icons/msg.svg";
 import notificationIcon from "../../assets/icons/notification.svg";
 import logoutIcon from "../../assets/icons/closesession.svg";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-   
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+
 import Logo from "../../assets/LogoPng.png";
 import { useAuthStore } from "../../state/authStore";
 
 export const Dashboard = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { logout } = useAuthStore(); 
-  const navigate = useNavigate(); 
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   const handleLogout = () => {
-    logout(); 
-    navigate("/"); 
+    logout();
+    navigate("/");
   };
 
+  const linkClasses = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center text-lg pl-[30px] py-4 ${
+      isActive ? "gradient-background-azulfeo" : ""
+    }`;
+
+  useEffect(() => {
+    // Quitar el sccroll del body
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      // Habilitar el scroll del body
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
-    <div className="w-full min-h-screen flex flex-col bg-gray-100">
+    <div className="w-full min-h-screen flex flex-col bg-gray-100 overflow-hidden">
       {/* Sección del contenido */}
-      <section className="w-full flex flex-row h-[80vh]">
+      <section className="w-full flex flex-row h-[80vh] ">
         {/* Sidebar */}
         <nav
           className={`bg-[#5c5e62] text-white fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${
@@ -43,7 +58,7 @@ export const Dashboard = () => {
             <span className="material-icons">menu</span>
           </button>
 
-          <div className="flex text-center justify-center items-center w-full mb-10 mt-8">
+          <div className="flex text-center justify-center items-center w-full mb-6 mt-6">
             <img src={Logo} alt="Logo" />
           </div>
           <ul>
@@ -53,48 +68,48 @@ export const Dashboard = () => {
                 Admin
               </Link>
             </li> */}
-            <li className="mb-4 border-b border-white pl-[30px] py-3">
-              <Link to={"/dash/"} className="flex items-center text-lg">
+            <li className=" border-b border-white">
+              <NavLink to={"/dash/home"} className={linkClasses}>
                 <img src={homeIcon} alt="Inicio" className="mr-2 w-6 h-6" />
                 Inicio
-              </Link>
+              </NavLink>
             </li>
-            <li className="mb-4 border-b border-white pl-[30px] py-3">
-              <Link to={"/dash/profile"} className="flex items-center text-lg">
+            <li className=" border-b border-white">
+              <NavLink to={"/dash/profile"} className={linkClasses}>
                 <img src={personIcon} alt="Perfil" className="mr-2 w-6 h-6" />
                 Perfil
-              </Link>
+              </NavLink>
             </li>
-            <li className="mb-4 border-b border-white pl-[30px] py-3">
-              <Link to={"/dash/search"} className="flex items-center text-lg">
+            <li className=" border-b border-white">
+              <NavLink to={"/dash/search"} className={linkClasses}>
                 <img src={searchIcon} alt="Búsqueda" className="mr-2 w-6 h-6" />
                 Búsqueda
-              </Link>
+              </NavLink>
             </li>
-            <li className="mb-4 border-b border-white pl-[30px] py-3">
-              <Link to={"/dash/messages"} className="flex items-center text-lg">
+            <li className=" border-b border-white">
+              <NavLink to={"/dash/messages"} className={linkClasses}>
                 <img
                   src={messageIcon}
                   alt="Mensajes"
                   className="mr-2 w-6 h-6"
                 />
                 Mensajes
-              </Link>
+              </NavLink>
             </li>
-            <li className="mb-4 border-b border-white pl-[30px] py-3">
-              <Link to={"/dash/notifications"} className="flex items-center text-lg">
+            <li className=" border-b border-white">
+              <NavLink to={"/dash/notifications"} className={linkClasses}>
                 <img
                   src={notificationIcon}
                   alt="Notificaciones"
                   className="mr-2 w-6 h-6"
                 />
                 Notificaciones
-              </Link>
+              </NavLink>
             </li>
-            <li className="mb-4 border-b border-white pl-[30px] py-3">
+            <li className=" border-b border-white ">
               <button
                 onClick={handleLogout}
-                className="flex items-center text-lg"
+                className="flex items-center text-lg pl-[30px] py-4"
               >
                 <img
                   src={logoutIcon}

@@ -2,6 +2,6 @@ import React from 'react'
 
 export const HomeDash = () => {
   return (
-    <div>HomeDash</div>
+    <div className=' animate__animated animate__fadeIn animate__faster'>HomeDash</div>
   )
 }

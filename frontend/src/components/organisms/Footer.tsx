@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
       </div>
 
       {/* Copyright */}
-      <div className="text-end mt-8 px-5 text-gray-500">
+      <div className="text-end mt-4 px-5 text-gray-500">
         <p>TechSkillSwap © 2024</p>
       </div>
     </footer>
