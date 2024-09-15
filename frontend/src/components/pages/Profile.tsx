@@ -4,7 +4,8 @@ import { UserLanguage, UserSkill } from "./ProfileTypes";
 import { useAuthStore } from "../../state/authStore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-
+import EditBtn from "../../assets/icons/editbtn.svg";
+import UserLogoDefault from "../../assets/User.png";
 // Define interfaces for user data
 interface UserRole {
   id: number;
@@ -273,43 +274,62 @@ export const Profile: React.FC = () => {
   return (
     <div className="max-w-5xl mx-auto p-6">
       {/* Profile Header */}
-      <div className="flex items-center border border-gray-300 rounded-lg p-6 mb-6">
-        <div className="w-24 h-24 rounded-full bg-gray-300 flex-shrink-0 mr-6">
+      <div className="flex items-center  border border-[#1E2126] rounded-sm p-6 mb-2 relative">
+        <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 flex flex-row">
           {/* Placeholder for Profile Picture */}
           <img
-            src={`https://api.dicebear.com/9.x/initials/svg?seed=${userProfile.firstName}-${userProfile.lastName}`}
+            src={UserLogoDefault}
             alt={`${userProfile.firstName} ${userProfile.lastName}`}
-            className="w-full h-full object-cover rounded-full"
+            className=""
           />
+          <div className="border-l border-black  h-[90%] mx-6"></div>
         </div>
-        <div>
-          <h1 className="text-3xl font-bold">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
-          <p className="text-gray-500">
-            Analista SIT Senior | Ingeniero de sistemas y computación | Técnico
-            en sistemas
-            <br />
-            Bogotá, Distrito Capital, Colombia
-          </p>
-          <div className="flex items-center mt-2">
-            <span className="text-black">★★★★★</span>{" "}
-            {/* Example of rating stars */}
+
+        <div className="flex-1 ml-5">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col gap-3">
+              <h1 className="text-3xl ">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
+              <p className="text-gray-500">
+                Analista SIT Senior | Ingeniero de sistemas y computación |
+                Técnico en sistemas
+              </p>
+              <p className="text-gray-500">
+                Bogotá, Distrito Capital, Colombia
+              </p>
+              <div className="flex items-center mt-2">
+                <span className="text-black">★★★★★</span>{" "}
+                {/* Example of rating stars */}
+              </div>
+            </div>
+
+            {/* Edit Button in the top-right corner */}
+            <button
+              onClick={() => setIsBioModalOpen(true)}
+              className="absolute top-3 right-3"
+            >
+              <img src={EditBtn} className="w-8 h-8" />
+            </button>
           </div>
         </div>
       </div>
 
       {/* Acerca de Section */}
-      <div className="border border-gray-300 rounded-lg p-4 mb-6">
+      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2 relative">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold">Acerca de...</h2>
-          <button onClick={() => setIsBioModalOpen(true)}>
-            <FontAwesomeIcon icon={faEdit} className="mr-2 w-6 h-6" />
+          {/* Edit Button in the top-right corner */}
+          <button
+            onClick={() => setIsBioModalOpen(true)}
+            className="absolute top-3 right-3"
+          >
+            <img src={EditBtn} className="w-8 h-8" />
           </button>
         </section>
         <p className="mt-2">{userProfile.bio ? userProfile.bio : "Sin B"}</p>
       </div>
 
       {/* Estudios Profesionales Section */}
-      <div className="border border-gray-300 rounded-lg p-4 mb-6">
+      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Estudios Profesionales</h2>
           <button
@@ -324,7 +344,7 @@ export const Profile: React.FC = () => {
               setIsEditMode(false);
               setStudyModalOpen(true);
             }}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
           >
             + Agregar Estudio
           </button>
@@ -376,92 +396,8 @@ export const Profile: React.FC = () => {
         </ul>
       </div>
 
-      {/* Modal for adding or editing studies */}
-      {studyModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h3 className="text-xl font-semibold mb-4">
-              {isEditMode ? "Editar Estudio" : "Agregar Estudio"}
-            </h3>
-            <div>
-              <input
-                type="text"
-                placeholder="Degree"
-                value={currentStudy?.degree || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    degree: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              />
-              <input
-                type="text"
-                placeholder="Institution"
-                value={currentStudy?.institution || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    institution: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              />
-              <input
-                type="date"
-                value={currentStudy?.start_date || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    start_date: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              />
-              <input
-                type="date"
-                value={currentStudy?.end_date || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    end_date: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              />
-              <textarea
-                placeholder="Description"
-                value={currentStudy?.description || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    description: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              />
-            </div>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setStudyModalOpen(false)}
-                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveStudy}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Lenguajes de Programación Section */}
-      <div className="border border-gray-300 rounded-lg p-4 mb-6">
+      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Lenguajes del Usuario</h2>
           <button
@@ -474,9 +410,9 @@ export const Profile: React.FC = () => {
               setIsEditMode(false);
               setLanguageModalOpen(true);
             }}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
           >
-            + Agregar Idioma
+            + Agregar Lenguage
           </button>
         </section>
 
@@ -518,118 +454,13 @@ export const Profile: React.FC = () => {
               </li>
             ))
           ) : (
-            <li>No hay idiomas disponibles</li>
+            <li>No hay Lenguajes disponibles</li>
           )}
         </ul>
       </div>
 
-      {/* Modal for adding or editing languages */}
-      {languageModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h3 className="text-xl font-semibold mb-4">
-              {isEditMode ? "Editar Idioma" : "Agregar Idioma"}
-            </h3>
-            <div>
-              <select
-                value={currentLanguage?.language.id || ""}
-                onChange={(e) =>
-                  setCurrentLanguage({
-                    ...currentLanguage!,
-                    language: {
-                      ...currentLanguage!.language,
-                      id: parseInt(e.target.value, 10),
-                      languageName:
-                        availableLanguages.find(
-                          (lang) => lang.id === parseInt(e.target.value, 10)
-                        )?.languageName || "",
-                    },
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              >
-                <option value="">Seleccionar Idioma</option>
-                {availableLanguages.map((language) => (
-                  <option key={language.id} value={language.id}>
-                    {language.languageName}
-                  </option>
-                ))}
-              </select>
-
-              <input
-                type="text"
-                placeholder="Nivel de competencia"
-                value={currentLanguage?.proficiencyLevel || ""}
-                onChange={(e) =>
-                  setCurrentLanguage({
-                    ...currentLanguage!,
-                    proficiencyLevel: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              />
-              <input
-                type="number"
-                placeholder="Años de experiencia"
-                value={currentLanguage?.yearsOfExperience || 0}
-                onChange={(e) =>
-                  setCurrentLanguage({
-                    ...currentLanguage!,
-                    yearsOfExperience: parseInt(e.target.value, 10),
-                  })
-                }
-                className="w-full p-2 mb-4 border rounded-lg"
-              />
-            </div>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setLanguageModalOpen(false)}
-                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveLanguage}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Bio Modal */}
-      {isBioModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-            <h3 className="text-xl font-semibold mb-4">Edit Bio</h3>
-            <textarea
-              value={newBio}
-              onChange={(e) => setNewBio(e.target.value)}
-              rows={5}
-              className="w-full p-2 border rounded-lg"
-            />
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setIsBioModalOpen(false)}
-                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleEditBio}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Habilidades y Conocimientos Section */}
-      <div className="border border-gray-300 rounded-lg p-4 mb-6">
+      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">
             Habilidades del Usuario
@@ -644,7 +475,7 @@ export const Profile: React.FC = () => {
               setIsEditMode(false);
               setSkillModalOpen(true);
             }}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
           >
             + Agregar Habilidad
           </button>
@@ -693,10 +524,207 @@ export const Profile: React.FC = () => {
         </ul>
       </div>
 
+      {/* Modal for adding or editing studies */}
+      {studyModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4">
+              {isEditMode ? "Editar Estudio" : "Agregar Estudio"}
+            </h3>
+            <div>
+              <input
+                type="text"
+                placeholder="Degree"
+                value={currentStudy?.degree || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    degree: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 rounded-lg bg-transparent border border-black"
+              />
+              <input
+                type="text"
+                placeholder="Institution"
+                value={currentStudy?.institution || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    institution: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
+              />
+              <input
+                type="date"
+                value={currentStudy?.start_date || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    start_date: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
+              />
+              <input
+                type="date"
+                value={currentStudy?.end_date || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    end_date: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
+              />
+              <textarea
+                placeholder="Description"
+                value={currentStudy?.description || ""}
+                onChange={(e) =>
+                  setCurrentStudy({
+                    ...currentStudy!,
+                    description: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
+              />
+            </div>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setStudyModalOpen(false)}
+                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveStudy}
+                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for adding or editing languages */}
+      {languageModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4">
+              {isEditMode ? "Editar Lenguaje" : "Agregar Lenguaje"}
+            </h3>
+            <div>
+              <select
+                value={currentLanguage?.language.id || ""}
+                onChange={(e) =>
+                  setCurrentLanguage({
+                    ...currentLanguage!,
+                    language: {
+                      ...currentLanguage!.language,
+                      id: parseInt(e.target.value, 10),
+                      languageName:
+                        availableLanguages.find(
+                          (lang) => lang.id === parseInt(e.target.value, 10)
+                        )?.languageName || "",
+                    },
+                  })
+                }
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
+              >
+                <option value="">Seleccionar Lenguaje</option>
+                {availableLanguages.map((language) => (
+                  <option key={language.id} value={language.id}>
+                    {language.languageName}
+                  </option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                placeholder="Nivel de competencia"
+                value={currentLanguage?.proficiencyLevel || ""}
+                onChange={(e) =>
+                  setCurrentLanguage({
+                    ...currentLanguage!,
+                    proficiencyLevel: e.target.value,
+                  })
+                }
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
+              />
+              <input
+                type="number"
+                placeholder="Años de experiencia"
+                value={currentLanguage?.yearsOfExperience || 0}
+                onChange={(e) =>
+                  setCurrentLanguage({
+                    ...currentLanguage!,
+                    yearsOfExperience: parseInt(e.target.value, 10),
+                  })
+                }
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
+              />
+            </div>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setLanguageModalOpen(false)}
+                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSaveLanguage}
+                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bio Modal */}
+      {isBioModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
+            <h3 className="text-xl font-semibold mb-4 text-center">
+              Editar Acerca de ...
+            </h3>
+
+            <div>
+              <label className="text-[#16191C] font-light text-[17px]">
+                Descripción del curso
+              </label>
+              <textarea
+                value={newBio}
+                onChange={(e) => setNewBio(e.target.value)}
+                rows={5}
+                className="w-full p-2 rounded-lg bg-transparent border border-black"
+              />
+            </div>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => setIsBioModalOpen(false)}
+                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEditBio}
+                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal for adding or editing skills */}
       {skillModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
             <h3 className="text-xl font-semibold mb-4">
               {isEditMode ? "Editar Habilidad" : "Agregar Habilidad"}
             </h3>
@@ -716,7 +744,7 @@ export const Profile: React.FC = () => {
                     },
                   })
                 }
-                className="w-full p-2 mb-4 border rounded-lg"
+                className="w-full p-2 mb-4 border border-black rounded-lg"
               >
                 <option value="">Seleccionar Habilidad</option>
                 {availableSkills.map((skill) => (
@@ -736,7 +764,7 @@ export const Profile: React.FC = () => {
                     proficiencyLevel: e.target.value,
                   })
                 }
-                className="w-full p-2 mb-4 border rounded-lg"
+                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
               />
               <input
                 type="number"
@@ -748,19 +776,19 @@ export const Profile: React.FC = () => {
                     yearsOfExperience: parseInt(e.target.value, 10),
                   })
                 }
-                className="w-full p-2 mb-4 border rounded-lg"
+                className="w-full p-2 mb-4 border border-black rounded-lg"
               />
             </div>
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-center mt-4">
               <button
                 onClick={() => setSkillModalOpen(false)}
-                className="mr-2 bg-gray-500 text-white px-4 py-2 rounded-lg"
+                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSaveSkill}
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
               >
                 Guardar
               </button>

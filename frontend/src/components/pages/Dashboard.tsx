@@ -7,8 +7,6 @@ import messageIcon from "../../assets/icons/msg.svg";
 import notificationIcon from "../../assets/icons/notification.svg";
 import logoutIcon from "../../assets/icons/closesession.svg";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUnlockKeyhole } from '@fortawesome/free-solid-svg-icons';
    
 import Logo from "../../assets/LogoPng.png";
 import { useAuthStore } from "../../state/authStore";
@@ -45,16 +43,16 @@ export const Dashboard = () => {
             <span className="material-icons">menu</span>
           </button>
 
-          <div className="flex text-center justify-center items-center w-full">
+          <div className="flex text-center justify-center items-center w-full mb-10 mt-8">
             <img src={Logo} alt="Logo" />
           </div>
           <ul>
-            <li className="mb-4 border-b border-white pl-[30px] py-3">
+            {/* <li className="mb-4 border-b border-white pl-[30px] py-3">
               <Link to={"/dash/admin"} className="flex items-center text-lg">
                 <FontAwesomeIcon icon={faUnlockKeyhole} className="mr-2 w-6 h-6"/> {""}
                 Admin
               </Link>
-            </li>
+            </li> */}
             <li className="mb-4 border-b border-white pl-[30px] py-3">
               <Link to={"/dash/"} className="flex items-center text-lg">
                 <img src={homeIcon} alt="Inicio" className="mr-2 w-6 h-6" />
