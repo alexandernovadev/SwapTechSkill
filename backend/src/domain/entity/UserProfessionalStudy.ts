@@ -23,4 +23,10 @@ export class UserProfessionalStudy {
 
   @Column({ type: "text", nullable: true })
   description: string;
+
+  @Column({ type: "text", nullable: true })
+  level_study: string;
+
+  @Column({ type: "text", nullable: true })
+  state: string;
 }

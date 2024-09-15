@@ -272,7 +272,7 @@ export const Profile: React.FC = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-6 animate__animated animate__fadeIn animate__faster">
+    <div className="max-w-5xl mx-auto p-6 animate__animated animate__fadeIn animate-so-fast">
       {/* Profile Header */}
       <div className="flex items-center  border border-[#1E2126] rounded-sm p-6 mb-2 relative">
         <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 flex flex-row">
@@ -527,7 +527,7 @@ export const Profile: React.FC = () => {
       {/* Modal for adding or editing studies */}
       {studyModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate__faster">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
             <h3 className="text-xl font-semibold mb-4">
               {isEditMode ? "Editar Estudio" : "Agregar Estudio"}
             </h3>
@@ -611,7 +611,7 @@ export const Profile: React.FC = () => {
       {/* Modal for adding or editing languages */}
       {languageModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
             <h3 className="text-xl font-semibold mb-4">
               {isEditMode ? "Editar Lenguaje" : "Agregar Lenguaje"}
             </h3>
@@ -687,7 +687,7 @@ export const Profile: React.FC = () => {
       {/* Bio Modal */}
       {isBioModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
             <h3 className="text-xl font-semibold mb-4 text-center">
               Editar Acerca de ...
             </h3>
@@ -724,7 +724,7 @@ export const Profile: React.FC = () => {
       {/* Modal for adding or editing skills */}
       {skillModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md">
+          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast ">
             <h3 className="text-xl font-semibold mb-4">
               {isEditMode ? "Editar Habilidad" : "Agregar Habilidad"}
             </h3>

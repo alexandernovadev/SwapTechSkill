@@ -10,6 +10,11 @@ npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence
 ## Run migration
 npx typeorm-ts-node-commonjs migration:run -d ./src/infrastructure/persistence/typeormSource.ts
 
+## Run second migrate user mas
+npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/AddLocationAndLabelProfileToUser -d ./src/infrastructure/persistence/typeormSource.ts
+
+## 3 migration 
+npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/AddLevelStudyAndStateToUserProfessionalStudy -d ./src/infrastructure/persistence/typeormSource.ts
 
 ____POStGREES
 show tables :  \dt

@@ -20,6 +20,12 @@ export class User {
   @Column({ name: 'last_name', length: 50 })
   lastName: string;
 
+  @Column({ name: 'location', type: 'text', nullable: true })
+  location: string;
+
+  @Column({ name: 'label_profile', type: 'text', nullable: true })
+  labelProfile: string;
+  
   @Column({ name: 'email', length: 100, unique: true })
   email: string;
 
