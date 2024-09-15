@@ -8,9 +8,9 @@ export class UserRepository {
   async updateNameLabelLocation(
     id: number,
     name: string,
-    label: string,
-    location: string,
     lastName: string,
+    location: string,
+    label: string,
   ): Promise<User | null> {
     const user = await this.findById(id);
     if (!user) {

@@ -23,5 +23,5 @@ textarea:focus, input:focus, select:focus {
 
 
 .animate-so-fast {
-  --animate-duration: 0.3s;
+  --animate-duration: 1s;
 }

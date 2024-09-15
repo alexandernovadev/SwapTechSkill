@@ -27,24 +27,17 @@ export class AuthController {
       const decoded: any = jwt.verify(token, JWT_SECRET);
 
       // Buscar al usuario en la base de datos
-      const user = await userRepository.findByIdWithRoles(decoded.id);
+      const user = await userRepository.findByIdAllData(decoded.id);
 
-      const userData = {
-        id: user.id,
-        first_name: user.firstName,
-        last_name: user.lastName,
-        email: user.email,
-        profile_picture_url: user.profilePictureUrl,
-        bio: user.bio,
-        auth_provider: user.authProvider,
-        roles: user.userRoles.map((userRole) => userRole.role.roleName),
-      };
+      // remove passwordHash from user object with spread operator
+      // delete user.passwordHash;
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
       // Devolver los datos del usuario
-      return res.status(200).json(userData);
+      return res.status(200).json(user);
     } catch (error) {
       return res.status(500).json({ message: 'Error fetching user', error });
     }

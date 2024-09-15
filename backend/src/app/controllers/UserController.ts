@@ -20,31 +20,29 @@ export class UserController {
     res: Response,
   ): Promise<Response> {
     const { id } = req.params;
-    const { name, label, location, lastname } = req.body;
+    const { firstName, lastName, location, labelProfile } = req.body;
 
-    if (!name || !label || !location) {
+    if (!firstName || !lastName || !location || !labelProfile) {
       return res
         .status(400)
-        .json({ message: 'Name, label and location are required' });
+        .json({ message: 'Name, label ,labelProfile and location are required' });
     }
 
     try {
       const updatedUser = await userRepository.updateNameLabelLocation(
         Number(id),
-        name,
-        label,
+        firstName,
+        lastName,
         location,
-        lastname
+        labelProfile,
       );
       if (!updatedUser) {
         return res.status(404).json({ message: 'User not found' });
       }
-      return res
-        .status(200)
-        .json({
-          message: 'Name, label and location updated',
-          user: updatedUser,
-        });
+      return res.status(200).json({
+        message: 'Name, label and location updated',
+        user: updatedUser,
+      });
     } catch (error) {
       return res
         .status(500)
