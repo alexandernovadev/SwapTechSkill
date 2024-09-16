@@ -14,7 +14,7 @@ const SocialMediaLinks: React.FC = () => {
         href="https://facebook.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-400 hover:text-white"
+        className="text-white hover:text-gray-300"
       >
         <FontAwesomeIcon icon={faFacebookF} size="2xl" />
       </a>
@@ -22,7 +22,7 @@ const SocialMediaLinks: React.FC = () => {
         href="https://instagram.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-400 hover:text-white"
+        className="text-white hover:text-gray-300"
       >
         <FontAwesomeIcon icon={faInstagram} size="2xl" />
       </a>
@@ -30,7 +30,7 @@ const SocialMediaLinks: React.FC = () => {
         href="https://twitter.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-400 hover:text-white"
+        className="text-white hover:text-gray-300"
       >
         <FontAwesomeIcon icon={faTwitter} size="2xl" />
       </a>
@@ -38,7 +38,7 @@ const SocialMediaLinks: React.FC = () => {
         href="https://tiktok.com"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-400 hover:text-white"
+        className="text-white hover:text-gray-300"
       >
         <FontAwesomeIcon icon={faTiktok} size="2xl" />
       </a>
