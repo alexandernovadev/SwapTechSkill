@@ -207,7 +207,7 @@ export class UserSeederService {
         userSkill.user = user;
         userSkill.skill = skill;
         userSkill.yearsOfExperience = Math.floor(Math.random() * 6) + 2;
-        userSkill.proficiencyLevel = Math.floor(Math.random() * 101).toString(); 
+        userSkill.description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
         return userSkill;
       });
 

@@ -58,7 +58,7 @@ export interface Role {
 
 export interface UserSkill {
   id?: number;
-  proficiencyLevel?: string;
+  description?: string;
   yearsOfExperience?: number;
   skill?: Skill;
 }

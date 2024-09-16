@@ -41,6 +41,7 @@ interface ProfileState {
   deleteStudy: (studyId: number) => Promise<void>;
   findStudyById: (studyId: number) => UserProfessionalStudy | undefined;
   findLanguageById: (languageId: number) => UserLanguage | undefined;
+  findSkillById: (skillId: number) => UserSkill | undefined;
 }
 
 export const useProfileStore = create<ProfileState>()((set, get) => ({
@@ -77,6 +78,11 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
     }
   },
 
+  // Find skill by ID
+  findSkillById: (skillId: number) => {
+    const { userProfile } = get();
+    return userProfile?.userSkills?.find((skill) => skill.id === skillId);
+  },
   // Find language by ID
   findLanguageById: (languageId: number) => {
     const { userProfile } = get();

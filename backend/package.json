@@ -11,7 +11,8 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,json,md}'",
     "test": "jest --passWithNoTests",
     "cleanpackage": "rm -rf node_modules && rm -rf package-lock.json yarn.lock && yarn install",
-    "typeorm": "typeorm-ts-node-commonjs"
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migrate": "npx typeorm-ts-node-commonjs migration:run -d ./src/infrastructure/persistence/typeormSource.ts"
   },
   "author": "novalabs",
   "license": "MIT",

@@ -1,309 +1,77 @@
-import React, { useEffect, useState } from "react";
-import axiosInstance from "../../services/api";
-import { UserLanguage, UserSkill } from "./ProfileTypes";
-import { useAuthStore } from "../../state/authStore";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import { useProfileStore } from "../../state/useProfileStore";
+import { ModalProfile } from "../organisms/ModalProfile";
+import { EditProfileForm } from "../organisms/Profile/EditProfileForm";
 import EditBtn from "../../assets/icons/editbtn.svg";
 import UserLogoDefault from "../../assets/User.png";
-// Define interfaces for user data
-interface UserRole {
-  id: number;
-  role: {
-    id: number;
-    roleName: string;
-  };
-}
+import { EditBioForm } from "../organisms/Profile/EditBioForm";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { FormStudies } from "../organisms/Profile/FormStudies";
+import { FormLanguages } from "../organisms/Profile/FormLanguages";
+import { FormSkills } from "../organisms/Profile/FormSkills";
+import { PythonSvgIcon } from "../../assets/reactsvgcons/Python";
 
-interface IUserProfile {
-  id: number;
-  firstName: string;
-  lastName: string;
-  labelProfile: string | null;
-  location: string | null;
-  email: string;
-  profilePictureUrl: string | null;
-  bio: string | null;
-  userRoles: UserRole[];
-  userLanguages: UserLanguage[];
-  userSkills: UserSkill[];
-  userProfessionalStudies: Array<any>;
-}
+export const Profile = () => {
+  const {
+    userProfile,
+    loading,
+    error,
+    fetchProfile,
+    fetchAvailableLanguages,
+    fetchAvailableSkills,
+    deleteStudy,
+    deleteLanguage,
+    deleteSkill,
+  } = useProfileStore();
 
-interface IStudy {
-  id?: number;
-  degree: string;
-  institution: string;
-  start_date: string;
-  end_date: string;
-  description: string;
-}
+  const [isModalMyDataOpen, setIsModalMyDataOpen] = useState(false);
+  const [isModalMyBioOpen, setIsModalMyBioOpen] = useState(false);
+  const [isModalStudiesOpen, setIsModalStudiesOpen] = useState(false);
+  const [isEditingStudies, setisEditingStudies] = useState(false);
+  const [selectedStudy, setSelectedStudy] = useState(0);
 
-interface IUserLanguage {
-  id?: number;
-  language: {
-    id: number;
-    languageName: string;
-  };
-  proficiencyLevel: string;
-  yearsOfExperience: number;
-}
+  const [isModalLanguagesOpen, setIsModalLanguagesOpen] = useState(false);
+  const [isEditingLanguage, setIsEditingLanguage] = useState(false);
+  const [selectedLanguageId, setSelectedLanguageId] = useState<number>(0);
 
-interface ILanguage {
-  id: number;
-  languageName: string;
-}
+  const [isModalSkillsOpen, setIsModalSkillsOpen] = useState(false);
+  const [isEditingSkill, setIsEditingSkill] = useState(false);
+  const [selectedSkillId, setSelectedSkillId] = useState<number>(0);
 
-interface IUserSkill {
-  id?: number;
-  skill: {
-    id: number;
-    skillName: string;
-  };
-  proficiencyLevel: string;
-  yearsOfExperience: number;
-}
-
-interface ISkill {
-  id: number;
-  skillName: string;
-}
-
-export const Profile: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<IUserProfile | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [isBioModalOpen, setIsBioModalOpen] = useState<boolean>(false); // Modal state
-  const [isMyData, setIsMyData] = useState<boolean>(false); // Modal state
-  const [newBio, setNewBio] = useState<string>("");
-
-  const [studyModalOpen, setStudyModalOpen] = useState<boolean>(false); // Modal state
-  const [currentStudy, setCurrentStudy] = useState<IStudy | null>(null); // For edit or create
-
-  const [languageModalOpen, setLanguageModalOpen] = useState<boolean>(false); // Modal state
-  const [currentLanguage, setCurrentLanguage] = useState<IUserLanguage | null>(
-    null
-  );
-
-  // Estado anidado para manejar los campos de usuario
-  const [userData, setUserData] = useState({
-    name: userProfile?.firstName || "",
-    lastname: userProfile?.lastName || "",
-    label: userProfile?.labelProfile || "",
-    location: userProfile?.location || "",
-  });
-
-  // For edit or create
-  const [availableLanguages, setAvailableLanguages] = useState<ILanguage[]>([]);
-
-  const [skillModalOpen, setSkillModalOpen] = useState<boolean>(false); // Modal state
-  const [currentSkill, setCurrentSkill] = useState<IUserSkill | null>(null); // For edit or create
-  const [isEditMode, setIsEditMode] = useState<boolean>(false); // Edit mode flag
-  const [availableSkills, setAvailableSkills] = useState<ISkill[]>([]); // Available skills for selection
-
-  const { user } = useAuthStore(); // Get the user object from zustand store
-
-  // Fetch user profile data with async/await and error handling
   useEffect(() => {
-    if (!user || !user.id) {
-      setError("User not authenticated or ID not available.");
-      setLoading(false);
-      return;
-    }
+    fetchProfile();
+    fetchAvailableLanguages();
+    fetchAvailableSkills();
+  }, [fetchProfile, fetchAvailableLanguages, fetchAvailableSkills]);
 
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axiosInstance.get(`/users/getById/${user.id}`);
-
-        console.log(response);
-
-        setUserProfile(response.data);
-        setError(null); // Reset any previous errors
-        const responseLang = await axiosInstance.get(`/languages/getall`);
-        setAvailableLanguages(responseLang.data);
-        setNewBio(response.data.bio || ""); // Set the bio in the modal
-        // Fetch available skills for selection
-        const skillsResponse = await axiosInstance.get("/skills/getall"); // Adjust the endpoint as necessary
-        setAvailableSkills(skillsResponse.data);
-
-        console.log("User Profile Data:", response.data);
-      } catch (err) {
-        setError("Error fetching user data.");
-        console.error("Error fetching user data:", err);
-      } finally {
-        setLoading(false); // Set loading to false whether the request succeeds or fails
-      }
-    };
-
-    fetchUserProfile();
-  }, [user]); // Dependency array includes user to re-fetch if the user changes
-
-  // Maneja los cambios en los campos del formulario
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserData({
-      ...userData,
-      [name]: value, // Actualiza el campo correspondiente
-    });
+  const handleEditStudy = (studyId: number) => {
+    setSelectedStudy(studyId);
+    setisEditingStudies(true);
+    setIsModalStudiesOpen(true);
   };
 
-  const handleEditUserData = async () => {
-    try {
-      const response = await fetch(
-        `{{url}}/api/users/updateNameLabelLocation/${user!.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData), // Envía los datos del estado
-        }
-      );
-
-      const data = await response.json();
-      if (response.ok) {
-        // Actualización exitosa
-        console.log("Datos actualizados:", data);
-        setIsMyData(false); // Cierra el modal
-      } else {
-        console.error("Error al actualizar los datos:", data.message);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  // Handle saving a skill (create or update)
-  const handleSaveSkill = async () => {
-    try {
-      if (isEditMode && currentSkill && currentSkill.id) {
-        // If it's edit mode, update the skill
-        await axiosInstance.put(`/userskills/${currentSkill.id}`, currentSkill);
-      } else {
-        // If it's create mode, add a new skill
-        await axiosInstance.post(`/userskills`, {
-          ...currentSkill,
-          user: { id: userProfile?.id },
-        });
-      }
-      setSkillModalOpen(false);
-      setCurrentSkill(null);
-      setIsEditMode(false);
-      // Refresh profile data
-      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
-      setUserProfile(response.data);
-    } catch (error) {
-      console.error("Error saving skill:", error);
-    }
-  };
-
-  // Handle deletion of a skill
-  const handleDeleteSkill = async (skillId: number) => {
-    try {
-      await axiosInstance.delete(`/userskills/${skillId}`);
-      // Refresh profile data
-      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
-      setUserProfile(response.data);
-    } catch (error) {
-      console.error("Error deleting skill:", error);
-    }
-  };
-
-  const handleEditBio = async () => {
-    if (!userProfile) return;
-
-    try {
-      const updatedProfile = {
-        ...userProfile,
-        bio: newBio,
-      };
-
-      await axiosInstance.put(`/users/updateBio/${userProfile.id}`, {
-        bio: newBio,
-      });
-      setUserProfile(updatedProfile);
-      setIsBioModalOpen(false); // Close the modal on success
-    } catch (error) {
-      console.error("Error updating bio:", error);
-    }
-  };
-
-  // Handle the creation of a new study or update an existing one
-  const handleSaveStudy = async () => {
-    try {
-      if (isEditMode && currentStudy && currentStudy.id) {
-        // If it's edit mode, update the study
-        await axiosInstance.put(
-          `/userprofesions/${currentStudy.id}`,
-          currentStudy
-        );
-      } else {
-        // If it's create mode, create a new study
-        await axiosInstance.post(`/userprofesions`, {
-          ...currentStudy,
-          user: { id: userProfile?.id },
-        });
-      }
-      setStudyModalOpen(false);
-      setCurrentStudy(null);
-      setIsEditMode(false);
-      // Refresh profile data
-      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
-      setUserProfile(response.data);
-    } catch (error) {
-      console.error("Error saving study:", error);
-    }
-  };
-
-  // Handle deletion of a study
   const handleDeleteStudy = async (studyId: number) => {
-    try {
-      await axiosInstance.delete(`/userprofesions/${studyId}`);
-      // Refresh profile data
-      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
-      setUserProfile(response.data);
-    } catch (error) {
-      console.error("Error deleting study:", error);
-    }
+    await deleteStudy(studyId);
   };
 
-  // Handle saving a language (create or update)
-  const handleSaveLanguage = async () => {
-    try {
-      if (isEditMode && currentLanguage && currentLanguage.id) {
-        // If it's edit mode, update the language
-        await axiosInstance.put(
-          `/userlanguages/${currentLanguage.id}`,
-          currentLanguage
-        );
-      } else {
-        // If it's create mode, add a new language
-        await axiosInstance.post(`/userlanguages`, {
-          ...currentLanguage,
-          user: { id: userProfile?.id },
-        });
-      }
-      setLanguageModalOpen(false);
-      setCurrentLanguage(null);
-      setIsEditMode(false);
-      // Refresh profile data
-      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
-      setUserProfile(response.data);
-    } catch (error) {
-      console.error("Error saving language:", error);
-    }
-  };
-
-  // Handle deletion of a language
   const handleDeleteLanguage = async (languageId: number) => {
-    try {
-      await axiosInstance.delete(`/userlanguages/${languageId}`);
-      // Refresh profile data
-      const response = await axiosInstance.get(`/users/getById/${user!.id}`);
-      setUserProfile(response.data);
-    } catch (error) {
-      console.error("Error deleting language:", error);
-    }
+    await deleteLanguage(languageId);
+  };
+
+  const handleDeleteSkill = async (skillId: number) => {
+    await deleteSkill(skillId);
+  };
+  const handleEditSkill = (skillId: number) => {
+    setIsEditingSkill(true);
+    setSelectedSkillId(skillId);
+    setIsModalSkillsOpen(true);
+  };
+
+  const handleEditLanguage = (languageId: number) => {
+    setIsEditingLanguage(true);
+    setSelectedLanguageId(languageId);
+    setIsModalLanguagesOpen(true);
   };
 
   if (loading) {
@@ -311,31 +79,29 @@ export const Profile: React.FC = () => {
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>Error: {error}</div>;
   }
 
   if (!userProfile) {
-    return <div>No user data available</div>;
+    return <div>No profile data available.</div>;
   }
 
   return (
     <div className="max-w-5xl mx-auto p-6 animate__animated animate__fadeIn animate-so-fast">
       {/* Profile Header */}
-      <div className="flex items-center  border border-[#1E2126] rounded-sm p-6 mb-2 relative">
+      <div className="flex items-center border border-[#1E2126] rounded-sm p-6 mb-2 relative">
         <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 flex flex-row">
-          {/* Placeholder for Profile Picture */}
           <img
             src={UserLogoDefault}
             alt={`${userProfile.firstName} ${userProfile.lastName}`}
             className=""
           />
-          <div className="border-l border-black  h-[90%] mx-6"></div>
+          <div className="border-l border-black h-[90%] mx-6"></div>
         </div>
-
         <div className="flex-1 ml-5">
           <div className="flex justify-between items-start">
             <div className="flex flex-col gap-3">
-              <h1 className="text-3xl ">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
+              <h1 className="text-3xl">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
               <p className="text-gray-500">
                 {userProfile.labelProfile
                   ? userProfile.labelProfile
@@ -352,7 +118,7 @@ export const Profile: React.FC = () => {
 
             {/* Edit Button in the top-right corner */}
             <button
-              onClick={() => setIsMyData(true)}
+              onClick={() => setIsModalMyDataOpen(true)}
               className="absolute top-3 right-3"
             >
               <img src={EditBtn} className="w-8 h-8" />
@@ -360,13 +126,21 @@ export const Profile: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Modal for editing profile */}
+      <ModalProfile
+        title="Mis Datos"
+        isOpen={isModalMyDataOpen}
+        onClose={() => setIsModalMyDataOpen(false)}
+      >
+        <EditProfileForm onClose={() => setIsModalMyDataOpen(false)} />
+      </ModalProfile>
+
       {/* Acerca de Section */}
-      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2 relative">
+      <div className="border border-[#1E2126] rounded-sm p-4 mb-2 relative">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold">Acerca de...</h2>
-          {/* Edit Button in the top-right corner */}
           <button
-            onClick={() => setIsBioModalOpen(true)}
+            onClick={() => setIsModalMyBioOpen(true)}
             className="absolute top-3 right-3"
           >
             <img src={EditBtn} className="w-8 h-8" />
@@ -374,21 +148,23 @@ export const Profile: React.FC = () => {
         </section>
         <p className="mt-2">{userProfile.bio ? userProfile.bio : "Sin B"}</p>
       </div>
+      {/* Modal for editing my bio */}
+      <ModalProfile
+        title="Mis Datos"
+        isOpen={isModalMyBioOpen}
+        onClose={() => setIsModalMyBioOpen(false)}
+      >
+        <EditBioForm onClose={() => setIsModalMyBioOpen(false)} />
+      </ModalProfile>
+
       {/* Estudios Profesionales Section */}
-      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
+      <div className="border border-[#1E2126] rounded-sm p-4 mb-2">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Estudios Profesionales</h2>
           <button
             onClick={() => {
-              setCurrentStudy({
-                degree: "",
-                institution: "",
-                start_date: "",
-                end_date: "",
-                description: "",
-              });
-              setIsEditMode(false);
-              setStudyModalOpen(true);
+              setisEditingStudies(false);
+              setIsModalStudiesOpen(true);
             }}
             className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
           >
@@ -396,38 +172,34 @@ export const Profile: React.FC = () => {
           </button>
         </section>
 
-        <ul className="space-y-4">
+        <ul className="space-y-4 mt-8">
           {userProfile.userProfessionalStudies &&
           userProfile.userProfessionalStudies.length > 0 ? (
             userProfile.userProfessionalStudies.map((study, index) => (
-              <li key={index} className="bg-white p-4 shadow-sm rounded-lg">
+              <li key={index} className="border-l-2 pl-2 border-black">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">
                       {study.degree}
                     </h3>
+                    <p className="text-xs font-medium text-blue-600">
+                      {/* Cambia las fechas aquí si tienes el formato correcto */}
+                      2022 - 2023
+                    </p>
                     <p className="text-gray-500">{study.institution}</p>
                     <p className="text-sm text-gray-400 mt-1">
                       {study.description}
                     </p>
                   </div>
                   <div className="ml-4 text-right">
-                    <p className="text-xs font-medium text-blue-600">
-                      {new Date(study.start_date).toLocaleDateString()} -{" "}
-                      {new Date(study.end_date).toLocaleDateString()}
-                    </p>
                     <button
-                      onClick={() => {
-                        setCurrentStudy(study);
-                        setIsEditMode(true);
-                        setStudyModalOpen(true);
-                      }}
+                      onClick={() => handleEditStudy(study.study_id!)}
                       className="text-gray-600 hover:text-gray-800 mr-2"
                     >
                       <FontAwesomeIcon icon={faEdit} />
                     </button>
                     <button
-                      onClick={() => handleDeleteStudy(study.study_id)}
+                      onClick={() => handleDeleteStudy(study.study_id!)}
                       className="text-red-600 hover:text-red-800"
                     >
                       <FontAwesomeIcon icon={faTrashAlt} />
@@ -441,49 +213,53 @@ export const Profile: React.FC = () => {
           )}
         </ul>
       </div>
+      {/* Modal for adding/editing Studies */}
+      <ModalProfile
+        title={isEditingStudies ? "Editando Estudio" : "Agregando Estudio"}
+        isOpen={isModalStudiesOpen}
+        onClose={() => setIsModalStudiesOpen(false)}
+      >
+        <FormStudies
+          onClose={() => setIsModalStudiesOpen(false)}
+          isEditing={isEditingStudies}
+          studyId={selectedStudy}
+        />
+      </ModalProfile>
+
       {/* Lenguajes de Programación Section */}
       <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Lenguajes del Usuario</h2>
           <button
-            onClick={() => {
-              setCurrentLanguage({
-                language: { id: 0, languageName: "" },
-                proficiencyLevel: "",
-                yearsOfExperience: 0,
-              });
-              setIsEditMode(false);
-              setLanguageModalOpen(true);
-            }}
+            onClick={() => setIsModalLanguagesOpen(true)}
             className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
           >
             + Agregar Lenguage
           </button>
         </section>
 
-        <ul className="space-y-4">
+        <ul className="space-y-1">
           {userProfile.userLanguages && userProfile.userLanguages.length > 0 ? (
             userProfile.userLanguages.map((language, index) => (
               <li key={index} className="bg-white p-4 shadow-sm rounded-lg">
                 <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {language.language.languageName}
-                    </h3>
-                    <p className="text-gray-500">
-                      Nivel de competencia: {language.proficiencyLevel}
-                    </p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      Años de experiencia: {language.yearsOfExperience}
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8">
+                      <PythonSvgIcon />
+                    </div>
+                    <section className="flex flex-col">
+                      <h3 className="text-lg font-semibold text-gray-800">
+                        {language.language?.languageName}
+                      </h3>
+
+                      <p className="text-sm text-gray-400 mt-1">
+                        Años de experiencia: {language.yearsOfExperience}
+                      </p>
+                    </section>
                   </div>
                   <div className="ml-4 text-right">
                     <button
-                      onClick={() => {
-                        setCurrentLanguage(language);
-                        setIsEditMode(true);
-                        setLanguageModalOpen(true);
-                      }}
+                      onClick={() => handleEditLanguage(language.id!)}
                       className="text-gray-600 hover:text-gray-800 mr-2"
                     >
                       <FontAwesomeIcon icon={faEdit} />
@@ -503,22 +279,27 @@ export const Profile: React.FC = () => {
           )}
         </ul>
       </div>
-      {/* Habilidades y Conocimientos Section */}
+
+      {/* Modal para lenguajes */}
+      <ModalProfile
+        title={isEditingLanguage ? "Editando Languajes" : "Agregando Languajes"}
+        isOpen={isModalLanguagesOpen}
+        onClose={() => setIsModalLanguagesOpen(false)}
+      >
+        <FormLanguages
+          onClose={() => setIsModalLanguagesOpen(false)}
+          isEditing={isEditingLanguage}
+          languageId={selectedLanguageId}
+        />
+      </ModalProfile>
+
       <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">
             Habilidades del Usuario
           </h2>
           <button
-            onClick={() => {
-              setCurrentSkill({
-                skill: { id: 0, skillName: "" },
-                proficiencyLevel: "",
-                yearsOfExperience: 0,
-              });
-              setIsEditMode(false);
-              setSkillModalOpen(true);
-            }}
+            onClick={() => setIsModalSkillsOpen(true)}
             className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
           >
             + Agregar Habilidad
@@ -532,22 +313,15 @@ export const Profile: React.FC = () => {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-800">
-                      {skill.skill.skillName}
+                      {skill.skill?.skillName}
                     </h3>
-                    <p className="text-gray-500">
-                      Nivel de competencia: {skill.proficiencyLevel}
-                    </p>
                     <p className="text-sm text-gray-400 mt-1">
                       Años de experiencia: {skill.yearsOfExperience}
                     </p>
                   </div>
                   <div className="ml-4 text-right">
                     <button
-                      onClick={() => {
-                        setCurrentSkill(skill);
-                        setIsEditMode(true);
-                        setSkillModalOpen(true);
-                      }}
+                      onClick={() => handleEditSkill(skill.id!)}
                       className="text-gray-600 hover:text-gray-800 mr-2"
                     >
                       <FontAwesomeIcon icon={faEdit} />
@@ -567,366 +341,18 @@ export const Profile: React.FC = () => {
           )}
         </ul>
       </div>
-      {/* Modal for adding or editing studies */}
-      {studyModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
-            <h3 className="text-xl font-semibold mb-4">
-              {isEditMode ? "Editar Estudio" : "Agregar Estudio"}
-            </h3>
-            <div>
-              <input
-                type="text"
-                placeholder="Degree"
-                value={currentStudy?.degree || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    degree: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 rounded-lg bg-transparent border border-black"
-              />
-              <input
-                type="text"
-                placeholder="Institution"
-                value={currentStudy?.institution || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    institution: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
-              <input
-                type="date"
-                value={currentStudy?.start_date || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    start_date: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
-              <input
-                type="date"
-                value={currentStudy?.end_date || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    end_date: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
-              <textarea
-                placeholder="Description"
-                value={currentStudy?.description || ""}
-                onChange={(e) =>
-                  setCurrentStudy({
-                    ...currentStudy!,
-                    description: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
-            </div>
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={() => setStudyModalOpen(false)}
-                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveStudy}
-                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Modal for adding or editing languages */}
-      {languageModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
-            <h3 className="text-xl font-semibold mb-4">
-              {isEditMode ? "Editar Lenguaje" : "Agregar Lenguaje"}
-            </h3>
-            <div>
-              <select
-                value={currentLanguage?.language.id || ""}
-                onChange={(e) =>
-                  setCurrentLanguage({
-                    ...currentLanguage!,
-                    language: {
-                      ...currentLanguage!.language,
-                      id: parseInt(e.target.value, 10),
-                      languageName:
-                        availableLanguages.find(
-                          (lang) => lang.id === parseInt(e.target.value, 10)
-                        )?.languageName || "",
-                    },
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              >
-                <option value="">Seleccionar Lenguaje</option>
-                {availableLanguages.map((language) => (
-                  <option key={language.id} value={language.id}>
-                    {language.languageName}
-                  </option>
-                ))}
-              </select>
-
-              <input
-                type="text"
-                placeholder="Nivel de competencia"
-                value={currentLanguage?.proficiencyLevel || ""}
-                onChange={(e) =>
-                  setCurrentLanguage({
-                    ...currentLanguage!,
-                    proficiencyLevel: e.target.value,
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
-              <input
-                type="number"
-                placeholder="Años de experiencia"
-                value={currentLanguage?.yearsOfExperience || 0}
-                onChange={(e) =>
-                  setCurrentLanguage({
-                    ...currentLanguage!,
-                    yearsOfExperience: parseInt(e.target.value, 10),
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
-            </div>
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={() => setLanguageModalOpen(false)}
-                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveLanguage}
-                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Bio Modal */}
-      {isBioModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
-            <h3 className="text-xl font-semibold mb-4 text-center">
-              Editar Acerca de ...
-            </h3>
-
-            <div>
-              <div className="text-[#16191C] font-light text-[13px] my-1">
-                Descripción
-              </div>
-              <textarea
-                value={newBio}
-                onChange={(e) => setNewBio(e.target.value)}
-                rows={5}
-                className="w-full p-2 rounded-lg bg-transparent border border-black"
-              />
-            </div>
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={() => setIsBioModalOpen(false)}
-                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleEditBio}
-                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Modal for adding or editing skills */}
-      {skillModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast ">
-            <h3 className="text-xl font-semibold mb-4">
-              {isEditMode ? "Editar Habilidad" : "Agregar Habilidad"}
-            </h3>
-            <div>
-              <div className="text-[#16191C] font-light text-[13px] mb-1 ml-4">
-                Seleccionar Habilidad
-              </div>
-              <select
-                value={currentSkill?.skill.id || ""}
-                onChange={(e) =>
-                  setCurrentSkill({
-                    ...currentSkill!,
-                    skill: {
-                      ...currentSkill!.skill,
-                      id: parseInt(e.target.value, 10),
-                      skillName:
-                        availableSkills.find(
-                          (skill) => skill.id === parseInt(e.target.value, 10)
-                        )?.skillName || "",
-                    },
-                  })
-                }
-                className="w-full p-2 mb-1 border border-black rounded-lg bg-transparent"
-              >
-                <option value=""></option>
-                {availableSkills.map((skill) => (
-                  <option key={skill.id} value={skill.id}>
-                    {skill.skillName}
-                  </option>
-                ))}
-              </select>
-
-              <div className="text-[#16191C] font-light text-[13px] mb-1 ml-4">
-                Descripcion
-              </div>
-              <textarea
-                placeholder="Nivel de competencia"
-                rows={6}
-                value={currentSkill?.proficiencyLevel || ""}
-                onChange={(e) =>
-                  setCurrentSkill({
-                    ...currentSkill!,
-                    proficiencyLevel: e.target.value,
-                  })
-                }
-                className="w-full p-2 border border-black rounded-lg bg-transparent"
-              ></textarea>
-
-              <div className="text-[#16191C] font-light text-[13px] mb-1 ml-4">
-                Años de experiencia
-              </div>
-              <input
-                type="number"
-                placeholder="Escriba cuantos años de experiencia tiene  en la habilidad "
-                value={currentSkill?.yearsOfExperience || 0}
-                onChange={(e) =>
-                  setCurrentSkill({
-                    ...currentSkill!,
-                    yearsOfExperience: parseInt(e.target.value, 10),
-                  })
-                }
-                className="w-full p-2 mb-4 border border-black rounded-lg bg-transparent"
-              />
-            </div>
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={() => setSkillModalOpen(false)}
-                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleSaveSkill}
-                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {/* Name LastName Location LabelProfile Modal */}
-      {isMyData && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50">
-          <div className="bg-[#D9D9D9] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate__zoomIn animate-so-fast">
-            <h3 className="text-xl font-semibold mb-4 text-center">
-              Editar Mis datos
-            </h3>
-
-            {/* Campo de Nombre */}
-            <div className="mb-4">
-              <div className="text-[#16191C] font-light text-[13px] my-1">
-                Nombre
-              </div>
-              <input
-                type="text"
-                name="name" // Define el nombre del campo
-                value={userProfile?.firstName}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-lg bg-transparent border border-black"
-              />
-            </div>
-
-            {/* Campo de Apellido */}
-            <div className="mb-4">
-              <div className="text-[#16191C] font-light text-[13px] my-1">
-                Apellido
-              </div>
-              <input
-                type="text"
-                name="lastname" // Define el nombre del campo
-                value={userData.lastname}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-lg bg-transparent border border-black"
-              />
-            </div>
-
-            {/* Campo de Etiqueta */}
-            <div className="mb-4">
-              <div className="text-[#16191C] font-light text-[13px] my-1">
-                Label
-              </div>
-              <input
-                type="text"
-                name="label" // Define el nombre del campo
-                value={userData.label}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-lg bg-transparent border border-black"
-              />
-            </div>
-
-            {/* Campo de Ubicación */}
-            <div className="mb-4">
-              <div className="text-[#16191C] font-light text-[13px] my-1">
-                Ubicación
-              </div>
-              <input
-                type="text"
-                name="location" // Define el nombre del campo
-                value={userData.location}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded-lg bg-transparent border border-black"
-              />
-            </div>
-
-            <div className="flex justify-center mt-4">
-              <button
-                onClick={() => setIsMyData(false)}
-                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleEditUserData}
-                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal para Skill */}
+      <ModalProfile
+        title={isEditingSkill ? "Editando Habilidad" : "Agregando Habilidad"}
+        isOpen={isModalSkillsOpen}
+        onClose={() => setIsModalSkillsOpen(false)}
+      >
+        <FormSkills
+          onClose={() => setIsModalSkillsOpen(false)}
+          isEditing={isEditingSkill}
+          skillId={selectedSkillId}
+        />
+      </ModalProfile>
     </div>
   );
 };

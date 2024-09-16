@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useProfileStore } from "../../../state/useProfileStore";
-import { UserLanguage, Language } from "../../../interfaces/User";
+import { UserSkill, Skill } from "../../../interfaces/User";
 
 interface FormSkillsProps {
   onClose: () => void;
@@ -10,79 +10,93 @@ interface FormSkillsProps {
 }
 
 const proficiencyLevels = ["Básico", "Intermedio", "Avanzado"];
+
 export const FormSkills: React.FC<FormSkillsProps> = ({
   onClose,
   skillId,
   isEditing = false,
 }) => {
-  const {
-    availableLanguages,
-    userProfile,
-    addLanguage,
-    updateLanguage,
-    findLanguageById,
-  } = useProfileStore();
+  const { availableSkills, userProfile, addSkill, updateSkill, findSkillById } =
+    useProfileStore();
 
-  // Obtener el idioma si estamos editando
-  const language = skillId ? findLanguageById(skillId) : undefined;
+  // Obtener la skill si se está editando
+  const skill = skillId ? findSkillById(skillId) : undefined;
+
+  useEffect(() => {
+    // Si necesitas cargar las habilidades disponibles desde el store
+    // fetchAvailableSkills(); // descomenta esto si es necesario
+  }, []);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Partial<UserLanguage>>({
+  } = useForm<Partial<UserSkill>>({
     defaultValues: {
-      language: language?.language || { id: 0, languageName: "" },
-      yearsOfExperience: language?.yearsOfExperience || 0,
-      proficiencyLevel: language?.proficiencyLevel || proficiencyLevels[2],
+      skill: skill?.skill || { id: 0, skillName: "" },
+      yearsOfExperience: skill?.yearsOfExperience || 0,
+      description: skill?.description || "",
     },
   });
 
-  const onSubmit = async (data: Partial<UserLanguage>) => {
+  const onSubmit = async (data: Partial<UserSkill>) => {
+    const selectedSkill = availableSkills.find(
+      (s: Skill) => s.skillName === data.skill?.skillName
+    );
+
     const payload = {
-      language: availableLanguages.find(
-        (lang: Language) => lang.languageName === data.language?.languageName
-      ),
-      proficiencyLevel: data.proficiencyLevel,
+      skill: selectedSkill, // Añadir el id y el nombre correcto
+      description: data.description,
       yearsOfExperience: data.yearsOfExperience,
       user: { id: userProfile?.id },
     };
 
-    
-    if (isEditing && language?.id) {
-      await updateLanguage(language.id, payload);
+    if (isEditing && skill?.id) {
+      await updateSkill(skill.id, payload);
     } else {
-      await addLanguage(payload);
+      await addSkill(payload);
     }
     onClose();
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-      {/* Selección de Lenguaje */}
+      {/* Selección de Skill */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">
-          Selecciona un lenguaje
+          Selecciona un Skill
         </label>
         <select
-          {...register("language.languageName", {
-            required: "Selecciona un lenguaje",
+          {...register("skill.skillName", {
+            required: "Selecciona una habilidad",
           })}
           className="mt-1 block w-full border bg-transparent border-black p-2 rounded-md"
         >
           <option value="">Selecciona una opción</option>
-          {availableLanguages.map((lang: Language) => (
-            <option key={lang.id} value={lang.languageName}>
-              {lang.languageName}
+          {availableSkills.map((skill: Skill) => (
+            <option key={skill.id} value={skill.skillName}>
+              {skill.skillName}
             </option>
           ))}
         </select>
-        {errors.language?.languageName && (
-          <p className="text-red-500">{errors.language.languageName.message}</p>
+        {errors.skill?.skillName && (
+          <p className="text-red-500">{errors.skill.skillName.message}</p>
         )}
       </div>
 
-    
+      {/* Descripción */}
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700">
+          Descripción
+        </label>
+        <textarea
+          {...register("description")}
+          rows={6}
+          className="mt-1 block w-full border bg-transparent border-black p-2 rounded-md"
+          placeholder="Escribe una descripción"
+        />
+      </div>
+
       {/* Años de experiencia */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700">

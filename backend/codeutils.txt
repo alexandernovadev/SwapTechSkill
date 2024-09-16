@@ -11,6 +11,8 @@ npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence
 ## Make migration 
 npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/AddLevelStudyAndStateToUserProfessionalStudy -d ./src/infrastructure/persistence/typeormSource.ts
 
+## Make migration c2
+npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/UpdateUserSkillEntity -d ./src/infrastructure/persistence/typeormSource.ts
 
 
 ## ----- RUN ALL MIGRATIONS -----

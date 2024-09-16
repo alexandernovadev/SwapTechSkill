@@ -10,6 +10,7 @@ import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FormStudies } from "../organisms/Profile/FormStudies";
 import { FormLanguages } from "../organisms/Profile/FormLanguages";
 import { FormSkills } from "../organisms/Profile/FormSkills";
+import { set } from "react-hook-form";
 
 export const Messages = () => {
   const {
@@ -309,9 +310,6 @@ export const Messages = () => {
                     <h3 className="text-lg font-semibold text-gray-800">
                       {skill.skill?.skillName}
                     </h3>
-                    <p className="text-gray-500">
-                      Nivel de competencia: {skill.proficiencyLevel}
-                    </p>
                     <p className="text-sm text-gray-400 mt-1">
                       Años de experiencia: {skill.yearsOfExperience}
                     </p>
