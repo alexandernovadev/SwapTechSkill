@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useProfileStore } from "../../state/useProfileStore";
 import { ModalProfile } from "../organisms/ModalProfile";
 import { EditProfileForm } from "../organisms/Profile/EditProfileForm";
+import EditBtn from "../../assets/icons/editbtn.svg";
+import UserLogoDefault from "../../assets/User.png";
 
 export const Messages = () => {
   const {
@@ -37,23 +39,46 @@ export const Messages = () => {
   }
 
   return (
-    <div>
-      <h1 className="font-bold">Profile Information</h1>
-      <div>
-        <strong>Name:</strong> {userProfile.firstName} {userProfile.lastName}
+    <div className="max-w-5xl mx-auto p-6 animate__animated animate__fadeIn animate-so-fast">
+      <div className="flex items-center  border border-[#1E2126] rounded-sm p-6 mb-2 relative">
+        <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 flex flex-row">
+          {/* Placeholder for Profile Picture */}
+          <img
+            src={UserLogoDefault}
+            alt={`${userProfile.firstName} ${userProfile.lastName}`}
+            className=""
+          />
+          <div className="border-l border-black  h-[90%] mx-6"></div>
+        </div>
+
+        <div className="flex-1 ml-5">
+          <div className="flex justify-between items-start">
+            <div className="flex flex-col gap-3">
+              <h1 className="text-3xl ">{`${userProfile.firstName} ${userProfile.lastName}`}</h1>
+              <p className="text-gray-500">
+                {userProfile.labelProfile
+                  ? userProfile.labelProfile
+                  : "Sin Label"}
+              </p>
+              <p className="text-gray-500">
+                {userProfile.location ? userProfile.location : "Sin Ubicación"}
+              </p>
+              <div className="flex items-center mt-2">
+                <span className="text-black">★★★★★</span>{" "}
+                {/* Example of rating stars */}
+              </div>
+            </div>
+
+            {/* Edit Button in the top-right corner */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="absolute top-3 right-3"
+            >
+              <img src={EditBtn} className="w-8 h-8" />
+            </button>
+          </div>
+        </div>
       </div>
-      <div>
-        <strong>Label:</strong> {userProfile.labelProfile || "N/A"}
-      </div>
-      <div>
-        <strong>Location:</strong> {userProfile.location || "N/A"}
-      </div>
-      <div>
-        <strong>Bio:</strong> {userProfile.bio || "N/A"}
-      </div>
-      <button className="bg-slate-300 p-4" onClick={() => setIsModalOpen(true)}>
-        Editar
-      </button>
 
       {/* Modal for editing profile */}
       <ModalProfile

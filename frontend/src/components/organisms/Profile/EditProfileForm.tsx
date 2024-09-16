@@ -31,57 +31,70 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>Name:</label>
+      {/* Campo de Nombre */}
+      <div className="mb-4">
+        <div className="text-[#16191C] font-light text-[13px] my-1">Nombre</div>
         <input
           type="text"
           name="firstName"
           value={formState.firstName}
           onChange={handleChange}
-          className="border p-2"
+          className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
       </div>
 
-      <div>
-        <label>LastName:</label>
+      {/* Campo de Apellido */}
+      <div className="mb-4">
+        <div className="text-[#16191C] font-light text-[13px] my-1">
+          Apellido
+        </div>
         <input
           type="text"
           name="lastName"
           value={formState.lastName}
           onChange={handleChange}
-          className="border p-2"
+          className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
       </div>
-      <div>
-        <label>Label:</label>
+
+      {/* Campo de Etiqueta */}
+      <div className="mb-4">
+        <div className="text-[#16191C] font-light text-[13px] my-1">Label</div>
         <input
           type="text"
           name="labelProfile"
           value={formState.labelProfile}
           onChange={handleChange}
-          className="border p-2"
+          className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
       </div>
-      <div>
-        <label>Location:</label>
+
+      {/* Campo de Ubicación */}
+      <div className="mb-4">
+        <div className="text-[#16191C] font-light text-[13px] my-1">
+          Ubicación
+        </div>
         <input
           type="text"
           name="location"
           value={formState.location}
           onChange={handleChange}
-          className="border p-2"
+          className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
       </div>
 
+      {/* Botones */}
       <div className="flex justify-center mt-4">
         <button
+          type="button"
           onClick={onClose}
           className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
         >
-          Cancel
+          Cancelar
         </button>
         <button
           type="submit"
+          onClick={handleSubmit}
           className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
         >
           Guardar
