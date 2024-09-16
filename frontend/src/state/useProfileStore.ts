@@ -40,6 +40,7 @@ interface ProfileState {
   ) => Promise<void>;
   deleteStudy: (studyId: number) => Promise<void>;
   findStudyById: (studyId: number) => UserProfessionalStudy | undefined;
+  findLanguageById: (languageId: number) => UserLanguage | undefined;
 }
 
 export const useProfileStore = create<ProfileState>()((set, get) => ({
@@ -74,6 +75,12 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
     } catch (error) {
       set({ error: "Error fetching profile", loading: false });
     }
+  },
+
+  // Find language by ID
+  findLanguageById: (languageId: number) => {
+    const { userProfile } = get();
+    return userProfile?.userLanguages?.find((lang) => lang.id === languageId);
   },
 
   // Find a study by ID

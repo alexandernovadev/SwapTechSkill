@@ -8,28 +8,37 @@ import { EditBioForm } from "../organisms/Profile/EditBioForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FormStudies } from "../organisms/Profile/FormStudies";
+import { FormLanguages } from "../organisms/Profile/FormLanguages";
+import { FormSkills } from "../organisms/Profile/FormSkills";
 
 export const Messages = () => {
   const {
     userProfile,
-    availableLanguages,
-    availableSkills,
     loading,
     error,
     fetchProfile,
     fetchAvailableLanguages,
     fetchAvailableSkills,
     deleteStudy,
+    deleteLanguage,
+    deleteSkill,
   } = useProfileStore();
 
   const [isModalMyDataOpen, setIsModalMyDataOpen] = useState(false);
   const [isModalMyBioOpen, setIsModalMyBioOpen] = useState(false);
   const [isModalStudiesOpen, setIsModalStudiesOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditingStudies, setisEditingStudies] = useState(false);
   const [selectedStudy, setSelectedStudy] = useState(0);
 
+  const [isModalLanguagesOpen, setIsModalLanguagesOpen] = useState(false);
+  const [isEditingLanguage, setIsEditingLanguage] = useState(false);
+  const [selectedLanguageId, setSelectedLanguageId] = useState<number>(0);
+
+  const [isModalSkillsOpen, setIsModalSkillsOpen] = useState(false);
+  const [isEditingSkill, setIsEditingSkill] = useState(false);
+  const [selectedSkillId, setSelectedSkillId] = useState<number>(0);
+
   useEffect(() => {
-    // Fetch the profile data when the component mounts
     fetchProfile();
     fetchAvailableLanguages();
     fetchAvailableSkills();
@@ -37,12 +46,31 @@ export const Messages = () => {
 
   const handleEditStudy = (studyId: number) => {
     setSelectedStudy(studyId);
-    setIsEditing(true);
+    setisEditingStudies(true);
     setIsModalStudiesOpen(true);
   };
 
   const handleDeleteStudy = async (studyId: number) => {
     await deleteStudy(studyId);
+  };
+
+  const handleDeleteLanguage = async (languageId: number) => {
+    await deleteLanguage(languageId);
+  };
+
+  const handleDeleteSkill = async (skillId: number) => {
+    await deleteSkill(skillId);
+  };
+  const handleEditSkill = (skillId: number) => {
+    setIsEditingSkill(true);
+    setSelectedSkillId(skillId);
+    setIsModalSkillsOpen(true);
+  };
+
+  const handleEditLanguage = (languageId: number) => {
+    setIsEditingLanguage(true);
+    setSelectedLanguageId(languageId);
+    setIsModalLanguagesOpen(true);
   };
 
   if (loading) {
@@ -105,6 +133,7 @@ export const Messages = () => {
       >
         <EditProfileForm onClose={() => setIsModalMyDataOpen(false)} />
       </ModalProfile>
+
       {/* Acerca de Section */}
       <div className="border border-[#1E2126] rounded-sm p-4 mb-2 relative">
         <section className="flex justify-between">
@@ -126,13 +155,14 @@ export const Messages = () => {
       >
         <EditBioForm onClose={() => setIsModalMyBioOpen(false)} />
       </ModalProfile>
+
       {/* Estudios Profesionales Section */}
       <div className="border border-[#1E2126] rounded-sm p-4 mb-2">
         <section className="flex justify-between">
           <h2 className="text-xl font-semibold mb-4">Estudios Profesionales</h2>
           <button
             onClick={() => {
-              setIsEditing(false);
+              setisEditingStudies(false);
               setIsModalStudiesOpen(true);
             }}
             className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
@@ -184,14 +214,140 @@ export const Messages = () => {
       </div>
       {/* Modal for adding/editing Studies */}
       <ModalProfile
-        title={isEditing ? "Editando Estudio" : "Agregando Estudio"}
+        title={isEditingStudies ? "Editando Estudio" : "Agregando Estudio"}
         isOpen={isModalStudiesOpen}
         onClose={() => setIsModalStudiesOpen(false)}
       >
         <FormStudies
           onClose={() => setIsModalStudiesOpen(false)}
-          isEditing={isEditing}
+          isEditing={isEditingStudies}
           studyId={selectedStudy}
+        />
+      </ModalProfile>
+
+      {/* Lenguajes de Programación Section */}
+      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
+        <section className="flex justify-between">
+          <h2 className="text-xl font-semibold mb-4">Lenguajes del Usuario</h2>
+          <button
+            onClick={() => setIsModalLanguagesOpen(true)}
+            className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
+          >
+            + Agregar Lenguage
+          </button>
+        </section>
+
+        <ul className="space-y-4">
+          {userProfile.userLanguages && userProfile.userLanguages.length > 0 ? (
+            userProfile.userLanguages.map((language, index) => (
+              <li key={index} className="bg-white p-4 shadow-sm rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {language.language?.languageName}
+                    </h3>
+
+                    <p className="text-sm text-gray-400 mt-1">
+                      Años de experiencia: {language.yearsOfExperience}
+                    </p>
+                  </div>
+                  <div className="ml-4 text-right">
+                    <button
+                      onClick={() => handleEditLanguage(language.id!)}
+                      className="text-gray-600 hover:text-gray-800 mr-2"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteLanguage(language.id!)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))
+          ) : (
+            <li>No hay Lenguajes disponibles</li>
+          )}
+        </ul>
+      </div>
+
+      {/* Modal para lenguajes */}
+      <ModalProfile
+        title={isEditingLanguage ? "Editando Languajes" : "Agregando Languajes"}
+        isOpen={isModalLanguagesOpen}
+        onClose={() => setIsModalLanguagesOpen(false)}
+      >
+        <FormLanguages
+          onClose={() => setIsModalLanguagesOpen(false)}
+          isEditing={isEditingLanguage}
+          languageId={selectedLanguageId}
+        />
+      </ModalProfile>
+
+      <div className="border border-[#1E2126] rounded-sm  p-4 mb-2">
+        <section className="flex justify-between">
+          <h2 className="text-xl font-semibold mb-4">
+            Habilidades del Usuario
+          </h2>
+          <button
+            onClick={() => setIsModalSkillsOpen(true)}
+            className="gradient-background-azulfeo text-white px-4 py-2 rounded-sm"
+          >
+            + Agregar Habilidad
+          </button>
+        </section>
+
+        <ul className="space-y-4">
+          {userProfile.userSkills && userProfile.userSkills.length > 0 ? (
+            userProfile.userSkills.map((skill, index) => (
+              <li key={index} className="bg-white p-4 shadow-sm rounded-lg">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800">
+                      {skill.skill?.skillName}
+                    </h3>
+                    <p className="text-gray-500">
+                      Nivel de competencia: {skill.proficiencyLevel}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-1">
+                      Años de experiencia: {skill.yearsOfExperience}
+                    </p>
+                  </div>
+                  <div className="ml-4 text-right">
+                    <button
+                      onClick={() => handleEditSkill(skill.id!)}
+                      className="text-gray-600 hover:text-gray-800 mr-2"
+                    >
+                      <FontAwesomeIcon icon={faEdit} />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSkill(skill.id!)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            ))
+          ) : (
+            <li>No hay habilidades disponibles</li>
+          )}
+        </ul>
+      </div>
+      {/* Modal para Skill */}
+      <ModalProfile
+        title={isEditingSkill ? "Editando Habilidad" : "Agregando Habilidad"}
+        isOpen={isModalSkillsOpen}
+        onClose={() => setIsModalSkillsOpen(false)}
+      >
+        <FormSkills
+          onClose={() => setIsModalSkillsOpen(false)}
+          isEditing={isEditingSkill}
+          skillId={selectedSkillId}
         />
       </ModalProfile>
     </div>

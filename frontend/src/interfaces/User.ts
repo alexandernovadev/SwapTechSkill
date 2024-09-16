@@ -23,7 +23,6 @@ export interface UserLanguage {
   proficiencyLevel?: string;
   yearsOfExperience?: number;
   language?: Language;
-  skill?: Skill;
 }
 
 export interface Language {

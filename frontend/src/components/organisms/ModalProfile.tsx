@@ -37,7 +37,7 @@ export const ModalProfile = ({
     <>
       {showModal && (
         <div
-          className={`fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-50 animate-fast ${
+          className={`fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-1 animate-fast ${
             isClosing ? "animate__fadeOut" : "animate__fadeIn"
           }`}
           onClick={handleOverlayClick}
