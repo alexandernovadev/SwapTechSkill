@@ -39,6 +39,7 @@ interface ProfileState {
     studyData: Partial<UserProfessionalStudy>
   ) => Promise<void>;
   deleteStudy: (studyId: number) => Promise<void>;
+  findStudyById: (studyId: number) => UserProfessionalStudy | undefined;
 }
 
 export const useProfileStore = create<ProfileState>()((set, get) => ({
@@ -73,6 +74,14 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
     } catch (error) {
       set({ error: "Error fetching profile", loading: false });
     }
+  },
+
+  // Find a study by ID
+  findStudyById: (studyId: number) => {
+    const { userProfile } = get();
+    return userProfile?.userProfessionalStudies?.find(
+      (study) => study.study_id === studyId
+    );
   },
 
   // Update profile (Name, Label, Location)

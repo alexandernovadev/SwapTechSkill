@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { useProfileStore } from "../../../state/useProfileStore";
 
 interface EditProfileFormProps {
@@ -9,38 +10,38 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
   onClose,
 }) => {
   const { userProfile, updateProfile } = useProfileStore();
-  const [formState, setFormState] = useState({
-    firstName: userProfile?.firstName || "",
-    lastName: userProfile?.lastName || "",
-    labelProfile: userProfile?.labelProfile || "",
-    location: userProfile?.location || "",
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      firstName: userProfile?.firstName || "",
+      lastName: userProfile?.lastName || "",
+      labelProfile: userProfile?.labelProfile || "",
+      location: userProfile?.location || "",
+    },
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormState({ ...formState, [name]: value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await updateProfile(formState);
+  const onSubmit = async (data: any) => {
+    await updateProfile(data);
     onClose();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       {/* Campo de Nombre */}
       <div className="mb-4">
         <div className="text-[#16191C] font-light text-[13px] my-1">Nombre</div>
         <input
           type="text"
-          name="firstName"
-          value={formState.firstName}
-          onChange={handleChange}
+          {...register("firstName", { required: "El nombre es obligatorio" })}
           className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
+        {errors.firstName && (
+          <p className="text-red-400 text-sm">{errors.firstName.message}</p>
+        )}
       </div>
 
       {/* Campo de Apellido */}
@@ -50,11 +51,12 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
         </div>
         <input
           type="text"
-          name="lastName"
-          value={formState.lastName}
-          onChange={handleChange}
+          {...register("lastName", { required: "El apellido es obligatorio" })}
           className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
+        {errors.lastName && (
+          <p className="text-red-400 text-sm">{errors.lastName.message}</p>
+        )}
       </div>
 
       {/* Campo de Etiqueta */}
@@ -62,11 +64,15 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
         <div className="text-[#16191C] font-light text-[13px] my-1">Label</div>
         <input
           type="text"
-          name="labelProfile"
-          value={formState.labelProfile}
-          onChange={handleChange}
+          {...register("labelProfile", {
+            required: "El banner es obligatorio",
+            maxLength: 50,
+          })}
           className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
+        {errors.labelProfile && (
+          <p className="text-red-400 text-sm">Máximo 50 caracteres</p>
+        )}
       </div>
 
       {/* Campo de Ubicación */}
@@ -76,11 +82,12 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
         </div>
         <input
           type="text"
-          name="location"
-          value={formState.location}
-          onChange={handleChange}
+          {...register("location", { required: "La ubicación es obligatoria" })}
           className="w-full p-2 rounded-lg bg-transparent border border-black"
         />
+        {errors.location && (
+          <p className="text-red-400 text-sm">{errors.location.message}</p>
+        )}
       </div>
 
       {/* Botones */}
@@ -94,7 +101,6 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
         </button>
         <button
           type="submit"
-          onClick={handleSubmit}
           className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
         >
           Guardar

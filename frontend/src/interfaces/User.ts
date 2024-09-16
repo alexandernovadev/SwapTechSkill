@@ -16,8 +16,7 @@ export interface User {
   userProfessionalStudies?: UserProfessionalStudy[];
 }
 
-export interface UserResponse extends Omit<User, 'passwordHash'> {}
-
+export interface UserResponse extends Omit<User, "passwordHash"> {}
 
 export interface UserLanguage {
   id?: number;
@@ -41,11 +40,11 @@ export interface UserProfessionalStudy {
   study_id?: number;
   degree?: string;
   institution?: string;
-  start_date?: Date;
-  end_date?: Date;
+  start_date?: Date | string;
+  end_date?: Date | string;
   description?: string;
-  level_study?: null;
-  state?: null;
+  level_study?: string;
+  state?: string;
 }
 
 export interface UserRole {
