@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import axiosInstance from "../../services/api";
 import { Link } from "react-router-dom";
+import lupa from '../../assets/lupa.svg'
 
 // Define interfaces for the user and profile data
 interface User {
@@ -47,7 +48,7 @@ interface SearchProps {
 }
 
 export const Search = () => {
-  const [searchTerm, setSearchTerm] = useState<string>(""); // Valor por defecto "a"
+  const [searchTerm, setSearchTerm] = useState<string>(); // Valor por defecto "a"
   const [users, setUsers] = useState<User[]>([]);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
@@ -90,21 +91,24 @@ export const Search = () => {
   }, [searchTerm]); // Se ejecutará siempre que cambie searchTerm
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8  animate__animated animate__fadeIn animate__faster">
-      <h1 className="text-3xl font-semibold text-center mb-6">Búsqueda</h1>
-      <div className="border-b border-b-black my-2"></div>
+    <div className="max-w-4xl mx-auto px-4 py-2 animate__animated animate__fadeIn animate__faster">
+      <section className="flex flex-col items-center justify-center mb-4">
+        <h1 className="text-4xl font-semibold text-center mb-4">Búsqueda</h1>
+        <div className="bg-black h-[2px] w-[90%]">{" "}</div>
+      </section>
       <form
-        className="flex justify-center mb-6"
+        className="flex justify-center mb-6  sticky top-0 z-30 bg-slate-50"
         onSubmit={(e) => {
           e.preventDefault();
           handleSearch();
         }}
       >
+        <img src={lupa} alt="lupa" className="absolute left-2 top-2" width={"3.8%"} />
         <input
           type="text"
           value={searchTerm}
           onChange={handleInputChange} // Actualiza el searchTerm y la URL
-          className="border border-gray-300 rounded-lg p-2 w-full "
+          className="border border-black rounded-lg p-2 w-full pl-12 "
           placeholder="Java"
         />
         {/* <button
@@ -129,27 +133,29 @@ export const Search = () => {
         {users.map((user) => (
           <div
             key={user.id}
-            className="border border-gray-300 rounded-lg p-4 text-center"
+            className="border border-black rounded-lg p-2 text-center"
           >
-            <div className="w-24 h-24 rounded-full bg-gray-300 mx-auto mb-4">
+            <div className="w-32 h-32 rounded-full mx-auto mt-8">
               <img
                 src={`https://api.dicebear.com/9.x/initials/svg?seed=${user.firstName}-${user.lastName}`}
                 alt={`${user.firstName} ${user.lastName}`}
                 className="w-full h-full object-cover rounded-full"
               />
             </div>
-            <h2 className="text-lg font-semibold mb-2">
+            <h2 className="text-base font-medium rounded-lg py-1 bg-[#D9D9D9] relative bottom-1">
               {user.firstName} {user.lastName}
             </h2>
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-2">
               <span className="text-yellow-500">★★★★★</span>
             </div>
-            <Link
-              to={`/dash/user/${user.id}`}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-            >
-              Detalle...
-            </Link>
+            <div className="relative">
+              <Link
+                to={`/dash/user/${user.id}`}
+                className="gradient-background-azulfeo items-center justify-around text-white text-center px-2 py-1 rounded-2xl flex w-[100%]"
+              >
+                Detalle
+              </Link>
+            </div>
           </div>
         ))}
       </div>

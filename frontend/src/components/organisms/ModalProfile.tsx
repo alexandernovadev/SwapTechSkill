@@ -22,22 +22,43 @@ export const ModalProfile = ({
       setIsClosing(false);
     } else {
       setIsClosing(true);
-      setTimeout(() => setShowModal(false), 200); // La duración de la animación de cierre
+      setTimeout(() => setShowModal(false), 200); // Close animation duration
     }
   }, [isOpen]);
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      setIsClosing(true);
-      setTimeout(() => onClose(), 200); // La duración de la animación de cierre
+      closeWithAnimation();
     }
   };
+
+  const closeWithAnimation = () => {
+    setIsClosing(true);
+    setTimeout(() => onClose(), 200); // Close animation duration
+  };
+
+  // Close modal on "Escape" key press
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeWithAnimation();
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener("keydown", handleEscape);
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
 
   return (
     <>
       {showModal && (
         <div
-          className={`fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-1 animate-fast ${
+          className={`fixed inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-10 animate-fast ${
             isClosing ? "animate__fadeOut" : "animate__fadeIn"
           }`}
           onClick={handleOverlayClick}
