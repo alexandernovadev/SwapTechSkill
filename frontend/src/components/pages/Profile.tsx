@@ -12,6 +12,7 @@ import { FormLanguages } from "../organisms/Profile/FormLanguages";
 import { FormSkills } from "../organisms/Profile/FormSkills";
 import { PythonSvgIcon } from "../../assets/reactsvgcons/Python";
 import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
+import { ModalRating } from "../organisms/ModalRating";
 
 export const Profile = () => {
   const {
@@ -39,6 +40,8 @@ export const Profile = () => {
   const [isModalSkillsOpen, setIsModalSkillsOpen] = useState(false);
   const [isEditingSkill, setIsEditingSkill] = useState(false);
   const [selectedSkillId, setSelectedSkillId] = useState<number>(0);
+
+  const [isOpeningRating, setIsOpeningRating] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -112,7 +115,12 @@ export const Profile = () => {
                 {userProfile.location ? userProfile.location : "Sin Ubicación"}
               </p>
               <div className="flex items-center mt-2">
-                <span className="text-black">★★★★★</span>{" "}
+                <span
+                  className="text-black cursor-pointer"
+                  onClick={() => setIsOpeningRating(true)}
+                >
+                  ★★★★★
+                </span>{" "}
                 {/* Example of rating stars */}
               </div>
             </div>
@@ -252,9 +260,9 @@ export const Profile = () => {
                         )}
                         alt=""
                         onError={(e) => {
-                          e.currentTarget.src = 'https://raw.githubusercontent.com/devicons/devicon/master/icons/akka/akka-original.svg';
-                        }
-                        }
+                          e.currentTarget.src =
+                            "https://raw.githubusercontent.com/devicons/devicon/master/icons/akka/akka-original.svg";
+                        }}
                       />
                     </div>
                     <section className="flex flex-col">
@@ -363,6 +371,45 @@ export const Profile = () => {
           skillId={selectedSkillId}
         />
       </ModalProfile>
+
+      <ModalRating
+        isOpen={isOpeningRating}
+        onClose={() => setIsOpeningRating(false)}
+      >
+          <h1 className="text-3xl font-bold mb-6">Resumen de opiniones</h1>
+        <div className="flex flex-row">
+          {/* Título */}
+
+          <section className="flex-1">
+            <div className="">
+              {/* Barras de calificación */}
+              {[5, 4, 3, 2, 1].map((rating) => (
+                <div key={rating} className="flex">
+                  <span className="font-bold text-2xl "> {rating}</span>
+                  {/* //BARRA DE CALIFICACIÓN⁄ */}
+                  <section className="flex-grow px-2">
+                    <div
+                      className="bg-blue-500 h-6 rounded-full my-1"
+                      style={{
+                        width: ` ${rating * 15}%`,
+                      }}
+                    ></div>
+                  </section>
+                </div>
+              ))}
+            </div>
+
+            {/* Calificación promedio */}
+            <div className="flex flex-col items-start mb-6">
+              <div className="text-[90px] font-bold m-0 mr-4">3.7</div>
+              <div className="flex items-center">
+                <span className=" text-3xl">★★★★★</span>
+              </div>
+              <div className="ml-4 text-lg text-gray-600">11 opiniones</div>
+            </div>
+          </section>
+        </div>
+      </ModalRating>
     </div>
   );
 };
