@@ -11,6 +11,7 @@ export interface UserSkill {
   id: number;
   proficiencyLevel: string;
   yearsOfExperience: number;
+  description: string | null;
   skill: {
     id: number;
     skillName: string;

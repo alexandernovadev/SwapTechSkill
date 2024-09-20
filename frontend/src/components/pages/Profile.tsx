@@ -11,6 +11,7 @@ import { FormStudies } from "../organisms/Profile/FormStudies";
 import { FormLanguages } from "../organisms/Profile/FormLanguages";
 import { FormSkills } from "../organisms/Profile/FormSkills";
 import { PythonSvgIcon } from "../../assets/reactsvgcons/Python";
+import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
 
 export const Profile = () => {
   const {
@@ -245,7 +246,16 @@ export const Profile = () => {
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-2">
                     <div className="w-8 h-8">
-                      <PythonSvgIcon />
+                      <img
+                        src={getImageLanguagedevrepo(
+                          language.language?.languageName!
+                        )}
+                        alt=""
+                        onError={(e) => {
+                          e.currentTarget.src = 'https://raw.githubusercontent.com/devicons/devicon/master/icons/akka/akka-original.svg';
+                        }
+                        }
+                      />
                     </div>
                     <section className="flex flex-col">
                       <h3 className="text-lg font-semibold text-gray-800">

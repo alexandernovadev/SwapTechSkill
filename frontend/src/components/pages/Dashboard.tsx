@@ -10,11 +10,15 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import Logo from "../../assets/LogoPng.png";
 import { useAuthStore } from "../../state/authStore";
+import { useUIConfigStore } from "../../state/uiConfig";
 
 export const Dashboard = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout } = useAuthStore();
   const navigate = useNavigate();
+
+  const { isDisabledFooter } = useUIConfigStore();
+  console.log(isDisabledFooter);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -23,6 +27,10 @@ export const Dashboard = () => {
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  const gotoAdmin = () => {
+    navigate("/dash/admin");
   };
 
   const linkClasses = ({ isActive }: { isActive: boolean }) =>
@@ -40,10 +48,14 @@ export const Dashboard = () => {
     };
   }, []);
 
+  const height = isDisabledFooter ? "h-[80vh]" : "h-[100vh]";
+
   return (
-    <div className="w-full min-h-screen flex flex-col bg-gray-100 overflow-hidden">
+    <div className="w-full min-h-screen flex flex-col bg-transparent overflow-hidden">
       {/* Sección del contenido */}
-      <section className="w-full flex flex-row h-[80vh] ">
+      <section
+        className={`w-full flex flex-row ${height} transition-all duration-300`}
+      >
         {/* Sidebar */}
         <nav
           className={`bg-[#5c5e62] text-white fixed top-0 left-0 h-full z-10 transition-transform duration-300 ${
@@ -59,7 +71,13 @@ export const Dashboard = () => {
           </button>
 
           <div className="flex text-center justify-center items-center w-full mb-6 mt-6">
-            <img src={Logo} alt="Logo" />
+            {/* Si le doy doble click al logo debera navegar a /dash/admin */}
+            <img
+              src={Logo}
+              alt="Logo"
+              className="cursor-pointer"
+              onDoubleClick={gotoAdmin}
+            />
           </div>
           <ul>
             {/* <li className="mb-4 border-b border-white pl-[30px] py-3">
@@ -142,7 +160,7 @@ export const Dashboard = () => {
         </section>
       </section>
 
-      <Footer />
+      {isDisabledFooter && <Footer />}
     </div>
   );
 };
