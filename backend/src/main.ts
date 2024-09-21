@@ -15,6 +15,7 @@ import seederRoutes from './app/routes/seederRoutes';
 import authRoutes from './app/routes/AuthRoutes';
 import userRoutes from './app/routes/UserRoutes';
 import languagesRoutes from './app/routes/LanguagesRoutes';
+import friendRequestRoutes from './app/routes/FriendRequestRoutes';
 import skillCategoryRoutes from './app/routes/SkillCategoryRoutes';
 import skillRoutes from './app/routes/SkillRoutes';
 import userProfessionalStudyRoutes from './app/routes/UserProfessionalStudyRoutes';
@@ -91,6 +92,7 @@ class Server {
     // Rutas de API
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/users', authenticateJWT, userRoutes);
+    this.app.use('/api/friendrequest', friendRequestRoutes );
     this.app.use('/api/languages', languagesRoutes);
     this.app.use('/api/skill-categories', skillCategoryRoutes);
     this.app.use('/api/skills', skillRoutes);
