@@ -1,6 +1,5 @@
 import LogoMsg from "../../assets/icons/msgBlack.svg";
 import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
-import Notificacion from "../atoms/Notificacion";
 
 export const Messages = () => {
   return (
@@ -17,7 +16,6 @@ export const Messages = () => {
         <div className="bg-black h-[2px] w-[90%]"> </div>
       </section>
 
-      <Notificacion />
       <section>
         <div className="flex flex-col items-center justify-center">
           <div className="bg-[#D9D9D9] w-full px-2 py-1 cursor-pointer rounded-md mb-4 border border-black">

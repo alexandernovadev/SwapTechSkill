@@ -17,14 +17,17 @@ import { UserRating } from '../../domain/entity/UserRating';
 import { UserRole } from '../../domain/entity/UserRole';
 import { UserSkill } from '../../domain/entity/UserSkill';
 import { UserProfessionalStudy } from '../../domain/entity/UserProfessionalStudy';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'test',
-  password: 'test',
-  database: 'test',
+  host: process.env.DB_HOST || 'localhost',
+  port: +(process.env.DB_PORT) ||5432,
+  username:process.env.DB_USERNAME ||  'test',
+  password: process.env.DB_PASSWORD || 'test',
+  database: process.env.DB_DATABASE ||  'test',
   synchronize: false,
   logging: false,
   entities: [

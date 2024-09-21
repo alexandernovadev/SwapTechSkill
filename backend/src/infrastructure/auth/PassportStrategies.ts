@@ -9,8 +9,7 @@ import { UserRepository } from '../../domain/repositories/UserRepository';
 import { RoleRepository } from '../../domain/repositories/RoleRepository';
 import { UserRoleRepository } from '../../domain/repositories/UserRoleRepository';
 import { UserRole } from '../../domain/entity/UserRole';
-
-dotenv.config(); // ??? porque não está no main.ts
+dotenv.config();
 
 const userRepository = new UserRepository();
 const roleRepository = new RoleRepository();

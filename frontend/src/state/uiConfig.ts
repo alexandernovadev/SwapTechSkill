@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from "zustand";
 
 // Tipado para el estado del store
 interface UIConfigState {
@@ -7,6 +7,15 @@ interface UIConfigState {
   toggleDisabledFooter: () => void;
   setDisabledFooter: (value: boolean) => void;
   clearDisabledFooter: () => void;
+
+  // Notificación
+  notification: {
+    isVisible: boolean;
+    title: string;
+    subtitle: string;
+  };
+  showNotification: (title: string, subtitle: string) => void;
+  hideNotification: () => void;
 }
 
 // Función para obtener el estado de localStorage
@@ -30,32 +39,52 @@ const setLocalStorage = (key: string, value: boolean): void => {
 };
 
 export const useUIConfigStore = create<UIConfigState>((set) => ({
-  // Estado inicial, lo obtiene de localStorage o por defecto en `false`
-  isDisabledFooter: getLocalStorage('isDisabledFooter', false),
+  // Estado inicial del footer
+  isDisabledFooter: getLocalStorage("isDisabledFooter", false),
 
-  // Método para obtener el estado actual
-  getIsDisabledFooter: () => getLocalStorage('isDisabledFooter', false),
-
-  // Método para alternar el estado (CRUD)
+  // Métodos para el footer
+  getIsDisabledFooter: () => getLocalStorage("isDisabledFooter", false),
   toggleDisabledFooter: () =>
     set((state) => {
       const newValue = !state.isDisabledFooter;
-      setLocalStorage('isDisabledFooter', newValue); // Guarda en localStorage
+      setLocalStorage("isDisabledFooter", newValue);
       return { isDisabledFooter: newValue };
     }),
-
-  // Método para establecer un valor directamente
   setDisabledFooter: (value: boolean) =>
     set(() => {
-      setLocalStorage('isDisabledFooter', value); // Guarda en localStorage
+      setLocalStorage("isDisabledFooter", value);
       return { isDisabledFooter: value };
     }),
-
-  // Método para eliminar el valor de localStorage
   clearDisabledFooter: () =>
     set(() => {
-      window.localStorage.removeItem('isDisabledFooter');
-      return { isDisabledFooter: false }; // Reestablece al valor por defecto
+      window.localStorage.removeItem("isDisabledFooter");
+      return { isDisabledFooter: false };
     }),
-}));
 
+  // Estado inicial para la notificación
+  notification: {
+    isVisible: false,
+    title: "",
+    subtitle: "",
+  },
+
+  // Mostrar notificación
+  showNotification: (title: string, subtitle: string) =>
+    set(() => ({
+      notification: {
+        isVisible: true,
+        title,
+        subtitle,
+      },
+    })),
+
+  // Ocultar notificación
+  hideNotification: () =>
+    set(() => ({
+      notification: {
+        isVisible: false,
+        title: "",
+        subtitle: "",
+      },
+    })),
+}));

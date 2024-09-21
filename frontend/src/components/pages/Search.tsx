@@ -48,7 +48,7 @@ interface SearchProps {
 }
 
 export const Search = () => {
-  const [searchTerm, setSearchTerm] = useState<string>(); // Valor por defecto "a"
+  const [searchTerm, setSearchTerm] = useState<string>(""); // Valor por defecto "a"
   const [users, setUsers] = useState<User[]>([]);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
 

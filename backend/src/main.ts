@@ -1,14 +1,16 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { logger, stream } from './infrastructure/logging/Logger';
-import dotenv from 'dotenv';
-// import { chatSocket } from './application/sockets/chatSocket';
-// import { notificationSocket } from './application/sockets/notificationSocket';
+import passport from './infrastructure/auth/PassportStrategies';
+import { connectDatabase } from './config/database';
 import { errorHandler } from './shared/middlewares/errorHandler';
+import { SocketsService } from './app/sockets/sockets';
+
+// Import routes
 import seederRoutes from './app/routes/seederRoutes';
 import authRoutes from './app/routes/AuthRoutes';
 import userRoutes from './app/routes/UserRoutes';
@@ -18,66 +20,110 @@ import skillRoutes from './app/routes/SkillRoutes';
 import userProfessionalStudyRoutes from './app/routes/UserProfessionalStudyRoutes';
 import userSkillsRoutes from './app/routes/UserSkillsRoutes';
 import userLanguagesRoutes from './app/routes/UserLanguagesRoutes';
-import { connectDatabase } from './config/database';
-import passport from './infrastructure/auth/PassportStrategies';
-// import { authMiddleware } from './shared/middlewares/auth';
+import 'dotenv/config'
 
-dotenv.config();
-// Express application initialization
-const app: Application = express();
-const server = http.createServer(app);
-const io = new SocketIOServer(server);
+class Server {
+  private app: Application;
+  private port: string | number;
+  private server: http.Server;
+  private io: SocketIOServer;
 
-// Middleware setup
-app.use(helmet());
-app.use(morgan('combined', { stream }));
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(passport.initialize());
+  constructor() {
+    // Inicializar aplicación Express
+    this.app = express();
+    this.port = process.env.PORT_BACK || 3000;
 
-// Socket.IO integration
-// io.on('connection', (socket) => {
-//   chatSocket(io, socket);
-//   notificationSocket(io, socket);
-// });
+    // Crear servidor HTTP
+    this.server = http.createServer(this.app);
 
-// Database connection
-connectDatabase();
+    // Inicializar Socket.IO
+    this.io = new SocketIOServer(this.server, {
+      cors: {
+        origin: process.env.URLFRONTEND || 'http://localhost:5173',
+        methods: ['GET', 'POST'],
+        credentials: true,
+      },
+    });
 
-// Basic routes
-app.get('/', (req: Request, res: Response) => {
-  // res.send('Oi Bom Dia, como voçe tá');
-  res.redirect('http://localhost:5173/auth/login');
-});
+    // Conectar a base de datos
+    this.connectToDatabase();
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/languages', languagesRoutes);
-app.use('/api/skill-categories', skillCategoryRoutes);
-app.use('/api/skills', skillRoutes);
-app.use('/api/userprofesions', userProfessionalStudyRoutes);
-app.use('/api/userskills', userSkillsRoutes);
-app.use('/api/userlanguages', userLanguagesRoutes);
+    // Configurar middlewares
+    this.middlewares();
 
-// app.use('/api/users', authMiddleware, userRoutes);
-// app.use('/api/notifications', authMiddleware, notificationRoutes);
-// app.use('/api/chats', authMiddleware, chatRoutes);
+    // Configurar rutas
+    this.routes();
 
-// hacer un miidleware para solo admin y mentor
-// Seeding routes
-app.use('/api', seederRoutes); // Only for development
+    // Configurar manejo de errores global
+    this.handleErrors();
 
-// Global error handling
-app.use(errorHandler);
+    // Inicializar Sockets
+    this.configureSockets();
+  }
 
-// Start server
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  // logger.info(`Server is running on port ${PORT}`);
-  console.log(`process.env.PORT: ${process.env.GITHUB_CLIENT_ID}`);
-  console.log(`Server is running on port ${PORT}`);
-});
+  private middlewares() {
+    // Helmet para mejorar seguridad
+    this.app.use(helmet());
 
-export default app;
+    // Morgan para registrar peticiones HTTP
+    this.app.use(morgan('combined', { stream }));
+
+    // Habilitar CORS
+    this.app.use(cors());
+
+    // Parseo de JSON y datos de formularios
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: true }));
+
+    // Inicializar Passport para autenticación
+    this.app.use(passport.initialize());
+  }
+
+  private routes() {
+    // Ruta principal que redirecciona al frontend
+    this.app.get('/', (req: Request, res: Response) => {
+      res.redirect(process.env.URLFRONTEND || 'http://localhost:5173/auth/login');
+    });
+
+    // Rutas de API
+    this.app.use('/api/auth', authRoutes);
+    this.app.use('/api/users', userRoutes);
+    this.app.use('/api/languages', languagesRoutes);
+    this.app.use('/api/skill-categories', skillCategoryRoutes);
+    this.app.use('/api/skills', skillRoutes);
+    this.app.use('/api/userprofesions', userProfessionalStudyRoutes);
+    this.app.use('/api/userskills', userSkillsRoutes);
+    this.app.use('/api/userlanguages', userLanguagesRoutes);
+
+    // Solo para desarrollo: Rutas de seeding
+    this.app.use('/api', seederRoutes);
+  }
+
+  private handleErrors() {
+    // Manejo global de errores
+    this.app.use(errorHandler);
+  }
+
+  private configureSockets() {
+    // Inicializar servicios de Sockets
+    new SocketsService(this.io);
+  }
+
+  private connectToDatabase() {
+    // Conectar a la base de datos
+    connectDatabase();
+  }
+
+  public start() {
+    // Iniciar el servidor
+    this.server.listen(this.port, () => {
+      console.log(`Server is running on port ${this.port}`);
+    });
+  }
+}
+
+// Instanciar y arrancar el servidor
+const server = new Server();
+server.start();
+
+export default server;
