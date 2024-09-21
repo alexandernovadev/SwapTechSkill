@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { FriendRequestRepository } from '../../domain/repositories/FriendRequestRepository';
 import { FriendRequest } from '../../domain/entity/FriendRequest';
+import { io } from '../../main';
 
 const friendRequestRepository = new FriendRequestRepository();
 
@@ -11,6 +12,13 @@ export class FriendRequestController {
       const friendRequest = await friendRequestRepository.save(
         req.body as FriendRequest,
       );
+      // Emitir evento de nueva solicitud de amistad al receptor
+      io.emit(
+        'new-friend-request',
+        friendRequest.receiver.toString(),
+        friendRequest,
+      );
+
       return res.status(201).json(friendRequest);
     } catch (error) {
       return res

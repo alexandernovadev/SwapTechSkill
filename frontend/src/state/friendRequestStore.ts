@@ -63,7 +63,7 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
         loading: false,
       });
 
-      showNotification("Notificación", "Solicitudes de amistad cargadas.");
+      // showNotification("Notificación", "Solicitudes de amistad cargadas.");
     } catch (error) {
       set({
         error: "Error fetching friend requests by receiverId",

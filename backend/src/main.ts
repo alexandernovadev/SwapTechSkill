@@ -28,7 +28,7 @@ class Server {
   private app: Application;
   private port: string | number;
   private server: http.Server;
-  private io: SocketIOServer;
+  public io: SocketIOServer;
 
   constructor() {
     // Inicializar aplicación Express
@@ -130,5 +130,8 @@ class Server {
 // Instanciar y arrancar el servidor
 const server = new Server();
 server.start();
+
+
+export const io = server.io;
 
 export default server;
