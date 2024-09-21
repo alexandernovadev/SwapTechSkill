@@ -21,4 +21,8 @@ router.delete('/:id', FriendRequestController.delete);
 // Ruta opcional para obtener todas las solicitudes sin paginación (si necesitas)
 router.get('/getall', FriendRequestController.findAllList);
 
+// Ruta para obtener todas las solicitudes de amistad por receiverId con paginación
+router.get('/receiver/:receiverId', FriendRequestController.getByReceiverId);
+
+
 export default router;

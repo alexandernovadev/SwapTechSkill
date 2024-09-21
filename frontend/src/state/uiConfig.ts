@@ -13,8 +13,9 @@ interface UIConfigState {
     isVisible: boolean;
     title: string;
     subtitle: string;
+    type?: 'normal' | 'error';
   };
-  showNotification: (title: string, subtitle: string) => void;
+  showNotification: (title: string, subtitle: string, type?:'normal' | 'error') => void;
   hideNotification: () => void;
 }
 
@@ -69,12 +70,13 @@ export const useUIConfigStore = create<UIConfigState>((set) => ({
   },
 
   // Mostrar notificación
-  showNotification: (title: string, subtitle: string) =>
+  showNotification: (title: string, subtitle: string, type = "normal") =>
     set(() => ({
       notification: {
         isVisible: true,
         title,
         subtitle,
+        type
       },
     })),
 
@@ -84,7 +86,7 @@ export const useUIConfigStore = create<UIConfigState>((set) => ({
       notification: {
         isVisible: false,
         title: "",
-        subtitle: "",
+        subtitle: ""
       },
     })),
 }));

@@ -19,6 +19,31 @@ export class FriendRequestController {
     }
   }
 
+  // Obtener todas las solicitudes de amistad por receiverId con paginación
+  static async getByReceiverId(req: Request, res: Response): Promise<Response> {
+    try {
+      const receiverId = parseInt(req.params.receiverId);
+      const page = parseInt(req.query.page as string) || undefined;
+      const perPage = parseInt(req.query.perPage as string) || undefined;
+
+      if (isNaN(receiverId)) {
+        return res.status(400).json({ message: 'Invalid receiverId' });
+      }
+
+      const { data, total } = await friendRequestRepository.findByReceiverId(
+        receiverId,
+        page,
+        perPage,
+      );
+
+      return res.status(200).json({ data, total });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error retrieving friend requests', error });
+    }
+  }
+
   // Listar todas las solicitudes de amistad con paginación
   static async findAll(req: Request, res: Response): Promise<Response> {
     try {
@@ -94,12 +119,10 @@ export class FriendRequestController {
       const { data } = await friendRequestRepository.findAll();
       return res.status(200).json(data);
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          message: 'Error obteniendo la lista de solicitudes de amistad',
-          error,
-        });
+      return res.status(500).json({
+        message: 'Error obteniendo la lista de solicitudes de amistad',
+        error,
+      });
     }
   }
 }

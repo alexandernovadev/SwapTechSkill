@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useUIConfigStore } from "../../state/uiConfig";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+
 const Notificacion: React.FC = () => {
   const { notification, hideNotification } = useUIConfigStore((state) => ({
     notification: state.notification,
     hideNotification: state.hideNotification,
   }));
 
-  const { isVisible, title, subtitle } = notification;
+  const { isVisible, title, subtitle, type } = notification;
   const [progressWidth, setProgressWidth] = useState(100); // Estado para controlar la barra de progreso
 
   useEffect(() => {
@@ -45,6 +48,14 @@ const Notificacion: React.FC = () => {
     fixed top-4 right-4 animate__animated  animate__slideInDown animate__faster`}
     >
       <div className="flex justify-between items-center w-full">
+        {type === "error" && (
+          <div className="bg-red-500 w-8 h-8 rounded-full flex items-center justify-center">
+            <FontAwesomeIcon
+              icon={faCircleExclamation}
+              className="text-gray-200"
+            />
+          </div>
+        )}
         <div>
           <p className="font-bold text-black">{title}</p>
           <p className="text-sm text-black">{subtitle}</p>

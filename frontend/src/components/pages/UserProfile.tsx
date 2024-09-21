@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; // Import useParams
 import axiosInstance from "../../services/api";
-import { UserLanguage, UserSkill } from "./ProfileTypes";
+import { UserSkill } from "./ProfileTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { User } from "../../interfaces/User";
@@ -10,6 +10,10 @@ import Infomenu from "../../assets/icons/infomenu.svg";
 import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
 import { ModalProfile } from "../organisms/ModalProfile";
 
+import { useAuthStore } from "../../state/authStore";
+import { useUIConfigStore } from "../../state/uiConfig";
+import { useFriendRequestStore } from "../../state/friendRequestStore";
+
 // Define interfaces for user data
 
 export const UserProfile: React.FC = () => {
@@ -17,7 +21,9 @@ export const UserProfile: React.FC = () => {
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-
+  const { createFriendRequest } = useFriendRequestStore();
+  const { showNotification } = useUIConfigStore();
+  const { user } = useAuthStore();
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [activeSkill, setActiveSkill] = useState<UserSkill>();
 
@@ -43,8 +49,28 @@ export const UserProfile: React.FC = () => {
     fetchUserProfile();
   }, [id]);
 
+  const handleConnect = async (idReceiver: number, skill: string) => {
+    if (userProfile) {
+      try {
+        await createFriendRequest({
+          sender: {
+            id: user?.id!,
+          },
+          receiver: {
+            id: idReceiver,
+          },
+          status: "pending",
+          message: skill,
+        });
+
+      } catch (error) {
+        console.error("Error creating friend request:", error);
+      }
+    }
+  };
+
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Cargando...</div>;
   }
 
   if (error) {
@@ -208,7 +234,12 @@ export const UserProfile: React.FC = () => {
                     {skill.skill?.skillName}
                   </h3>
                   <div className="flex items-center gap-2">
-                    <button className="gradient-background-azulfeo text-[16px] w-[220px] h-[33px] text-white rounded-xl px-2 py-0">
+                    <button
+                      onClick={() =>
+                        handleConnect(userProfile.id!, skill.skill?.skillName!)
+                      }
+                      className="gradient-background-azulfeo text-[16px] w-[220px] h-[33px] text-white rounded-xl px-2 py-0"
+                    >
                       Conectar
                     </button>
                     <button
