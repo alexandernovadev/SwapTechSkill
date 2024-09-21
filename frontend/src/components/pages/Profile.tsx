@@ -389,7 +389,7 @@ export const Profile = () => {
                   {/* //BARRA DE CALIFICACIÓN⁄ */}
                   <section className="flex-grow px-2">
                     <div
-                      className="bg-blue-500 h-6 rounded-full my-1"
+                      className="gradient-background-azulfeo  h-6 rounded-full my-1"
                       style={{
                         width: ` ${rating * 15}%`,
                       }}
