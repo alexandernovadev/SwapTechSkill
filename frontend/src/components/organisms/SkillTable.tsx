@@ -143,22 +143,22 @@ export const SkillTable = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Skills</h1>
       <button
-        className="px-4 py-2 bg-blue-500 text-white rounded mb-4"
+        className="px-4 py-2 gradient-background-azulfeo text-white rounded mb-4"
         onClick={() => openModal()}
       >
-        Add New Skill
+        Agregar Habilidad
       </button>
 
       {loading ? (
-        <p className="text-center">Loading...</p>
+        <p className="text-center">Cargando...</p>
       ) : (
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b">ID</th>
-              <th className="py-2 px-4 border-b">Skill Name</th>
-              <th className="py-2 px-4 border-b">Category</th>
-              <th className="py-2 px-4 border-b">Actions</th>
+              <th className="py-2 px-4 border-b">Nombre Habilidad </th>
+              <th className="py-2 px-4 border-b">Categoría</th>
+              <th className="py-2 px-4 border-b">____</th>
             </tr>
           </thead>
           <tbody>
@@ -174,13 +174,13 @@ export const SkillTable = () => {
                     className="px-2 py-1 bg-yellow-500 text-white rounded mr-2"
                     onClick={() => openModal(skill)}
                   >
-                    Edit
+                    Editar
                   </button>
                   <button
                     className="px-2 py-1 bg-red-500 text-white rounded"
                     onClick={() => openDeleteModal(skill)}
                   >
-                    Delete
+                    Borrar
                   </button>
                 </td>
               </tr>
@@ -197,10 +197,10 @@ export const SkillTable = () => {
           onClick={handlePreviousPage}
           disabled={page === 1}
         >
-          Previous
+          Anterior
         </button>
         <span className="text-lg">
-          Page {page} of {totalPages}
+          Página {page} de {totalPages}
         </span>
         <button
           className={`px-4 py-2 bg-gray-300 rounded ${
@@ -209,7 +209,7 @@ export const SkillTable = () => {
           onClick={handleNextPage}
           disabled={page === totalPages}
         >
-          Next
+          Siguiente
         </button>
       </div>
 
@@ -218,7 +218,7 @@ export const SkillTable = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl font-bold mb-4">
-              {isUpdate ? "Edit Skill" : "Add New Skill"}
+              {isUpdate ? "Editar Habilidad" : "Agragar Habilidad"}
             </h2>
             <input
               type="text"
@@ -232,7 +232,7 @@ export const SkillTable = () => {
               value={skillCategoryId ?? ""}
               onChange={(e) => setSkillCategoryId(Number(e.target.value))}
             >
-              <option value="">Select Category</option>
+              <option value="">Seleccionar Categoría</option>
               {categories.map((category: any) => (
                 <option key={category.id} value={category.id}>
                   {category.categoryName}
@@ -244,13 +244,13 @@ export const SkillTable = () => {
                 className="px-4 py-2 bg-gray-300 text-black rounded mr-2"
                 onClick={closeModal}
               >
-                Cancel
+                Cancelar
               </button>
               <button
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="px-4 py-2 gradient-background-azulfeo text-white rounded"
                 onClick={handleSubmit}
               >
-                {isUpdate ? "Update" : "Create"}
+                {isUpdate ? "Actulizar" : "Crear"}
               </button>
             </div>
           </div>
@@ -261,20 +261,20 @@ export const SkillTable = () => {
       {deleteModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
-            <p>Are you sure you want to delete this skill?</p>
+            <h2 className="text-xl font-bold mb-4">Confirmar Borrado</h2>
+            <p>¿ Estas seguro de borrar la habilidad ?</p>
             <div className="flex justify-end mt-4">
               <button
                 className="px-4 py-2 bg-gray-300 text-black rounded mr-2"
                 onClick={() => setDeleteModalOpen(false)}
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 className="px-4 py-2 bg-red-500 text-white rounded"
                 onClick={confirmDelete}
               >
-                Delete
+                Borrar
               </button>
             </div>
           </div>

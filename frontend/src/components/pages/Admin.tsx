@@ -45,44 +45,44 @@ export const Admin: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Admin Page</h1>
+      <h1 className="text-3xl font-bold mb-6">Administración</h1>
 
       {/* Tabs */}
       <div className="flex border-b-2 border-b-blue-500 mb-6">
         <button
           className={`px-4 py-2 rounded-sm ${
-            activeTab === "languages" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "languages" ? "gradient-background-azulfeo text-white" : "bg-gray-200"
           }`}
           onClick={() => changeTab("languages")}
         >
-          Languages
+          Lenguajes
         </button>
         <button
           className={`px-4 py-2 rounded-sm ${
-            activeTab === "skills" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "skills" ? "gradient-background-azulfeo text-white" : "bg-gray-200"
           }`}
           onClick={() => changeTab("skills")}
         >
-          Skills
+          Habilidades
         </button>
 
         <button
           className={`px-4 py-2 rounded-sm ${
             activeTab === "skillcategory"
-              ? "bg-blue-500 text-white"
+              ? "gradient-background-azulfeo text-white"
               : "bg-gray-200"
           }`}
           onClick={() => changeTab("skillcategory")}
         >
-          Skill Categories
+          Categorias de Habilidades
         </button>
         <button
           className={`px-4 py-2 rounded-sm ${
-            activeTab === "uiconfig" ? "bg-blue-500 text-white" : "bg-gray-200"
+            activeTab === "uiconfig" ? "gradient-background-azulfeo text-white" : "bg-gray-200"
           }`}
           onClick={() => changeTab("uiconfig")}
         >
-          UI Config
+          UI Configuración
         </button>
       </div>
 
@@ -93,7 +93,7 @@ export const Admin: React.FC = () => {
         {activeTab === "skills" && <SkillTable />}
         {activeTab === "uiconfig" && (
           <div className="flex items-center space-x-4">
-            <span>IsFooterEnabled:</span>
+            <span>Mostrar Footer:</span>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
                 type="checkbox"

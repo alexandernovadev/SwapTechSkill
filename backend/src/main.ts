@@ -20,7 +20,8 @@ import skillRoutes from './app/routes/SkillRoutes';
 import userProfessionalStudyRoutes from './app/routes/UserProfessionalStudyRoutes';
 import userSkillsRoutes from './app/routes/UserSkillsRoutes';
 import userLanguagesRoutes from './app/routes/UserLanguagesRoutes';
-import 'dotenv/config'
+import 'dotenv/config';
+import { authenticateJWT } from './shared/middlewares/auth';
 
 class Server {
   private app: Application;
@@ -82,12 +83,14 @@ class Server {
   private routes() {
     // Ruta principal que redirecciona al frontend
     this.app.get('/', (req: Request, res: Response) => {
-      res.redirect(process.env.URLFRONTEND || 'http://localhost:5173/auth/login');
+      res.redirect(
+        process.env.URLFRONTEND || 'http://localhost:5173/auth/login',
+      );
     });
 
     // Rutas de API
     this.app.use('/api/auth', authRoutes);
-    this.app.use('/api/users', userRoutes);
+    this.app.use('/api/users', authenticateJWT, userRoutes);
     this.app.use('/api/languages', languagesRoutes);
     this.app.use('/api/skill-categories', skillCategoryRoutes);
     this.app.use('/api/skills', skillRoutes);

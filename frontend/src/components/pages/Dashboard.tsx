@@ -6,19 +6,17 @@ import searchIcon from "../../assets/icons/buscar.svg";
 import messageIcon from "../../assets/icons/msg.svg";
 import notificationIcon from "../../assets/icons/notification.svg";
 import logoutIcon from "../../assets/icons/closesession.svg";
-import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import {  NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import Logo from "../../assets/LogoPng.png";
 import { useAuthStore } from "../../state/authStore";
 import { useUIConfigStore } from "../../state/uiConfig";
 
 export const Dashboard = () => {
+  const { isDisabledFooter } = useUIConfigStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const { logout } = useAuthStore();
   const navigate = useNavigate();
-
-  const { isDisabledFooter } = useUIConfigStore();
-  console.log(isDisabledFooter);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);

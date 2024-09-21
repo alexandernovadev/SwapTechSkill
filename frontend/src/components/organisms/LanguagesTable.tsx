@@ -116,21 +116,21 @@ export const LanguagesTable = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Languages</h1>
       <button
-        className="px-4 py-2 bg-blue-500 text-white rounded mb-4"
+        className="px-4 py-2 gradient-background-azulfeo text-white rounded mb-4"
         onClick={() => openModal()}
       >
-        Add New Language
+        Agregar Lenjuage
       </button>
 
       {loading ? (
-        <p className="text-center">Loading...</p>
+        <p className="text-center">Cargando...</p>
       ) : (
         <table className="min-w-full bg-white border border-gray-200">
           <thead>
             <tr>
               <th className="py-2 px-4 border-b">ID</th>
-              <th className="py-2 px-4 border-b">Language Name</th>
-              <th className="py-2 px-4 border-b">Actions</th>
+              <th className="py-2 px-4 border-b">Nombre de Languaje</th>
+              <th className="py-2 px-4 border-b">__</th>
             </tr>
           </thead>
           <tbody>
@@ -143,13 +143,13 @@ export const LanguagesTable = () => {
                     className="px-2 py-1 bg-yellow-500 text-white rounded mr-2"
                     onClick={() => openModal(language)}
                   >
-                    Edit
+                    Editar
                   </button>
                   <button
                     className="px-2 py-1 bg-red-500 text-white rounded"
                     onClick={() => openDeleteModal(language)}
                   >
-                    Delete
+                    Borrar
                   </button>
                 </td>
               </tr>
@@ -166,10 +166,10 @@ export const LanguagesTable = () => {
           onClick={handlePreviousPage}
           disabled={page === 1}
         >
-          Previous
+          Anterior
         </button>
         <span className="text-lg">
-          Page {page} of {totalPages}
+          Página {page} de {totalPages}
         </span>
         <button
           className={`px-4 py-2 bg-gray-300 rounded ${
@@ -178,7 +178,7 @@ export const LanguagesTable = () => {
           onClick={handleNextPage}
           disabled={page === totalPages}
         >
-          Next
+          Siguiente
         </button>
       </div>
 
@@ -187,27 +187,27 @@ export const LanguagesTable = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-xl font-bold mb-4">
-              {isUpdate ? "Edit Language" : "Add New Language"}
+              {isUpdate ? "Editar Languaje" : "Agregar Languaje"}
             </h2>
             <input
               type="text"
               value={languageName}
               onChange={(e) => setLanguageName(e.target.value)}
               className="border border-gray-300 p-2 rounded w-full mb-4"
-              placeholder="Language Name"
+              placeholder="Rust"
             />
             <div className="flex justify-end">
               <button
                 className="px-4 py-2 bg-gray-300 text-black rounded mr-2"
                 onClick={closeModal}
               >
-                Cancel
+                Cancelar
               </button>
               <button
-                className="px-4 py-2 bg-blue-500 text-white rounded"
+                className="px-4 py-2 gradient-background-azulfeo text-white rounded"
                 onClick={handleSubmit}
               >
-                {isUpdate ? "Update" : "Create"}
+                {isUpdate ? "Actualizar" : "Crear"}
               </button>
             </div>
           </div>
@@ -218,20 +218,20 @@ export const LanguagesTable = () => {
       {deleteModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Confirm Delete</h2>
-            <p>Are you sure you want to delete this language?</p>
+            <h2 className="text-xl font-bold mb-4">Confirmar Borrado</h2>
+            <p>¿ Estas seguro de borrar el Lenguaje ?</p>
             <div className="flex justify-end mt-4">
               <button
                 className="px-4 py-2 bg-gray-300 text-black rounded mr-2"
                 onClick={() => setDeleteModalOpen(false)}
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 className="px-4 py-2 bg-red-500 text-white rounded"
                 onClick={confirmDelete}
               >
-                Delete
+                Borrar
               </button>
             </div>
           </div>
