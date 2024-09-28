@@ -69,10 +69,6 @@ export const Profile = () => {
       };
       reader.readAsDataURL(file); // Convertir a Base64
 
-      // reader.onload = function () {
-      //   // Actualizar imagen de perfil
-      //   // updateImageProfile(reader.result as string);
-      // };
 
 
     }
