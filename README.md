@@ -11,7 +11,7 @@
 - [x] Añadir botón de "Detalle" en el perfil.
 - [x] Hacer toda la interfaz en español.
 - [x] Implementar un modal para cerrar sesión.
-- [ ] Habilitar la opción de editar la foto en el perfil.??
+- [x] Habilitar la opción de editar la foto en el perfil.
 - [x] Valida que las fechas de las prossions este validadas con data correcta form edit too.
 - [ ] Validar si ya envie una solicitud, no deberia dejarle envar otra y mostrar el estado (UserProfile)
 - [ ] Implementar notificación con sockets.
