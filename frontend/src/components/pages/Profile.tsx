@@ -45,8 +45,13 @@ export const Profile = () => {
   const [isOpeningRating, setIsOpeningRating] = useState(false);
 
   const [profileImage, setProfileImage] = useState<string | null>(
-    userProfile!.profilePictureUrl || null
+    userProfile?.profilePictureUrl || null
   );
+
+  // Put image caouse is base64
+  useEffect(() => {
+    setProfileImage(userProfile?.profilePictureUrl || null);
+  }, [userProfile?.profilePictureUrl]);
 
   useEffect(() => {
     fetchProfile();
@@ -64,7 +69,7 @@ export const Profile = () => {
       };
       reader.readAsDataURL(file); // Convertir a Base64
 
-      reader.onload = function () {     
+      reader.onload = function () {
         // Actualizar imagen de perfil
         updateImageProfile(reader.result as string);
       };
