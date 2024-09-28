@@ -10,9 +10,9 @@ import { faEdit, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FormStudies } from "../organisms/Profile/FormStudies";
 import { FormLanguages } from "../organisms/Profile/FormLanguages";
 import { FormSkills } from "../organisms/Profile/FormSkills";
-import { PythonSvgIcon } from "../../assets/reactsvgcons/Python";
 import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
 import { ModalRating } from "../organisms/ModalRating";
+import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
 
 export const Profile = () => {
   const {
@@ -192,8 +192,8 @@ export const Profile = () => {
                       {study.degree}
                     </h3>
                     <p className="text-xs font-medium text-blue-600">
-                      {/* Cambia las fechas aquí si tienes el formato correcto */}
-                      2022 - 2023
+                      {/* @ts-ignore */}
+                      {formatDateInSpanish(study.start_date)} - {formatDateInSpanish(study.end_date)}
                     </p>
                     <p className="text-gray-500">{study.institution}</p>
                     <p className="text-sm text-gray-400 mt-1">

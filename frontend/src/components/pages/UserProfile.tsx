@@ -13,6 +13,7 @@ import { ModalProfile } from "../organisms/ModalProfile";
 import { useAuthStore } from "../../state/authStore";
 import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
+import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
 
 // Define interfaces for user data
 
@@ -62,7 +63,6 @@ export const UserProfile: React.FC = () => {
           status: "pending",
           message: skill,
         });
-
       } catch (error) {
         console.error("Error creating friend request:", error);
       }
@@ -154,8 +154,8 @@ export const UserProfile: React.FC = () => {
                       {study.degree}
                     </h3>
                     <p className="text-xs font-medium text-blue-600">
-                      {/* Cambia las fechas aquí si tienes el formato correcto */}
-                      2022 - 2023
+                      {/* @ts-ignore */}
+                      {formatDateInSpanish(study.start_date)} - {formatDateInSpanish(study.end_date)}
                     </p>
                     <p className="text-gray-500">{study.institution}</p>
                     <p className="text-sm text-gray-400 mt-1">
