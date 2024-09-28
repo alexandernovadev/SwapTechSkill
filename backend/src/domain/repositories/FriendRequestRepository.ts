@@ -9,6 +9,7 @@ export class FriendRequestRepository {
     return await this.friendRequestRepository.save(friendRequest);
   }
 
+ 
   // Método para obtener todas las solicitudes de amistad por receiverId
   async findByReceiverId(
     receiverId: number,

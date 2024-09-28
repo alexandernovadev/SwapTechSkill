@@ -3,6 +3,11 @@ import axiosInstance from "../services/api";
 import { FriendRequest } from "../interfaces/models/FriendRequest";
 import { useUIConfigStore } from "./uiConfig";
 
+interface FriendRequestData {
+  status: string;
+  message: string;
+  responseAt: string;
+}
 interface FriendRequestState {
   friendRequests: FriendRequest[];
   loading: boolean;
@@ -16,7 +21,7 @@ interface FriendRequestState {
   createFriendRequest: (request: Partial<FriendRequest>) => Promise<void>;
   updateFriendRequest: (
     id: number,
-    requestData: Partial<FriendRequest>
+    requestData: Partial<FriendRequestData>
   ) => Promise<void>;
   deleteFriendRequest: (id: number) => Promise<void>;
   findRequestById: (id: number) => FriendRequest | undefined;
@@ -102,15 +107,27 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
   // Update an existing friend request
   updateFriendRequest: async (
     id: number,
-    requestData: Partial<FriendRequest>
+    requestData: Partial<FriendRequestData>
   ) => {
     set({ loading: true });
     const { showNotification } = useUIConfigStore.getState();
     try {
       await axiosInstance.put(`/friendrequest/${id}`, requestData);
+
+      // just update the status of the request
       set((state) => ({
         friendRequests: state.friendRequests.map((req) =>
-          req.id === id ? { ...req, ...requestData } : req
+          req.id === id
+            ? {
+                ...req,
+                ...requestData,
+                responseAt: requestData.responseAt
+                  ? new Date(requestData.responseAt)
+                  : req.responseAt,
+                message: requestData.message ?? req.message,
+                status: requestData.status ?? req.status,
+              }
+            : req
         ),
         loading: false,
       }));

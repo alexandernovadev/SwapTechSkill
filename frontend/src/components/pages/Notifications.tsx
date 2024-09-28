@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client"; // Importa socket.io-client
 import LogoNotification from "../../assets/icons/NotificationBlack.svg";
+import msgBlack from "../../assets/icons/msgBlack.svg";
 import infoCircle from "../../assets/icons/infoCircle.svg";
-import Notificacion from "../atoms/Notificacion";
 import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { useAuthStore } from "../../state/authStore";
@@ -10,11 +10,20 @@ import { Link } from "react-router-dom";
 
 const socket = io("http://localhost:3000"); // Conexión al servidor de sockets
 
+enum FriendRequestStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  REJECTED = "rejected",
+}
+
 export const Notifications = () => {
   const [socketMessage, setSocketMessage] = useState<string | null>(null);
   const { showNotification } = useUIConfigStore();
-  const { fetchFriendRequestsByReceiverId, friendRequests } =
-    useFriendRequestStore();
+  const {
+    fetchFriendRequestsByReceiverId,
+    friendRequests,
+    updateFriendRequest,
+  } = useFriendRequestStore();
   const { user } = useAuthStore();
 
   const handleClick = () => {
@@ -47,10 +56,52 @@ export const Notifications = () => {
     };
   }, []);
 
-  // Función para enviar un mensaje al servidor
-  const sendMessage = () => {
-    const message = "Hola desde el frontend";
-    socket.emit("mensaje-to-server", message);
+  // // Función para enviar un mensaje al servidor
+  // const sendMessage = () => {
+  //   const message = "Hola desde el frontend";
+  //   socket.emit("mensaje-to-server", message);
+  // };
+
+  const confirmNotification = async (friendRequest: any) => {
+    const rta = {
+      status: FriendRequestStatus.ACCEPTED,
+      message: friendRequest.message,
+      responseAt: new Date().toISOString(),
+    };
+
+    await updateFriendRequest(friendRequest.id, rta).then(() => {
+      showNotification(
+        "Notificación",
+        "Se acepta exitosamente la solicitud de conexión."
+      );
+    });
+  };
+  const rejectNotification = async (friendRequest: any) => {
+    const rta = {
+      status: FriendRequestStatus.REJECTED,
+      message: friendRequest.message,
+      responseAt: new Date().toISOString(),
+    };
+
+    await updateFriendRequest(friendRequest.id, rta).then(() => {
+      showNotification(
+        "Notificación",
+        "Se rechaza exitosamente la solicitud de conexión."
+      );
+    });
+  };
+
+  const returnStatus = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Solicitud pendiente";
+      case "accepted":
+        return "Solicitud aceptada";
+      case "rejected":
+        return "Solicitud rechazada";
+      default:
+        return "Solicitud pendiente";
+    }
   };
 
   return (
@@ -83,7 +134,7 @@ export const Notifications = () => {
         friendRequests.length > 0 &&
         friendRequests.map((friendRequest) => (
           <section key={friendRequest.id}>
-            <h1>Solicitud de conexión</h1>
+            <h1>{returnStatus(friendRequest.status)}</h1>
             <div className="flex items-center justify-between bg-[#D9D9D9] w-full px-4 py-2 rounded-md mb-4 border border-black">
               <div className="flex items-center">
                 <Link to={`/dash/user/${friendRequest.sender.id}`}>
@@ -94,20 +145,35 @@ export const Notifications = () => {
                 </span>
               </div>
               <div className="flex space-x-2">
-                <button
-                  type="button"
-                  onClick={sendMessage} // Enviar mensaje al servidor cuando se haga clic en el botón
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg"
-                >
-                  Aceptar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleClick}
-                  className="bg-black text-white px-4 py-2 rounded-lg"
-                >
-                  Rechazar
-                </button>
+                {friendRequest.status === "pending" ? (
+                  <>
+                    <button
+                      className="gradient-background-azulfeo text-white px-4 py-2 rounded-md"
+                      onClick={() => confirmNotification(friendRequest)}
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      className="bg-black text-white px-4 py-2 rounded-md"
+                      onClick={() => rejectNotification(friendRequest)}
+                    >
+                      Rechazar
+                    </button>
+                  </>
+                ) : friendRequest.status === "accepted" ? (
+                  <>
+                    <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">
+                      Solicitud Aceptada
+                    </button>
+                    <button>
+                      <img src={msgBlack} className="w-9 h-9" alt="msg" />
+                    </button>
+                  </>
+                ) : (
+                  <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">
+                    Solicitud Rechazada
+                  </button>
+                )}
               </div>
             </div>
           </section>
