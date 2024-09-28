@@ -28,7 +28,7 @@ interface ProfileState {
   ) => Promise<void>;
   deleteSkill: (skillId: number) => Promise<void>;
   addLanguage: (language: Partial<UserLanguage>) => Promise<void>;
-  updateImageProfile: (profilePictureUrl: string) => Promise<void>;
+  updateImageProfile: (file: File) => Promise<void>;
   updateLanguage: (
     languageId: number,
     languageData: Partial<UserLanguage>
@@ -52,18 +52,33 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
   loading: false,
   error: null,
 
-  updateImageProfile: async (profilePictureUrl: string) => {
+  updateImageProfile: async (file: File) => {
     const { userProfile } = get();
     if (!userProfile) return;
 
+    const formData = new FormData();
+    formData.append("profilePicture", file);
+
     try {
-      await axiosInstance.put(`/users/updateImagenProfile/${userProfile.id}`, {
-        profilePictureUrl,
-      });
+      // Llama a la API para subir la imagen
+      const response = await axiosInstance.put(
+        `/users/updateImagenProfile/${userProfile.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      const profilePictureUrl = response.data.profilePictureUrl;
+
+      // Actualiza el estado del perfil con la nueva URL de la imagen
       set((state) => ({
         userProfile: { ...state.userProfile, profilePictureUrl },
       }));
     } catch (error) {
+      console.error("Error updating profile picture:", error);
       set({ error: "Error updating profile picture" });
     }
   },

@@ -71,7 +71,7 @@ class Server {
     // Morgan para registrar peticiones HTTP
     this.app.use(morgan('combined', { stream }));
 
-    // Habilitar CORS
+    // Habilitar CORS** follow images
     this.app.use(cors());
 
     // Parseo de JSON y datos de formularios
@@ -81,8 +81,13 @@ class Server {
     // Inicializar Passport para autenticación
     this.app.use(passport.initialize());
 
-    // Servir la carpeta 'uploads' de manera estática
-    this.app.use('/uploads', express.static(path.join(__dirname, './uploads')));
+    // Servir la carpeta 'uploads' de manera estática 
+
+    this.app.use('/uploads', cors({
+      origin: process.env.URLFRONTEND || 'http://localhost:5173',
+      methods: ['GET'],
+      credentials: true
+    }), express.static(path.join(__dirname, './uploads')));
   }
 
   private routes() {

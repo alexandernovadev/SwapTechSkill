@@ -13,6 +13,7 @@ import { FormSkills } from "../organisms/Profile/FormSkills";
 import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
 import { ModalRating } from "../organisms/ModalRating";
 import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
+import { URLBACKEND } from "../../config/variables";
 
 export const Profile = () => {
   const {
@@ -69,8 +70,8 @@ export const Profile = () => {
       };
       reader.readAsDataURL(file); // Convertir a Base64
 
-
-
+      // Llamamos a la acción del store para subir la imagen
+      await updateImageProfile(file);
     }
   };
 
@@ -123,7 +124,7 @@ export const Profile = () => {
           {/* Imagen de perfil con fallback a imagen predeterminada */}
           <div className="bg-slate-900 w-52 h-52 rounded-full">
             <img
-              src={profileImage || UserLogoDefault}
+              src={`${profileImage}` || UserLogoDefault}
               alt={`${userProfile.firstName} ${userProfile.lastName}`}
               className="w-52 h-52 rounded-full object-cover"
             />
