@@ -23,11 +23,9 @@ export class UserController {
     const { firstName, lastName, location, labelProfile } = req.body;
 
     if (!firstName || !lastName || !location || !labelProfile) {
-      return res
-        .status(400)
-        .json({
-          message: 'Name, label ,labelProfile and location are required',
-        });
+      return res.status(400).json({
+        message: 'Name, label ,labelProfile and location are required',
+      });
     }
 
     try {
@@ -58,29 +56,36 @@ export class UserController {
     res: Response,
   ): Promise<Response> {
     const { id } = req.params;
-    const { profilePictureUrl } = req.body;
-
-    if (!profilePictureUrl) {
-      return res
-        .status(400)
-        .json({ message: 'Profile picture URL is required' });
-    }
 
     try {
-      const updatedUser = await userRepository.updateProfilePictureUrl(
+      // Primero buscamos el usuario
+      const user = await userRepository.findById(Number(id));
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Verificamos que haya un archivo subido
+      // @ts-ignore
+      if (!req.file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+
+      // Guardamos la URL de la foto en la base de datos
+      // @ts-ignore
+      const profilePictureUrl = `/uploads/${req.file.filename}`;
+      await userRepository.updateProfilePictureUrl(
         Number(id),
         profilePictureUrl,
       );
-      if (!updatedUser) {
-        return res.status(404).json({ message: 'User not found' });
-      }
+
       return res
         .status(200)
-        .json({ message: 'Profile picture URL updated', user: updatedUser });
+        .json({ message: 'Profile picture updated', profilePictureUrl });
     } catch (error) {
+      console.error(error);
       return res
         .status(500)
-        .json({ message: 'Error updating profile picture URL', error });
+        .json({ message: 'Error updating profile picture', error });
     }
   }
 

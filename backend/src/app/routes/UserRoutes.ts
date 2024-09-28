@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { UserController } from '../controllers/UserController';
+import { upload } from '../../shared/middlewares/multerImages';
 
 const router = Router();
 
@@ -11,7 +12,14 @@ router.get('/search', UserController.searchAdvanced); // Búsqueda avanzada
 router.get('/getById/:id', UserController.getById); // Buscar por ID
 router.get('/searchByJustWordAllData', UserController.searchByJustWordAllData); // Búsqueda por palabra en todos los campos
 router.put('/updateBio/:id', UserController.updateBio);
-router.put('/updateNameLabelLocation/:id', UserController.updateNameLabelLocation);
-router.put('/updateImagenProfile/:id', UserController.updateProfilePictureUrl);
+router.put(
+  '/updateNameLabelLocation/:id',
+  UserController.updateNameLabelLocation,
+);
+router.put(
+  '/updateImagenProfile/:id',
+  upload.single('profilePicture'),
+  UserController.updateProfilePictureUrl,
+);
 
 export default router;

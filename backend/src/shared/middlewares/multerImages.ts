@@ -4,7 +4,7 @@ import path from 'path';
 // Configuración de almacenamiento de Multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../../uploads')); // Carpeta de destino
+    cb(null, path.join(__dirname, '../../uploads')); // Cambia la ruta si es necesario
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);

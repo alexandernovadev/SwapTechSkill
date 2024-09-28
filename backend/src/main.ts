@@ -23,6 +23,7 @@ import userSkillsRoutes from './app/routes/UserSkillsRoutes';
 import userLanguagesRoutes from './app/routes/UserLanguagesRoutes';
 import 'dotenv/config';
 import { authenticateJWT } from './shared/middlewares/auth';
+import path from 'path';
 
 class Server {
   private app: Application;
@@ -79,6 +80,9 @@ class Server {
 
     // Inicializar Passport para autenticación
     this.app.use(passport.initialize());
+
+    // Servir la carpeta 'uploads' de manera estática
+    this.app.use('/uploads', express.static(path.join(__dirname, './uploads')));
   }
 
   private routes() {

@@ -21,4 +21,5 @@
 - [ ] Eñ usario debe llegarle de aprevacion o rechazo 
 - [ ] Pasado 30 dias , borrar notificaciones 
 - [ ] validar solo imagenes , hp vida 
+- [ ] Crear chats cuando haya una conexion valida
 
