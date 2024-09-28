@@ -1,11 +1,12 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useProfileStore } from "../../../state/useProfileStore";
 import { UserProfessionalStudy } from "../../../interfaces/User";
 import { professions } from "../../../data/professions";
 import { universidades } from "../../../data/universities";
 import { levelStudies } from "../../../data/levelStudies";
 import { states } from "../../../data/stateStudies";
+import { DateTime } from "luxon"; // Para formatear las fechas
 
 interface FormStudiesProps {
   onClose: () => void;
@@ -23,24 +24,66 @@ export const FormStudies: React.FC<FormStudiesProps> = ({
   // Obtener el estudio con la función del store
   const study = studyId ? findStudyById(studyId) : undefined;
 
+  // Función para formatear la fecha con Luxon
+  const formatDateInSpanish = (dateString: string): string => {
+    const date = DateTime.fromISO(dateString);
+    if (!date.isValid) return "FECHA NO VÁLIDA";
+    return date.setLocale("es").toFormat("MMMM d 'del' yyyy");
+  };
+
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<Partial<UserProfessionalStudy>>({
     defaultValues: {
       level_study: study?.level_study || levelStudies[0],
       state: study?.state || states[0],
-      start_date: study?.start_date
-        ? new Date(study.start_date).toISOString().slice(0, 7)
-        : "2020-01-01",
-      end_date: study?.end_date
-        ? new Date(study.end_date).toISOString().slice(0, 7)
-        : "2021-02-02",
+      start_date: study?.start_date || "",
+      end_date: study?.end_date || "",
       degree: study?.degree || professions[0],
       institution: study?.institution || universidades[0],
     },
   });
+
+  // Observamos los valores de las fechas
+  const startDateValue = useWatch({
+    control,
+    name: "start_date",
+  });
+  const endDateValue = useWatch({
+    control,
+    name: "end_date",
+  });
+
+  // Estados para almacenar las fechas formateadas
+  const [formattedStartDate, setFormattedStartDate] = useState<string>("");
+  const [formattedEndDate, setFormattedEndDate] = useState<string>("");
+
+  // Función auxiliar para asegurarnos de que el valor sea un string
+  const getStringDate = (dateValue: string | Date): string => {
+    return typeof dateValue === "string"
+      ? dateValue
+      : dateValue.toISOString().split("T")[0]; // Convertimos Date a string en formato YYYY-MM-DD
+  };
+
+  // Actualizar las fechas formateadas cuando el usuario las cambie
+  useEffect(() => {
+    if (startDateValue) {
+      setFormattedStartDate(formatDateInSpanish(getStringDate(startDateValue)));
+    } else {
+      setFormattedStartDate("");
+    }
+  }, [startDateValue]);
+
+  useEffect(() => {
+    if (endDateValue) {
+      setFormattedEndDate(formatDateInSpanish(getStringDate(endDateValue)));
+    } else {
+      setFormattedEndDate("");
+    }
+  }, [endDateValue]);
 
   const onSubmit = async (data: Partial<UserProfessionalStudy>) => {
     if (isEditing && study?.study_id) {
@@ -104,7 +147,8 @@ export const FormStudies: React.FC<FormStudiesProps> = ({
       {/* Fecha de inicio */}
       <div className="mb-4">
         <label className="text-[#16191C] font-light text-[13px] my-1">
-          Fecha de inicio
+          Fecha de inicio{" "}
+          <span className="text-[10px] font-bold color-azulfeo capitalize">({formattedStartDate})</span>
         </label>
         <input
           type="date"
@@ -121,7 +165,8 @@ export const FormStudies: React.FC<FormStudiesProps> = ({
       {/* Fecha de fin */}
       <div className="mb-4">
         <label className="text-[#16191C] font-light text-[13px] my-1">
-          Fecha de fin
+          Fecha de fin{" "}
+          <span className="text-[10px] font-bold color-azulfeo capitalize">({formattedEndDate})</span>
         </label>
         <input
           type="date"

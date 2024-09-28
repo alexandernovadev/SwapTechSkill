@@ -14,4 +14,4 @@
 - [x] Hacer toda la interfaz en español.
 - [ ] Implementar un modal para cerrar sesión.
 - [ ] Habilitar la opción de editar la foto en el perfil.
-- [ ] Valida que las fechas de las prossions este validadas con data correcta form edit too.
+- [x] Valida que las fechas de las prossions este validadas con data correcta form edit too.
