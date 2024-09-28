@@ -77,7 +77,7 @@ export class AuthController {
 
       // Crear token JWT
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: '1y',
       });
 
       return res.status(201).json({ token, user });
@@ -118,7 +118,7 @@ export class AuthController {
 
       // Crear token JWT
       const token = jwt.sign(userData, JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: '1y',
       });
 
       return res.status(200).json({ token, user:userData });
@@ -136,7 +136,7 @@ export class AuthController {
 
       // Generar token JWT
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: '1y',
       });
 
       // Redirigir al frontend con el token en la URL
@@ -157,7 +157,7 @@ export class AuthController {
 
       // Generar token JWT
       const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: '1y',
       });
 
       // Redirigir al frontend con el token en la URL
