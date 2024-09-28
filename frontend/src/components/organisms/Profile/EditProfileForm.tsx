@@ -1,6 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useProfileStore } from "../../../state/useProfileStore";
+import { locations } from "../../../data/location";
 
 interface EditProfileFormProps {
   onClose: () => void;
@@ -61,7 +62,7 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
 
       {/* Campo de Etiqueta */}
       <div className="mb-4">
-        <div className="text-[#16191C] font-light text-[13px] my-1">Label</div>
+        <div className="text-[#16191C] font-light text-[13px] my-1">Rol</div>
         <input
           type="text"
           {...register("labelProfile", {
@@ -80,11 +81,17 @@ export const EditProfileForm: React.FC<EditProfileFormProps> = ({
         <div className="text-[#16191C] font-light text-[13px] my-1">
           Ubicación
         </div>
-        <input
-          type="text"
+        <select
           {...register("location", { required: "La ubicación es obligatoria" })}
           className="w-full p-2 rounded-lg bg-transparent border border-black"
-        />
+        >
+          <option value="">Selecciona una ubicación</option>
+          {locations.map((location, index) => (
+            <option key={index} value={location}>
+              {location}
+            </option>
+          ))}
+        </select>
         {errors.location && (
           <p className="text-red-400 text-sm">{errors.location.message}</p>
         )}

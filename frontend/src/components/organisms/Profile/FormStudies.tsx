@@ -2,27 +2,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useProfileStore } from "../../../state/useProfileStore";
 import { UserProfessionalStudy } from "../../../interfaces/User";
-
-const levelStudies = [
-  "Primaria",
-  "Bachillerato",
-  "Técnico",
-  "Tecnólogo",
-  "Universitario",
-  "Maestría",
-  "Doctorado",
-  "Posdoctorado",
-];
-
-const states = [
-  "En espera",
-  "En curso",
-  "Graduado",
-  "Expulsado",
-  "Suspendido",
-  "Cancelado",
-  "No graduado",
-];
+import { professions } from "../../../data/professions";
+import { universidades } from "../../../data/universities";
+import { levelStudies } from "../../../data/levelStudies";
+import { states } from "../../../data/stateStudies";
 
 interface FormStudiesProps {
   onClose: () => void;
@@ -54,8 +37,8 @@ export const FormStudies: React.FC<FormStudiesProps> = ({
       end_date: study?.end_date
         ? new Date(study.end_date).toISOString().slice(0, 7)
         : "2021-02-02",
-      degree: study?.degree || "",
-      institution: study?.institution || "",
+      degree: study?.degree || professions[0],
+      institution: study?.institution || universidades[0],
     },
   });
 
@@ -157,14 +140,21 @@ export const FormStudies: React.FC<FormStudiesProps> = ({
         <label className="text-[#16191C] font-light text-[13px] my-1">
           Título otorgado
         </label>
-        <input
-          type="text"
+        <select
           {...register("degree", {
-            required: "Ingresa el título otorgado",
+            required: "Selecciona el título otorgado",
           })}
           className="w-full p-2 rounded-lg bg-transparent border border-black"
-          placeholder="Ingresa el título otorgado"
-        />
+        >
+          <option value="" disabled>
+            Selecciona una opción
+          </option>
+          {professions.map((titulo) => (
+            <option key={titulo} value={titulo}>
+              {titulo}
+            </option>
+          ))}
+        </select>
         {errors.degree && (
           <p className="text-red-500">{errors.degree.message}</p>
         )}
@@ -175,14 +165,21 @@ export const FormStudies: React.FC<FormStudiesProps> = ({
         <label className="text-[#16191C] font-light text-[13px] my-1">
           Institución
         </label>
-        <input
-          type="text"
+        <select
           {...register("institution", {
-            required: "Ingresa el nombre de la institución",
+            required: "Selecciona una institución",
           })}
           className="w-full p-2 rounded-lg bg-transparent border border-black"
-          placeholder="Ingresa la institución"
-        />
+        >
+          <option value="" disabled>
+            Selecciona una opción
+          </option>
+          {universidades.map((universidad) => (
+            <option key={universidad} value={universidad}>
+              {universidad}
+            </option>
+          ))}
+        </select>
         {errors.institution && (
           <p className="text-red-500">{errors.institution.message}</p>
         )}

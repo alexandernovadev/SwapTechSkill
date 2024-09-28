@@ -109,7 +109,7 @@ export const Profile = () => {
               <p className="text-gray-500">
                 {userProfile.labelProfile
                   ? userProfile.labelProfile
-                  : "Sin Label"}
+                  : "Sin Rol Profesional"}
               </p>
               <p className="text-gray-500">
                 {userProfile.location ? userProfile.location : "Sin Ubicación"}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import axiosInstance from "../../services/api";
 import { Link } from "react-router-dom";
-import lupa from '../../assets/lupa.svg'
+import lupa from "../../assets/lupa.svg";
 
 // Define interfaces for the user and profile data
 interface User {
@@ -94,7 +94,7 @@ export const Search = () => {
     <div className="max-w-4xl mx-auto px-4 py-2 animate__animated animate__fadeIn animate__faster">
       <section className="flex flex-col items-center justify-center mb-4">
         <h1 className="text-4xl font-semibold text-center mb-4">Búsqueda</h1>
-        <div className="bg-black h-[2px] w-[90%]">{" "}</div>
+        <div className="bg-black h-[2px] w-[90%]"> </div>
       </section>
       <form
         className="flex justify-center mb-6  sticky top-0 z-30 bg-slate-50"
@@ -103,7 +103,12 @@ export const Search = () => {
           handleSearch();
         }}
       >
-        <img src={lupa} alt="lupa" className="absolute left-2 top-2" width={"3.8%"} />
+        <img
+          src={lupa}
+          alt="lupa"
+          className="absolute left-2 top-2"
+          width={"3.8%"}
+        />
         <input
           type="text"
           value={searchTerm}
