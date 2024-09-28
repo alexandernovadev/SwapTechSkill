@@ -193,7 +193,9 @@ export const Profile = () => {
                     </h3>
                     <p className="text-xs font-medium text-blue-600">
                       {/* @ts-ignore */}
-                      {formatDateInSpanish(study.start_date)} - {formatDateInSpanish(study.end_date)}
+                      {formatDateInSpanish(study.start_date)} -{" "}
+                      {/* @ts-ignore */}
+                      {formatDateInSpanish(study.end_date)}
                     </p>
                     <p className="text-gray-500">{study.institution}</p>
                     <p className="text-sm text-gray-400 mt-1">
@@ -218,7 +220,9 @@ export const Profile = () => {
               </li>
             ))
           ) : (
-            <li>No studies available</li>
+            <li className="border-l-2 pl-2 border-black">
+              Este usuario no tiene estudios registrados
+            </li>
           )}
         </ul>
       </div>
@@ -376,7 +380,7 @@ export const Profile = () => {
         isOpen={isOpeningRating}
         onClose={() => setIsOpeningRating(false)}
       >
-          <h1 className="text-3xl font-bold mb-6">Resumen de opiniones</h1>
+        <h1 className="text-3xl font-bold mb-6">Resumen de opiniones</h1>
         <div className="flex flex-row">
           {/* Título */}
 

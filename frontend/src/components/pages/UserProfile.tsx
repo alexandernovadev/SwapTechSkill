@@ -155,7 +155,9 @@ export const UserProfile: React.FC = () => {
                     </h3>
                     <p className="text-xs font-medium text-blue-600">
                       {/* @ts-ignore */}
-                      {formatDateInSpanish(study.start_date)} - {formatDateInSpanish(study.end_date)}
+                      {formatDateInSpanish(study.start_date)} -{" "}
+                      {/* @ts-ignore */}
+                      {formatDateInSpanish(study.end_date)}
                     </p>
                     <p className="text-gray-500">{study.institution}</p>
                     <p className="text-sm text-gray-400 mt-1">
@@ -167,7 +169,9 @@ export const UserProfile: React.FC = () => {
               </li>
             ))
           ) : (
-            <li>No studies available</li>
+            <li className="border-l-2 pl-2 border-black">
+              Este usuario no tiene estudios registrados
+            </li>
           )}
         </ul>
       </div>
