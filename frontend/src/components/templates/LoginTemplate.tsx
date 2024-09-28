@@ -7,6 +7,7 @@ import LogoGithub from "../../assets/icons/logo-github.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../state/authStore";
 import axiosInstance from "../../services/api";
+import { URLBACKEND } from "../../config/variables";
 
 interface LoginFormValues {
   email: string;
@@ -33,7 +34,7 @@ const LoginTemplate: React.FC = () => {
     try {
       // Usar axiosInstance en lugar de fetch
       const response = await axiosInstance.post("/auth/login", data);
-      
+
       if (response.status === 200) {
         // Simulación de éxito: Almacenar token y navegar
         login(response.data.user, response.data.token);
@@ -146,14 +147,14 @@ const LoginTemplate: React.FC = () => {
             </div>
             <div className="flex justify-between mb-6 space-x-4">
               <Link
-                to={"http://localhost:3000/api/auth/google"}
+                to={`${URLBACKEND}/api/auth/google`}
                 className="w-1/2 py-2.5 px-4 border border-white text-white flex items-center justify-center rounded-md hover:bg-gray-700 transition-colors"
               >
                 <img src={LogoGoogle} alt="Inicio" className="mr-2 w-6 h-6" />
                 Google
               </Link>
               <Link
-                to={"http://localhost:3000/api/auth/github"}
+                to={`${URLBACKEND}/api/auth/github`}
                 className="w-1/2 py-2.5 px-4 border border-white text-white flex items-center justify-center rounded-md hover:bg-gray-700 transition-colors"
               >
                 <img src={LogoGithub} alt="Inicio" className="mr-2 w-6 h-6" />

@@ -7,8 +7,9 @@ import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { useAuthStore } from "../../state/authStore";
 import { Link } from "react-router-dom";
+import { URLBACKEND } from "../../config/variables";
 
-const socket = io("http://localhost:3000"); // Conexión al servidor de sockets
+const socket = io(URLBACKEND); // Conexión al servidor de sockets
 
 enum FriendRequestStatus {
   PENDING = "pending",

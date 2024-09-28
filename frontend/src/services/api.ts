@@ -1,13 +1,10 @@
 import axios from "axios";
 import { useUIConfigStore } from "../state/uiConfig";
-
-// Usar la variable VITE_URLBACKEND del archivo .env
-const URLBACKEND =
-  import.meta.env.VITE_URLBACKEND || "http://localhost:3000/api"; // URL por defecto si no está definida
+import { URLBACKEND } from "../config/variables";
 
 // Configuración básica de Axios
 const axiosInstance = axios.create({
-  baseURL: URLBACKEND, // Configura la base URL para todas las peticiones
+  baseURL: URLBACKEND + "/api", // Configura la base URL para todas las peticiones
   headers: {
     "Content-Type": "application/json", // Define el tipo de contenido por defecto
   },
