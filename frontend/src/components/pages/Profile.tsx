@@ -127,6 +127,7 @@ export const Profile = () => {
               src={`${profileImage}` || UserLogoDefault}
               alt={`${userProfile.firstName} ${userProfile.lastName}`}
               className="w-52 h-52 rounded-full object-cover"
+              onError={() => setProfileImage(UserLogoDefault)} 
             />
           </div>
           {/* Botón de edición sobre la imagen */}
