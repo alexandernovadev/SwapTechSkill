@@ -87,7 +87,7 @@ export const Profile = () => {
   }
 
   if (!userProfile) {
-    return <div>No profile data available.</div>;
+    return <div>Este perfil no existe !</div>;
   }
 
   return (
