@@ -13,8 +13,6 @@ export const techIcons: { [key: string]: string } = {
 
 // Convierte todas las keys a minúsculas
 export const getTechIcon = (name: string): string => {
-  
   const iconKey = name.toLowerCase();
-  console.log(techIcons[iconKey]);
   return techIcons[iconKey] || techIcons["default"];
 };

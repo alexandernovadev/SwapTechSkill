@@ -34,8 +34,6 @@ export const UserProfile: React.FC = () => {
       try {
         if (id) {
           const response = await axiosInstance.get(`/users/getById/${id}`);
-          console.log("response", response.data);
-
           setUserProfile(response.data);
           setError(null); // Reset any previous errors
         }

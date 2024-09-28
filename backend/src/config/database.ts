@@ -1,5 +1,4 @@
-import { AppDataSource } from "../infrastructure/persistence/typeormSource";
-
+import { AppDataSource } from '../infrastructure/persistence/typeormSource';
 
 export const connectDatabase = async (): Promise<void> => {
   try {

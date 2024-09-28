@@ -13,12 +13,9 @@ export class SocketsService {
     this.io.on('connection', (socket: Socket) => {
       console.log('New client connected', socket.id);
 
-   
-
       // Desconexión
       socket.on('disconnect', () => {
         console.log('Cliente desconectado');
-     
       });
     });
   }

@@ -65,8 +65,6 @@ export class LanguageController {
   static async getById(req: Request, res: Response) {
     const id = parseInt(req.params.id, 10);
 
-    console.log('id: ', id);
-
     try {
       const language = await languageRepository.findById(id);
       if (!language) {

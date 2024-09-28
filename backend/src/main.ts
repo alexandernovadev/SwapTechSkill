@@ -92,7 +92,7 @@ class Server {
     // Rutas de API
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/users', authenticateJWT, userRoutes);
-    this.app.use('/api/friendrequest', friendRequestRoutes );
+    this.app.use('/api/friendrequest', friendRequestRoutes);
     this.app.use('/api/languages', languagesRoutes);
     this.app.use('/api/skill-categories', skillCategoryRoutes);
     this.app.use('/api/skills', skillRoutes);
@@ -130,7 +130,6 @@ class Server {
 // Instanciar y arrancar el servidor
 const server = new Server();
 server.start();
-
 
 export const io = server.io;
 

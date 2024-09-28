@@ -33,8 +33,6 @@ const LoginTemplate: React.FC = () => {
     try {
       // Usar axiosInstance en lugar de fetch
       const response = await axiosInstance.post("/auth/login", data);
-
-      console.log(data);
       
       if (response.status === 200) {
         // Simulación de éxito: Almacenar token y navegar

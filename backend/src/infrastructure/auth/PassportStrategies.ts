@@ -100,8 +100,6 @@ passport.use(
       callbackURL: '/api/auth/google/callback',
     },
     async (token, tokenSecret, profile, done) => {
-      console.log('Google Profile:', JSON.stringify(profile, null, 3));
-
       try {
         // Extraer los nombres de la información del perfil
         const firstName = profile.name?.givenName || 'Firstname';
