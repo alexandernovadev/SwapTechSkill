@@ -6,25 +6,24 @@ import searchIcon from "../../assets/icons/buscar.svg";
 import messageIcon from "../../assets/icons/msg.svg";
 import notificationIcon from "../../assets/icons/notification.svg";
 import logoutIcon from "../../assets/icons/closesession.svg";
-import {  NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import Logo from "../../assets/LogoPng.png";
-import { useAuthStore } from "../../state/authStore";
 import { useUIConfigStore } from "../../state/uiConfig";
+import { ModalCloseSession } from "../organisms/ModalCloseSession";
 
 export const Dashboard = () => {
   const { isDisabledFooter } = useUIConfigStore();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { logout } = useAuthStore();
   const navigate = useNavigate();
+  const [isModalCloseSession, setIsModalCloseSession] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   const handleLogout = () => {
-    logout();
-    navigate("/");
+    setIsModalCloseSession(true);
   };
 
   const gotoAdmin = () => {
@@ -122,11 +121,8 @@ export const Dashboard = () => {
                 Notificaciones
               </NavLink>
             </li>
-            <li className=" border-b border-white ">
-              <button
-                onClick={handleLogout}
-                className="flex items-center text-lg pl-[30px] py-4"
-              >
+            <li className=" border-b border-white cursor-pointer" onClick={handleLogout} >
+              <button className="flex items-center text-lg pl-[30px] py-4">
                 <img
                   src={logoutIcon}
                   alt="Cerrar Sesión"
@@ -137,6 +133,11 @@ export const Dashboard = () => {
             </li>
           </ul>
         </nav>
+
+        <ModalCloseSession
+          isOpen={isModalCloseSession}
+          onClose={() => setIsModalCloseSession(false)}
+        />
 
         {/* Contenido principal */}
         <section
