@@ -12,6 +12,6 @@
 - [x] Incluir todas las universidades de Colombia.
 - [ ] Añadir botón de "Detalle" en el perfil.
 - [x] Hacer toda la interfaz en español.
-- [ ] Implementar un modal para cerrar sesión.
+- [x] Implementar un modal para cerrar sesión.
 - [ ] Habilitar la opción de editar la foto en el perfil.
 - [x] Valida que las fechas de las prossions este validadas con data correcta form edit too.

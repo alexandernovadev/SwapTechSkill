@@ -113,14 +113,14 @@ export const Notifications = () => {
           </section>
         ))}
 
-      {/* Test del socket */}
+      {/* Test del socket 
       <div className="bg-gray-100 p-4 rounded-md border border-black mt-4">
         <h2 className="text-xl font-semibold">Test de Socket.IO</h2>
         <p>
           Mensaje recibido del servidor:{" "}
           {socketMessage || "Esperando mensaje..."}
         </p>
-      </div>
+      </div>*/}
     </div>
   );
 };

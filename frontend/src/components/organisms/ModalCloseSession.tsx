@@ -71,34 +71,34 @@ export const ModalCloseSession = ({
           onClick={handleOverlayClick}
         >
           <div
-            className={`bg-[#D9D9D9] flex items-center flex-col border-2 border-black p-4 rounded-2xl shadow-lg w-full max-w-lg animate__animated animate-fast ${
+            className={`bg-[#D9D9D9] flex items-center flex-col border-2 border-black px-4 py-3 rounded-2xl shadow-lg w-full max-w-lg animate__animated animate-fast ${
               isClosing ? "animate__zoomOut" : "animate__zoomIn"
             }`}
           >
             <img
               src={AlertCircle}
               alt="Inicio"
-              className="mr-2 w-[150px] h-[150px]"
+              className="mr-2 w-[140px] h-[140px]"
             />
-            <h2 className="text-[42px]">Cierre de Sesión</h2>
-            <p className="text-[22px] text-center" style={{ color: "#16191C" }}>
+            <h2 className="text-[36px]">Cierre de Sesión</h2>
+            <p className="text-[20px] text-center" style={{ color: "#16191C" }}>
               Si deseas salir haz clic en Aceptar o en Cancelar para continuar
               trabajando
             </p>
 
             {/* Botones */}
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center my-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px]"
+                className="mr-2 bg-black text-white px-4 py-2 rounded-lg min-w-[180px] text-[20px]"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleConfirm}
                 type="submit"
-                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px]"
+                className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg min-w-[180px] text-[20px]"
               >
                 Aceptar
               </button>
