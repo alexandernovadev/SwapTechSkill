@@ -12,5 +12,6 @@ router.get('/getById/:id', UserController.getById); // Buscar por ID
 router.get('/searchByJustWordAllData', UserController.searchByJustWordAllData); // Búsqueda por palabra en todos los campos
 router.put('/updateBio/:id', UserController.updateBio);
 router.put('/updateNameLabelLocation/:id', UserController.updateNameLabelLocation);
+router.put('/updateImagenProfile/:id', UserController.updateProfilePictureUrl);
 
 export default router;

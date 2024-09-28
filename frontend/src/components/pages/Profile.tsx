@@ -25,6 +25,7 @@ export const Profile = () => {
     deleteStudy,
     deleteLanguage,
     deleteSkill,
+    updateImageProfile,
   } = useProfileStore();
 
   const [isModalMyDataOpen, setIsModalMyDataOpen] = useState(false);
@@ -46,6 +47,8 @@ export const Profile = () => {
   const [profileImage, setProfileImage] = useState<string | null>(
     userProfile?.profilePictureUrl || null
   );
+  console.log(userProfile);
+  
 
   useEffect(() => {
     fetchProfile();
@@ -53,7 +56,7 @@ export const Profile = () => {
     fetchAvailableSkills();
   }, [fetchProfile, fetchAvailableLanguages, fetchAvailableSkills]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -62,6 +65,14 @@ export const Profile = () => {
         setProfileImage(base64String); // Actualizamos la imagen con el Base64
       };
       reader.readAsDataURL(file); // Convertir a Base64
+
+      // Print base64 string
+      reader.onload = function () {
+        console.log(reader.result);
+
+        // Actualizar imagen de perfil
+        updateImageProfile(reader.result as string);
+      };
     }
   };
 
@@ -113,13 +124,12 @@ export const Profile = () => {
         <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 relative">
           {/* Imagen de perfil con fallback a imagen predeterminada */}
           <div className="bg-slate-900 w-52 h-52 rounded-full">
-
-          <img
-            src={profileImage || UserLogoDefault}
-            alt={`${userProfile.firstName} ${userProfile.lastName}`}
-            className="w-52 h-52 rounded-full object-cover"
+            <img
+              src={profileImage || UserLogoDefault}
+              alt={`${userProfile.firstName} ${userProfile.lastName}`}
+              className="w-52 h-52 rounded-full object-cover"
             />
-            </div>
+          </div>
           {/* Botón de edición sobre la imagen */}
           <label htmlFor="upload-photo" className="absolute top-2 right-2">
             <FontAwesomeIcon

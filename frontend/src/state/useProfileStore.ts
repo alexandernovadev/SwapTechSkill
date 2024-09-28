@@ -28,6 +28,7 @@ interface ProfileState {
   ) => Promise<void>;
   deleteSkill: (skillId: number) => Promise<void>;
   addLanguage: (language: Partial<UserLanguage>) => Promise<void>;
+  updateImageProfile: (profilePictureUrl: string) => Promise<void>;
   updateLanguage: (
     languageId: number,
     languageData: Partial<UserLanguage>
@@ -51,6 +52,21 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
   loading: false,
   error: null,
 
+  updateImageProfile: async (profilePictureUrl: string) => {
+    const { userProfile } = get();
+    if (!userProfile) return;
+
+    try {
+      await axiosInstance.put(`/users/updateImagenProfile/${userProfile.id}`, {
+        profilePictureUrl,
+      });
+      set((state) => ({
+        userProfile: { ...state.userProfile, profilePictureUrl },
+      }));
+    } catch (error) {
+      set({ error: "Error updating profile picture" });
+    }
+  },
   // Fetch user profile
   fetchProfile: async () => {
     const { user } = useAuthStore.getState(); // Obtén el usuario autenticado

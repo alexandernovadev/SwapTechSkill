@@ -25,7 +25,9 @@ export class UserController {
     if (!firstName || !lastName || !location || !labelProfile) {
       return res
         .status(400)
-        .json({ message: 'Name, label ,labelProfile and location are required' });
+        .json({
+          message: 'Name, label ,labelProfile and location are required',
+        });
     }
 
     try {
@@ -47,6 +49,38 @@ export class UserController {
       return res
         .status(500)
         .json({ message: 'Error updating name, label and location', error });
+    }
+  }
+
+  // Método para actualizar solo la imagen de perfil de un usuario
+  static async updateProfilePictureUrl(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const { id } = req.params;
+    const { profilePictureUrl } = req.body;
+
+    if (!profilePictureUrl) {
+      return res
+        .status(400)
+        .json({ message: 'Profile picture URL is required' });
+    }
+
+    try {
+      const updatedUser = await userRepository.updateProfilePictureUrl(
+        Number(id),
+        profilePictureUrl,
+      );
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      return res
+        .status(200)
+        .json({ message: 'Profile picture URL updated', user: updatedUser });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error updating profile picture URL', error });
     }
   }
 

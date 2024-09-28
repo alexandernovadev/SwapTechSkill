@@ -25,14 +25,14 @@ export class User {
 
   @Column({ name: 'label_profile', type: 'text', nullable: true })
   labelProfile: string;
-  
+
   @Column({ name: 'email', length: 100, unique: true })
   email: string;
 
   @Column({ name: 'password_hash', length: 255 })
   passwordHash: string;
 
-  @Column({ name: 'profile_picture_url', length: 255, nullable: true })
+  @Column({ name: 'profile_picture_url', type: 'text', nullable: true })
   profilePictureUrl: string;
 
   @Column({ name: 'bio', type: 'text', nullable: true })

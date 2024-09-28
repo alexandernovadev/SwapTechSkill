@@ -25,6 +25,21 @@ export class UserRepository {
     return user;
   }
 
+  // Just update profile_picture_url
+  async updateProfilePictureUrl(
+    id: number,
+    profilePictureUrl: string,
+  ): Promise<User | null> {
+    const user = await this.findById(id);
+    if (!user) {
+      return null;
+    }
+    // Update profile_picture_url
+    user.profilePictureUrl = profilePictureUrl;
+    await this.userRepository.save(user);
+    return user;
+  }
+
   // Método para buscar un usuario por correo electrónico y cargar los roles
   async findByEmail(email: string): Promise<User | undefined> {
     return await this.userRepository

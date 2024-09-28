@@ -6,7 +6,7 @@ export interface User {
   labelProfile?: string;
   email?: string;
   passwordHash?: string;
-  profilePictureUrl?: null;
+  profilePictureUrl?: string | null;
   bio?: string;
   authProvider?: string;
   authProviderId?: string;
