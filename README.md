@@ -17,3 +17,8 @@
 - [ ] Implementar notificación con sockets.
 - [ ] Unificar el modal para ver el detalle de usuario (eliminar modal superpuesto).
 - [ ] Agregar modales de notificaion when se acepta and rejected
+- [ ] Yo no me debo ver como usario (db)
+- [ ] Eñ usario debe llegarle de aprevacion o rechazo 
+- [ ] Pasado 30 dias , borrar notificaciones 
+- [ ] validar solo imagenes , hp vida 
+
