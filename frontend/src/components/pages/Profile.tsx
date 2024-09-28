@@ -13,7 +13,6 @@ import { FormSkills } from "../organisms/Profile/FormSkills";
 import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
 import { ModalRating } from "../organisms/ModalRating";
 import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
-import { URLBACKEND } from "../../config/variables";
 
 export const Profile = () => {
   const {
