@@ -43,11 +43,27 @@ export const Profile = () => {
 
   const [isOpeningRating, setIsOpeningRating] = useState(false);
 
+  const [profileImage, setProfileImage] = useState<string | null>(
+    userProfile?.profilePictureUrl || null
+  );
+
   useEffect(() => {
     fetchProfile();
     fetchAvailableLanguages();
     fetchAvailableSkills();
   }, [fetchProfile, fetchAvailableLanguages, fetchAvailableSkills]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setProfileImage(base64String); // Actualizamos la imagen con el Base64
+      };
+      reader.readAsDataURL(file); // Convertir a Base64
+    }
+  };
 
   const handleEditStudy = (studyId: number) => {
     setSelectedStudy(studyId);
@@ -94,13 +110,30 @@ export const Profile = () => {
     <div className="max-w-5xl mx-auto p-6 animate__animated animate__fadeIn animate-so-fast">
       {/* Profile Header */}
       <div className="flex items-center border border-[#1E2126] rounded-sm p-6 mb-2 relative">
-        <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 flex flex-row">
+        <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 relative">
+          {/* Imagen de perfil con fallback a imagen predeterminada */}
+          <div className="bg-slate-900 w-52 h-52 rounded-full">
+
           <img
-            src={UserLogoDefault}
+            src={profileImage || UserLogoDefault}
             alt={`${userProfile.firstName} ${userProfile.lastName}`}
-            className=""
+            className="w-52 h-52 rounded-full object-cover"
+            />
+            </div>
+          {/* Botón de edición sobre la imagen */}
+          <label htmlFor="upload-photo" className="absolute top-2 right-2">
+            <FontAwesomeIcon
+              icon={faEdit}
+              className="text-white bg-black p-2 rounded-full cursor-pointer"
+            />
+          </label>
+          <input
+            type="file"
+            id="upload-photo"
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageChange}
           />
-          <div className="border-l border-black h-[90%] mx-6"></div>
         </div>
         <div className="flex-1 ml-5">
           <div className="flex justify-between items-start">
