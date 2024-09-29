@@ -16,8 +16,6 @@ import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
 import { FriendsRequestUser } from "../../interfaces/dtos/FriendsRequestUser";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 
-
-
 export const UserProfile: React.FC = () => {
   const { id } = useParams(); // Extract id from URL
   const [userProfile, setUserProfile] = useState<User | null>(null);
@@ -52,10 +50,7 @@ export const UserProfile: React.FC = () => {
     fetchUserProfile();
   }, [id]);
 
-  const handleConnect = async (
-    idReceiver: number,
-    skillSender: number
-  ) => {
+  const handleConnect = async (idReceiver: number, skillSender: number) => {
     if (userProfile) {
       try {
         await createFriendRequest({
@@ -182,9 +177,7 @@ export const UserProfile: React.FC = () => {
       <div className="border border-[#1E2126] rounded-sm p-4 mb-2">
         <h2 className="text-xl font-semibold">Acerca de...</h2>
         <p className="mt-2">
-          {userProfile.bio
-            ? userProfile.bio
-            : "NULL : Estudiante de ingeniería de sistemas y computación, actualmente en el décimo semestre, con un sólido interés y formación en desarrollo de software y bases de datos"}
+          {userProfile.bio ? userProfile.bio : " Sin información disponible."}
         </p>
       </div>
 
@@ -264,7 +257,7 @@ export const UserProfile: React.FC = () => {
               </div>
             ))
           ) : (
-            <li>No hay Lenguajes disponibles</li>
+            <li className="list-none p-0 m-0 ml-1">No hay Lenguajes disponibles</li>
           )}
         </div>
       </div>
@@ -304,10 +297,7 @@ export const UserProfile: React.FC = () => {
                       ) : (
                         <button
                           onClick={() =>
-                            handleConnect(
-                              userProfile.id!,
-                              skill?.id!
-                            )
+                            handleConnect(userProfile.id!, skill?.id!)
                           }
                           className="gradient-background-azulfeo text-[16px] w-[220px] h-[33px] text-white rounded-xl px-2 py-0"
                         >

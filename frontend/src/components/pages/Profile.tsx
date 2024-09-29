@@ -339,7 +339,7 @@ export const Profile = () => {
               </li>
             ))
           ) : (
-            <li>No hay Lenguajes disponibles</li>
+            <li className="list-none p-0 m-0 ml-1">No hay Lenguajes disponibles</li>
           )}
         </ul>
       </div>
