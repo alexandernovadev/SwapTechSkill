@@ -92,7 +92,7 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
     set({ loading: true });
     try {
       const response = await axiosInstance.get(`/users/getById/${user.id}`);
-      const profile = response.data;
+      const profile = response.data.user;
 
       // Asigna valores por defecto a los arreglos que puedan ser undefined
       set({

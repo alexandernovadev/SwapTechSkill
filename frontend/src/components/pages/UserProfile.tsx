@@ -14,6 +14,15 @@ import { useAuthStore } from "../../state/authStore";
 import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
+import { FriendsRequestUser } from "../../interfaces/dtos/FriendsRequestUser";
+
+// Enum for Friend Request Status
+enum FriendRequestStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  REJECTED = "rejected",
+  COMPLETED = "completed",
+}
 
 // Define interfaces for user data
 
@@ -27,33 +36,41 @@ export const UserProfile: React.FC = () => {
   const { user } = useAuthStore();
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [activeSkill, setActiveSkill] = useState<UserSkill>();
+  const [friendRequest, setFriendRequest] = useState<FriendsRequestUser[]>();
 
   // Fetch user profile data with async/await and error handling
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        if (id) {
-          const response = await axiosInstance.get(`/users/getById/${id}`);
-          setUserProfile(response.data);
-          setError(null); // Reset any previous errors
-        }
-      } catch (err) {
-        setError("Error fetching user data.");
-        console.error("Error fetching user data:", err);
-      } finally {
-        setLoading(false); // Set loading to false whether the request succeeds or fails
-      }
-    };
+  const fetchUserProfile = async () => {
+    try {
+      if (id) {
+        const response = await axiosInstance.get(`/users/getById/${id}`);
+        setUserProfile(response.data.user);
+        setFriendRequest(response.data.friendsRequest);
+        console.log("User Profile Data:", response.data);
 
+        setError(null); // Reset any previous errors
+      }
+    } catch (err) {
+      setError("Error fetching user data.");
+      console.error("Error fetching user data:", err);
+    } finally {
+      setLoading(false); // Set loading to false whether the request succeeds or fails
+    }
+  };
+
+  useEffect(() => {
     fetchUserProfile();
   }, [id]);
 
-  const handleConnect = async (idReceiver: number, skill: string, skillSender: number) => {
+  const handleConnect = async (
+    idReceiver: number,
+    skill: string,
+    skillSender: number
+  ) => {
     if (userProfile) {
       try {
         await createFriendRequest({
-          skillSender:{
-            id:skillSender
+          skillSender: {
+            id: skillSender,
           },
           sender: {
             id: user?.id!,
@@ -61,13 +78,56 @@ export const UserProfile: React.FC = () => {
           receiver: {
             id: idReceiver,
           },
-          status: "pending",
+          status: FriendRequestStatus.PENDING, // Update status to "pending"
           message: " - ",
         });
+        // Reload user profile data after connection
+        fetchUserProfile();
       } catch (error) {
         console.error("Error creating friend request:", error);
       }
     }
+  };
+
+  // Function to get the request status message
+  const getRequestStatusMessage = (status: string) => {
+    switch (status) {
+      case FriendRequestStatus.PENDING:
+        return "Solicitud enviada";
+      case FriendRequestStatus.ACCEPTED:
+        return "Solicitud aceptada";
+      case FriendRequestStatus.REJECTED:
+        return "Solicitud rechazada";
+      case FriendRequestStatus.COMPLETED:
+        return "Solicitud completada";
+      default:
+        return "Conectar";
+    }
+  };
+
+  // Function to get the background color based on the status
+  const getStatusBackgroundColor = (status: string) => {
+    switch (status) {
+      case FriendRequestStatus.PENDING:
+        return "bg-yellow-400 text-black";
+      case FriendRequestStatus.ACCEPTED:
+        return "bg-green-500 text-white";
+      case FriendRequestStatus.REJECTED:
+        return "bg-red-500 text-white";
+      case FriendRequestStatus.COMPLETED:
+        return "bg-blue-500 text-white";
+      default:
+        return "bg-gray-200 text-black"; // Default for "Conectar"
+    }
+  };
+
+  // Check if there's any pending, accepted, rejected, or completed request for this user
+  const getFriendRequestStatus = (skillId: number) => {
+    const request = friendRequest?.find(
+      (req) =>
+        req.skillSender?.id === skillId && req.receiver?.id === userProfile?.id
+    );
+    return request?.status;
   };
 
   if (loading) {
@@ -229,36 +289,56 @@ export const UserProfile: React.FC = () => {
 
         <ul className="space-y-4 ">
           {userProfile.userSkills && userProfile.userSkills.length > 0 ? (
-            userProfile.userSkills.map(({skill}, index) => (
-              <li
-                key={index}
-                className="bg-white border border-black p-1 rounded-lg"
-              >
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-semibold text-gray-800 pl-3">
-                    {skill?.skillName}
-                  </h3>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() =>
-                        handleConnect(userProfile.id!, skill?.skillName!, skill?.id!)
-                      }
-                      className="gradient-background-azulfeo text-[16px] w-[220px] h-[33px] text-white rounded-xl px-2 py-0"
-                    >
-                      Conectar 
-                    </button>
-                    <button
-                      onClick={() => {
-                        setIsOpenModalInfo(true);
-                        setActiveSkill(skill as UserSkill);
-                      }}
-                    >
-                      <img src={Infomenu} alt="info" className="w-10 h-10" />
-                    </button>
+            userProfile.userSkills.map(({ skill }, index) => {
+              // @ts-ignore
+              const requestStatus = getFriendRequestStatus(skill.id);
+              return (
+                <li
+                  key={index}
+                  className="bg-white border border-black p-1 rounded-lg"
+                >
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-lg font-semibold text-gray-800 pl-3">
+                      {skill?.skillName}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      {/* Show appropriate button based on the friend request status */}
+                      {requestStatus ? (
+                        <div
+                          className={`text-[16px] w-[220px] h-auto text-center rounded-xl px-2 py-1 ${getStatusBackgroundColor(
+                            requestStatus
+                          )}`}
+                        >
+                          {getRequestStatusMessage(requestStatus)}
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handleConnect(
+                              userProfile.id!,
+                              skill?.skillName!,
+                              skill?.id!
+                            )
+                          }
+                          className="gradient-background-azulfeo text-[16px] w-[220px] h-[33px] text-white rounded-xl px-2 py-0"
+                        >
+                          Conectar
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => {
+                          setIsOpenModalInfo(true);
+                          setActiveSkill(skill as UserSkill);
+                        }}
+                      >
+                        <img src={Infomenu} alt="info" className="w-10 h-10" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))
+                </li>
+              );
+            })
           ) : (
             <li>No hay habilidades disponibles</li>
           )}
