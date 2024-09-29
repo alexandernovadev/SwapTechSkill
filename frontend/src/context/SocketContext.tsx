@@ -23,7 +23,7 @@ export const SocketProvider = ({ children }: SocketProviderProps) => {
   const { socket, online, conectarSocket, desconectarSocket } = useSocket();
 
   const [auth, setAuth] = useState({
-    logged: false,
+    logged: true,
   });
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import { UserRole } from '../../domain/entity/UserRole';
 const userRepository = new UserRepository();
 const roleRepository = new RoleRepository();
 const userRoleRepository = new UserRoleRepository();
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET || 'defaultSecretKey';
 
 export class AuthController {
   // Ruta para obtener el usuario autenticado por JWT

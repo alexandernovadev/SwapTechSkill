@@ -1,3 +1,4 @@
+import { jwt } from 'jsonwebtoken';
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -30,6 +31,7 @@ class Server {
   private port: string | number;
   private server: http.Server;
   public io: SocketIOServer;
+  private sockets: SocketsService;
 
   constructor() {
     // Inicializar aplicación Express
@@ -47,6 +49,7 @@ class Server {
         credentials: true,
       },
     });
+    this.sockets = new SocketsService(this.io);
 
     // Conectar a base de datos
     this.connectToDatabase();
@@ -59,9 +62,6 @@ class Server {
 
     // Configurar manejo de errores global
     this.handleErrors();
-
-    // Inicializar Sockets
-    this.configureSockets();
   }
 
   private middlewares() {
@@ -69,7 +69,7 @@ class Server {
     this.app.use(helmet());
 
     // Morgan para registrar peticiones HTTP
-    this.app.use(morgan('combined', { stream }));
+    // this.app.use(morgan('combined', { stream }));
 
     // Habilitar CORS** follow images
     this.app.use(cors());
@@ -81,13 +81,17 @@ class Server {
     // Inicializar Passport para autenticación
     this.app.use(passport.initialize());
 
-    // Servir la carpeta 'uploads' de manera estática 
+    // Servir la carpeta 'uploads' de manera estática
 
-    this.app.use('/uploads', cors({
-      origin: process.env.URLFRONTEND || 'http://localhost:5173',
-      methods: ['GET'],
-      credentials: true
-    }), express.static(path.join(__dirname, './uploads')));
+    this.app.use(
+      '/uploads',
+      cors({
+        origin: process.env.URLFRONTEND || 'http://localhost:5173',
+        methods: ['GET'],
+        credentials: true,
+      }),
+      express.static(path.join(__dirname, './uploads')),
+    );
   }
 
   private routes() {
@@ -116,11 +120,6 @@ class Server {
   private handleErrors() {
     // Manejo global de errores
     this.app.use(errorHandler);
-  }
-
-  private configureSockets() {
-    // Inicializar servicios de Sockets
-    new SocketsService(this.io);
   }
 
   private connectToDatabase() {
