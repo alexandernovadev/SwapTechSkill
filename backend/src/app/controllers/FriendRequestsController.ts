@@ -14,8 +14,6 @@ export class FriendRequestController {
       );
 
       const reciverIdRoom = String(friendRequest.receiver.id);
-      console.log("las sala a enviar es ", reciverIdRoom);
-      
 
       // Emitir evento de nueva solicitud de amistad al receptor
       io.to(reciverIdRoom).emit('newFriendRequest', {

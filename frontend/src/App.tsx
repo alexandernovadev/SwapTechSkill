@@ -18,7 +18,6 @@ function App() {
     // Unirse a la sala del usuario por su ID
     if (isAuthenticated && user?.id) {
       socket?.emit("joinRoom", user?.id.toString()); // Unirse a la sala con el user.id
-      console.log("Me uni a la sala =>", user?.id);
     }
 
     // Limpiar la sala al salir

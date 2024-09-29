@@ -130,7 +130,7 @@ class Server {
   public start() {
     // Iniciar el servidor
     this.server.listen(this.port, () => {
-      console.log(`Server is running on port ${this.port}`);
+      console.info(`Server is running on port ${this.port}`);
     });
   }
 }

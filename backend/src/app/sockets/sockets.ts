@@ -21,7 +21,7 @@ export class SocketsService {
       if (!isValid) {
         return socket.disconnect();
       }
-      console.log(
+      console.info(
         `(${user.id}) ${user.first_name} ${user.last_name}  [conectado]`,
       );
 
@@ -31,7 +31,7 @@ export class SocketsService {
       
       // Desconexión
       socket.on('disconnect', () => {
-        console.log(`(${user.id}) Cliente desconectado`);
+        console.info(`(${user.id})| ${user.first_name} se ha |desconectado|`);
       });
     });
   }

@@ -64,7 +64,7 @@ export class SkillController {
       }
       return res.status(200).json(skill);
     } catch (error) {
-      console.log('error', JSON.stringify(error));
+      console.error('error', JSON.stringify(error));
 
       return res
         .status(500)

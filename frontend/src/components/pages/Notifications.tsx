@@ -23,8 +23,6 @@ export const Notifications = () => {
     fetchFriendRequestsByReceiverId(user?.id!);
   }, []);
 
-  console.log(friendRequests);
-
   // Listen newFriendRequest
   useEffect(() => {
     socket?.on("newFriendRequest", () => {

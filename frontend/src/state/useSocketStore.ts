@@ -31,12 +31,12 @@ const useSocketStore = create<SocketState>((set, get) => ({
 
     socket.on("connect", () => {
       set({ online: true, socket });
-      console.log("Socket connected");
+      console.info("Socket connected");
     });
 
     socket.on("disconnect", () => {
       set({ online: false });
-      console.log("Socket disconnected");
+      console.info("Socket disconnected");
     });
   },
 
@@ -46,7 +46,7 @@ const useSocketStore = create<SocketState>((set, get) => ({
     if (socket) {
       socket.disconnect();
       set({ online: false, socket: null });
-      console.log("Socket disconnected manually");
+      console.info("Socket disconnected manually");
     }
   },
 }));
