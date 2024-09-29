@@ -15,6 +15,7 @@ import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
 import { FriendsRequestUser } from "../../interfaces/dtos/FriendsRequestUser";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
+import useSocketStore from "../../state/useSocketStore";
 
 export const UserProfile: React.FC = () => {
   const { id } = useParams(); // Extract id from URL
@@ -26,6 +27,7 @@ export const UserProfile: React.FC = () => {
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [activeSkill, setActiveSkill] = useState<UserSkill>();
   const [friendRequest, setFriendRequest] = useState<FriendsRequestUser[]>();
+  const { socket } = useSocketStore();
 
   // Fetch user profile data with async/await and error handling
   const fetchUserProfile = async () => {
@@ -47,6 +49,16 @@ export const UserProfile: React.FC = () => {
   useEffect(() => {
     fetchUserProfile();
   }, [id]);
+
+  // Listen newFriendRequest
+  useEffect(() => {
+    socket?.on("newFriendRequest", () => {
+      fetchUserProfile();
+    });
+    return () => {
+      socket?.off("newFriendRequest");
+    };
+  }, [socket]);
 
   const handleConnect = async (idReceiver: number, skillSender: number) => {
     if (userProfile) {
@@ -255,7 +267,9 @@ export const UserProfile: React.FC = () => {
               </div>
             ))
           ) : (
-            <li className="list-none p-0 m-0 ml-1">No hay Lenguajes disponibles</li>
+            <li className="list-none p-0 m-0 ml-1">
+              No hay Lenguajes disponibles
+            </li>
           )}
         </div>
       </div>
