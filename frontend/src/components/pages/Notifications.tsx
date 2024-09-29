@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { io } from "socket.io-client"; // Importa socket.io-client
+import { useEffect } from "react";
 import LogoNotification from "../../assets/icons/NotificationBlack.svg";
 import msgBlack from "../../assets/icons/msgBlack.svg";
 import infoCircle from "../../assets/icons/infoCircle.svg";
@@ -7,20 +6,17 @@ import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { useAuthStore } from "../../state/authStore";
 import { Link } from "react-router-dom";
-import { URLBACKEND } from "../../config/variables";
-import { SocketContext } from "../../context/SocketContext";
-
-const socket = io(URLBACKEND); // Conexión al servidor de sockets
+import useSocketStore from "../../state/useSocketStore";
 
 enum FriendRequestStatus {
   PENDING = "pending",
   ACCEPTED = "accepted",
   REJECTED = "rejected",
+  COMPLETED = "completed",
 }
 
 export const Notifications = () => {
   const { showNotification } = useUIConfigStore();
-  const { socket } = useContext(SocketContext);
 
   const {
     fetchFriendRequestsByReceiverId,
@@ -29,44 +25,24 @@ export const Notifications = () => {
   } = useFriendRequestStore();
 
   const { user } = useAuthStore();
+  const { socket } = useSocketStore();
 
-  const handleClick = () => {
-    showNotification(
-      "Notificación",
-      "Se rechaza exitosamente la solicitud de conexión."
-    );
-  };
 
   useEffect(() => {
     fetchFriendRequestsByReceiverId(user?.id!);
-    // Unirse a la sala del usuario por su ID
-    if (user?.id) {
-      socket?.emit("joinRoom", user.id.toString()); // Unirse a la sala con el user.id
-      console.log("ME UNI A LA SALA ", user.id);
-    }
-
-    // Limpiar la sala al salir
-    return () => {
-      if (user?.id) {
-        socket?.emit("leaveRoom", user.id); // Abandonar la sala al desmontar el componente
-      }
-    };
-  }, [user?.id]);
-
+  }, []);
+  
   // Listen newFriendRequest
   useEffect(() => {
     socket?.on("newFriendRequest", (data) => {
       console.log("ENTEE Y REVIOCE ");
       showNotification("Nueva solicitud de amistad", data.message);
-      // Puedes actualizar el estado de solicitudes de amistad aquí si lo necesitas
       fetchFriendRequestsByReceiverId(user?.id!);
     });
-    // Limpia el listener cuando el componente se desmonta
     return () => {
       socket?.off("newFriendRequest");
     };
   }, [socket]);
-
 
   const confirmNotification = async (friendRequest: any) => {
     const rta = {
@@ -99,12 +75,14 @@ export const Notifications = () => {
 
   const returnStatus = (status: string) => {
     switch (status) {
-      case "pending":
+      case FriendRequestStatus.PENDING:
         return "Solicitud pendiente";
-      case "accepted":
+      case FriendRequestStatus.ACCEPTED:
         return "Solicitud aceptada";
-      case "rejected":
+      case FriendRequestStatus.REJECTED:
         return "Solicitud rechazada";
+      case FriendRequestStatus.COMPLETED:
+        return "Solicitud Completada";
       default:
         return "Solicitud pendiente";
     }
@@ -184,15 +162,6 @@ export const Notifications = () => {
             </div>
           </section>
         ))}
-
-      {/* Test del socket 
-      <div className="bg-gray-100 p-4 rounded-md border border-black mt-4">
-        <h2 className="text-xl font-semibold">Test de Socket.IO</h2>
-        <p>
-          Mensaje recibido del servidor:{" "}
-          {socketMessage || "Esperando mensaje..."}
-        </p>
-      </div>*/}
     </div>
   );
 };

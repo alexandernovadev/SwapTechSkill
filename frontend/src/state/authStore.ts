@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { User, UserResponse } from "../interfaces/User";
+import useSocketStore from "./useSocketStore"; // Import the socket store
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -16,8 +17,16 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       user: null,
       token: null,
-      login: (user, token) => set({ isAuthenticated: true, user, token }),
-      logout: () => set({ isAuthenticated: false, user: null, token: null }),
+      login: (user, token) => {
+        const { conectarSocket } = useSocketStore.getState();
+        conectarSocket();
+        set({ isAuthenticated: true, user, token });
+      },
+      logout: () => {
+        const { desconectarSocket } = useSocketStore.getState();
+        desconectarSocket();
+        set({ isAuthenticated: false, user: null, token: null });
+      },
     }),
     {
       name: "auth-storage",

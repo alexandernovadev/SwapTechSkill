@@ -140,7 +140,7 @@ export const Search = () => {
             key={user.id}
             className="border border-black rounded-lg p-2 text-center"
           >
-            <div className="w-32 h-32 rounded-full mx-auto mt-8">
+            <div className="w-auto h-auto rounded-full mx-auto mt-8">
               <img
                 src={`https://api.dicebear.com/9.x/initials/svg?seed=${user.firstName}-${user.lastName}`}
                 alt={`${user.firstName} ${user.lastName}`}
