@@ -9,7 +9,6 @@ export class FriendRequestRepository {
     return await this.friendRequestRepository.save(friendRequest);
   }
 
- 
   // Método para obtener todas las solicitudes de amistad por receiverId
   async findByReceiverId(
     receiverId: number,
@@ -25,11 +24,28 @@ export class FriendRequestRepository {
         skip: page ? skip : undefined,
         take: page ? take : undefined,
         order: { id: 'ASC' }, // Ordenar por ID ascendente
-        relations: ['sender', 'receiver'], // Incluir relaciones si es necesario
+        relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
       });
 
     return { data: friendRequests, total };
   }
+
+  // Método para obtener todas las solicitudes de amistad por senderId sin paginación
+  async findBySenderId(senderId: number): Promise<FriendRequest[]> {
+    return await this.friendRequestRepository.find({
+      where: { sender: { id: senderId } },
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+    });
+  }
+
+   // Método para obtener todas las solicitudes de amistad por senderId sin paginación
+   async findByRecieverdSinPag(receiverId: number): Promise<FriendRequest[]> {
+    return await this.friendRequestRepository.find({
+      where: { receiver: { id: receiverId } },
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+    });
+  }
+
 
   // Método para obtener todas las solicitudes de amistad con paginación
   async findAll(

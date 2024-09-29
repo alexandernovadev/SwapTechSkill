@@ -86,6 +86,8 @@ export class UserRepository {
 
   // Método para buscar un usuario por ID con todos los datos add rating, languages and skills
   async findByIdAllData(id: number): Promise<User | undefined> {
+    console.log('id', id);
+    
     return await this.userRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.userRoles', 'userRole') // Unir roles

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { UserRepository } from '../../domain/repositories/UserRepository';
+import { FriendRequestRepository } from '../../domain/repositories/FriendRequestRepository';
 
 const userRepository = new UserRepository();
+const friendRequestRepository = new FriendRequestRepository();
 
 export class UserController {
   // Método para crear un usuario
@@ -143,10 +145,11 @@ export class UserController {
     const { id } = req.params;
     try {
       const user = await userRepository.findByIdAllData(Number(id));
+      const friendsRequest = await friendRequestRepository.findByRecieverdSinPag(Number(id));
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
-      return res.status(200).json(user);
+      return res.status(200).json({user, friendsRequest: friendsRequest});
     } catch (error) {
       return res
         .status(500)

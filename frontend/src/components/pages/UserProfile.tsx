@@ -48,10 +48,13 @@ export const UserProfile: React.FC = () => {
     fetchUserProfile();
   }, [id]);
 
-  const handleConnect = async (idReceiver: number, skill: string) => {
+  const handleConnect = async (idReceiver: number, skill: string, skillSender: number) => {
     if (userProfile) {
       try {
         await createFriendRequest({
+          skillSender:{
+            id:skillSender
+          },
           sender: {
             id: user?.id!,
           },
@@ -59,7 +62,7 @@ export const UserProfile: React.FC = () => {
             id: idReceiver,
           },
           status: "pending",
-          message: skill,
+          message: " - ",
         });
       } catch (error) {
         console.error("Error creating friend request:", error);
@@ -238,7 +241,7 @@ export const UserProfile: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() =>
-                        handleConnect(userProfile.id!, skill?.skillName!)
+                        handleConnect(userProfile.id!, skill?.skillName!, skill?.id!)
                       }
                       className="gradient-background-azulfeo text-[16px] w-[220px] h-[33px] text-white rounded-xl px-2 py-0"
                     >
