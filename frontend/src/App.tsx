@@ -5,11 +5,13 @@ import Notificacion from "./components/atoms/Notificacion";
 import { useAuthStore } from "./state/authStore";
 import useSocketStore from "./state/useSocketStore";
 import { useEffect } from "react";
+import { useUIConfigStore } from "./state/uiConfig";
 
 library.add(fas);
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
+  const { showNotification } = useUIConfigStore();
   const { socket } = useSocketStore();
 
   useEffect(() => {
@@ -35,10 +37,19 @@ function App() {
     }
   }, [isAuthenticated]);
 
+  // Listen newFriendRequest
+  useEffect(() => {
+    socket?.on("newFriendRequest", (data) => {
+      showNotification("Nueva solicitud de amistad", data.message);
+    });
+    return () => {
+      socket?.off("newFriendRequest");
+    };
+  }, [socket]);
+
   return (
     <>
       <div className="App">
-        <Notificacion />
         <AppRoutes />
       </div>
     </>

@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useUIConfigStore } from "../../state/uiConfig";
-
+import { useNavigate } from "react-router-dom"; // Importa useNavigate de React Router
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import NotificationSound from "../../assets/audio/alert.wav"; // Importa el archivo de sonido
 
-const Notificacion: React.FC = () => {
+interface NotificacionProps {
+  duration?: number; // Duración en milisegundos (opcional)
+  navigateTo?: string; // Ruta opcional para redirigir
+}
+
+const Notificacion: React.FC<NotificacionProps> = ({
+  duration = 13000,
+  navigateTo,
+}) => {
   const { notification, hideNotification } = useUIConfigStore((state) => ({
     notification: state.notification,
     hideNotification: state.hideNotification,
@@ -13,20 +22,26 @@ const Notificacion: React.FC = () => {
   const { isVisible, title, subtitle, type } = notification;
   const [progressWidth, setProgressWidth] = useState(100); // Estado para controlar la barra de progreso
 
+  const audioRef = useRef<HTMLAudioElement | null>(null); // Crear ref para el audio
+  const navigate = useNavigate(); // Hook para navegación
+
   useEffect(() => {
     if (isVisible) {
       // Resetear la barra de progreso cuando la notificación se muestra
       setProgressWidth(100);
 
-      // Establecer un temporizador para hacer que la notificación desaparezca después de 3 segundos
+      // Establecer un temporizador para hacer que la notificación desaparezca después del tiempo especificado
       const timeout = setTimeout(() => {
-        hideNotification(); // Ocultar notificación después de 3 segundos
-      }, 3000);
+        hideNotification(); // Ocultar notificación después de la duración
+      }, duration);
+
+      // Calcular el intervalo para reducir la barra de progreso
+      const intervalDuration = duration / 100; // Duración dividida entre 100 pasos para la barra
 
       // Barra de progreso se va reduciendo con CSS animado
       const interval = setInterval(() => {
         setProgressWidth((prevWidth) => prevWidth - 1); // Reducir la barra cada intervalo
-      }, 30); // 3000 ms / 100 pasos = 30 ms por paso
+      }, intervalDuration); // Ajustar el intervalo según la duración
 
       // Limpiar el temporizador y el intervalo cuando el componente se desmonta
       return () => {
@@ -34,7 +49,7 @@ const Notificacion: React.FC = () => {
         clearInterval(interval);
       };
     }
-  }, [isVisible, hideNotification]);
+  }, [isVisible, hideNotification, duration]);
 
   if (!isVisible) {
     return null; // No mostrar la notificación si no está visible
@@ -56,6 +71,7 @@ const Notificacion: React.FC = () => {
             />
           </div>
         )}
+
         <div>
           <p className="font-bold text-black">{title}</p>
           <p className="text-sm text-black">{subtitle}</p>
@@ -69,10 +85,21 @@ const Notificacion: React.FC = () => {
         </button>
       </div>
 
+      {/* Botón "Ver" solo si existe navigateTo */}
+      {navigateTo && (
+        <button
+          onClick={() => navigate(navigateTo)}
+          className="mt-2 text-blue-500 underline"
+          aria-label="Ver"
+        >
+          Ver
+        </button>
+      )}
+
       {/* Barra de progreso */}
       <div className="w-full bg-gray-200 h-[0.9px] mt-1">
         <div
-          className="gradient-background-azulfeo  h-[0.8px]"
+          className="gradient-background-azulfeo h-[0.8px]"
           style={{ width: `${progressWidth}%` }} // Controla la barra con el estado
         ></div>
       </div>

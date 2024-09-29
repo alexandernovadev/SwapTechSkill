@@ -17,26 +17,21 @@ enum FriendRequestStatus {
 
 export const Notifications = () => {
   const { showNotification } = useUIConfigStore();
-
+  const { user } = useAuthStore();
+  const { socket } = useSocketStore();
   const {
     fetchFriendRequestsByReceiverId,
     friendRequests,
     updateFriendRequest,
   } = useFriendRequestStore();
 
-  const { user } = useAuthStore();
-  const { socket } = useSocketStore();
-
-
   useEffect(() => {
     fetchFriendRequestsByReceiverId(user?.id!);
   }, []);
-  
+
   // Listen newFriendRequest
   useEffect(() => {
     socket?.on("newFriendRequest", (data) => {
-      console.log("ENTEE Y REVIOCE ");
-      showNotification("Nueva solicitud de amistad", data.message);
       fetchFriendRequestsByReceiverId(user?.id!);
     });
     return () => {
@@ -58,6 +53,7 @@ export const Notifications = () => {
       );
     });
   };
+
   const rejectNotification = async (friendRequest: any) => {
     const rta = {
       status: FriendRequestStatus.REJECTED,

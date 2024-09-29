@@ -20,10 +20,12 @@ import { Search } from "../components/pages/Search";
 import { Messages } from "../components/pages/Messages";
 import { Notifications } from "../components/pages/Notifications";
 import UserProfile from "../components/pages/UserProfile";
+import Notificacion from "../components/atoms/Notificacion";
 
 const AppRoutes: React.FC = () => {
   return (
     <Router>
+      <Notificacion />
       <Routes>
         <Route path="/" element={<Home />} />
 
