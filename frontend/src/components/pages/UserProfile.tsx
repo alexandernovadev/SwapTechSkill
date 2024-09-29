@@ -11,7 +11,6 @@ import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
 import { ModalProfile } from "../organisms/ModalProfile";
 
 import { useAuthStore } from "../../state/authStore";
-import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
 import { FriendsRequestUser } from "../../interfaces/dtos/FriendsRequestUser";
@@ -25,7 +24,6 @@ export const UserProfile: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const { createFriendRequest } = useFriendRequestStore();
-  const { showNotification } = useUIConfigStore();
   const { user } = useAuthStore();
   const [isOpenModalInfo, setIsOpenModalInfo] = useState<boolean>(false);
   const [activeSkill, setActiveSkill] = useState<UserSkill>();
@@ -56,7 +54,6 @@ export const UserProfile: React.FC = () => {
 
   const handleConnect = async (
     idReceiver: number,
-    skill: string,
     skillSender: number
   ) => {
     if (userProfile) {
@@ -309,7 +306,6 @@ export const UserProfile: React.FC = () => {
                           onClick={() =>
                             handleConnect(
                               userProfile.id!,
-                              skill?.skillName!,
                               skill?.id!
                             )
                           }

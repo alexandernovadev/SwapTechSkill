@@ -23,9 +23,11 @@ export const Notifications = () => {
     fetchFriendRequestsByReceiverId(user?.id!);
   }, []);
 
+  console.log(friendRequests);
+
   // Listen newFriendRequest
   useEffect(() => {
-    socket?.on("newFriendRequest", (data) => {
+    socket?.on("newFriendRequest", () => {
       fetchFriendRequestsByReceiverId(user?.id!);
     });
     return () => {
@@ -115,7 +117,7 @@ export const Notifications = () => {
                   <img src={infoCircle} alt="Icon" className="w-9 h-9 mr-2" />
                 </Link>
                 <span className="text-2xl font-light">
-                  {friendRequest.message}
+                  {friendRequest?.skillSender?.skillName}
                 </span>
               </div>
               <div className="flex space-x-2">
