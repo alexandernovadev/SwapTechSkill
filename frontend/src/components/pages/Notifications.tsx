@@ -15,18 +15,22 @@ export const Notifications = () => {
   const { socket } = useSocketStore();
   const {
     fetchFriendRequestsByReceiverId,
+    fetchFriendRequestsBySenderId,
     friendRequests,
+    myfriendRequestsSent,
     updateFriendRequest,
   } = useFriendRequestStore();
 
   useEffect(() => {
     fetchFriendRequestsByReceiverId(user?.id!);
+    fetchFriendRequestsBySenderId(user?.id!);
   }, []);
 
   // Listen newFriendRequest
   useEffect(() => {
     socket?.on("newFriendRequest", () => {
       fetchFriendRequestsByReceiverId(user?.id!);
+      fetchFriendRequestsBySenderId(user?.id!);
     });
     return () => {
       socket?.off("newFriendRequest");
@@ -59,7 +63,7 @@ export const Notifications = () => {
       showNotification(
         "Notificación",
         "Se rechaza exitosamente la solicitud de conexión."
-      );
+      )
     });
   };
 
@@ -92,12 +96,13 @@ export const Notifications = () => {
         <div className="bg-black h-[2px] w-[90%]"></div>
       </section>
 
+      <h1 className="text-2xl my-4 font-medium">Solitudes Recibidas</h1>
       {friendRequests && friendRequests.length === 0 && (
         <section>
           <div className="flex flex-col items-center justify-center">
             <div className="bg-[#D9D9D9] w-full p-4 rounded-md mb-4 border border-black">
               <h2 className="text-xl font-semibold text-center">
-                No tienes notificaciones
+                No tienes notificaciones pendientes
               </h2>
             </div>
           </div>
@@ -145,6 +150,59 @@ export const Notifications = () => {
                   </>
                 ) : (
                   <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">
+                    Solicitud Rechazada
+                  </button>
+                )}
+              </div>
+            </div>
+          </section>
+        ))}
+
+      <h1 className="text-2xl my-4 font-medium">Solitudes Enviadas </h1>
+      {myfriendRequestsSent && myfriendRequestsSent.length === 0 && (
+        <section>
+          <div className="flex flex-col items-center justify-center">
+            <div className="bg-[#D9D9D9] w-full p-4 rounded-md mb-4 border border-black">
+              <h2 className="text-xl font-semibold text-center">
+                No tienes solicitudes enviadas
+              </h2>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {myfriendRequestsSent &&
+        myfriendRequestsSent.length > 0 &&
+        myfriendRequestsSent.map((friendRequest) => (
+          <section key={friendRequest.id}>
+            <h1>{returnStatus(friendRequest.status)}</h1>
+            <div className="flex items-center justify-between bg-[#D9D9D9] w-full px-4 py-2 rounded-md mb-4 border border-black">
+              <div className="flex items-center">
+                <Link to={`/dash/user/${friendRequest.sender.id}`}>
+                  <img src={infoCircle} alt="Icon" className="w-9 h-9 mr-2" />
+                </Link>
+                <span className="text-2xl font-light">
+                  {friendRequest?.skillSender?.skillName}
+                </span>
+              </div>
+              <div className="flex space-x-2">
+                {friendRequest.status === "pending" ? (
+                  <>
+                      <button className="bg-yellow-400 text-black px-9 py-1 rounded-lg">
+                      Solicitud Enviada
+                    </button>
+                  </>
+                ) : friendRequest.status === "accepted" ? (
+                  <>
+                    <button className="bg-green-500 text-white px-6 py-1 rounded-lg">
+                      Solicitud Aceptada
+                    </button>
+                    <button>
+                      <img src={msgBlack} className="w-9 h-9" alt="msg" />
+                    </button>
+                  </>
+                ) : (
+                  <button className="bg-red-500 text-white px-6 py-1 rounded-lg">
                     Solicitud Rechazada
                   </button>
                 )}

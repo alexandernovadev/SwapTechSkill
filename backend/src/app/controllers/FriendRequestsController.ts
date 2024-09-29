@@ -2,11 +2,12 @@ import { Request, Response } from 'express';
 import { FriendRequestRepository } from '../../domain/repositories/FriendRequestRepository';
 import { FriendRequest } from '../../domain/entity/FriendRequest';
 import { io } from '../../main';
+import { personalizedMessage } from '../../shared/utils/mshSolicitud';
 
 const friendRequestRepository = new FriendRequestRepository();
 
 export class FriendRequestController {
-  // Crear una nueva solicitud de amistad
+  // Crear una nueva solicitud de conexión
   static async create(req: Request, res: Response): Promise<Response> {
     try {
       const friendRequest = await friendRequestRepository.save(
@@ -15,20 +16,20 @@ export class FriendRequestController {
 
       const reciverIdRoom = String(friendRequest.receiver.id);
 
-      // Emitir evento de nueva solicitud de amistad al receptor
+      // Emitir evento de nueva solicitud de conexión al receptor
       io.to(reciverIdRoom).emit('newFriendRequest', {
-        message: 'Tienes una nueva solicitud de amistad',
+        message: 'Tienes una nueva solicitud de conexión',
       });
 
       return res.status(201).json(friendRequest);
     } catch (error) {
       return res
         .status(500)
-        .json({ message: 'Error creando la solicitud de amistad', error });
+        .json({ message: 'Error creando la solicitud de conexión', error });
     }
   }
 
-  // Obtener todas las solicitudes de amistad por receiverId con paginación
+  // Obtener todas las solicitudes de conexión por receiverId con paginación
   static async getByReceiverId(req: Request, res: Response): Promise<Response> {
     try {
       const receiverId = parseInt(req.params.receiverId);
@@ -53,7 +54,33 @@ export class FriendRequestController {
     }
   }
 
-  // Listar todas las solicitudes de amistad con paginación
+  // Obtener todas las solicitudes de conexión por senderId con paginación
+  static async getBySenderId(req: Request, res: Response): Promise<Response> {
+    try {
+      const senderId = parseInt(req.params.senderId);
+      const page = parseInt(req.query.page as string) || undefined;
+      const perPage = parseInt(req.query.perPage as string) || undefined;
+
+      if (isNaN(senderId)) {
+        return res.status(400).json({ message: 'Invalid senderId' });
+      }
+
+      const { data, total } =
+        await friendRequestRepository.findBySenderIdPaginate(
+          senderId,
+          page,
+          perPage,
+        );
+
+      return res.status(200).json({ data, total });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error retrieving sender friend requests', error });
+    }
+  }
+
+  // Listar todas las solicitudes de conexión con paginación
   static async findAll(req: Request, res: Response): Promise<Response> {
     try {
       const page = parseInt(req.query.page as string) || 1;
@@ -66,11 +93,11 @@ export class FriendRequestController {
     } catch (error) {
       return res
         .status(500)
-        .json({ message: 'Error obteniendo solicitudes de amistad', error });
+        .json({ message: 'Error obteniendo solicitudes de conexión', error });
     }
   }
 
-  // Obtener una solicitud de amistad por ID
+  // Obtener una solicitud de conexión por ID
   static async findById(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseInt(req.params.id);
@@ -78,17 +105,17 @@ export class FriendRequestController {
       if (!friendRequest) {
         return res
           .status(404)
-          .json({ message: 'Solicitud de amistad no encontrada' });
+          .json({ message: 'Solicitud de conexión no encontrada' });
       }
       return res.status(200).json(friendRequest);
     } catch (error) {
       return res
         .status(500)
-        .json({ message: 'Error obteniendo la solicitud de amistad', error });
+        .json({ message: 'Error obteniendo la solicitud de conexión', error });
     }
   }
 
-  // Actualizar una solicitud de amistad por ID
+  // Actualizar una solicitud de conexión por ID
   static async update(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseInt(req.params.id);
@@ -96,20 +123,33 @@ export class FriendRequestController {
         id,
         req.body as Partial<FriendRequest>,
       );
+      const reciverIdRoom = String(updatedFriendRequest.sender.id);
+
+      const personliazedMessage = personalizedMessage(
+        updatedFriendRequest.status,
+      );
+
+      console.log(personliazedMessage);
+
+      // Emitir evento de nueva solicitud de conexión al receptor
+      io.to(reciverIdRoom).emit('newFriendRequest', {
+        message: String(personliazedMessage),
+      });
+
       if (!updatedFriendRequest) {
         return res
           .status(404)
-          .json({ message: 'Solicitud de amistad no encontrada' });
+          .json({ message: 'Solicitud de conexión no encontrada' });
       }
       return res.status(200).json(updatedFriendRequest);
     } catch (error) {
       return res
         .status(500)
-        .json({ message: 'Error actualizando la solicitud de amistad', error });
+        .json({ message: 'Error actualizando la solicitud de conexión', error });
     }
   }
 
-  // Eliminar una solicitud de amistad por ID
+  // Eliminar una solicitud de conexión por ID
   static async delete(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseInt(req.params.id);
@@ -118,18 +158,18 @@ export class FriendRequestController {
     } catch (error) {
       return res
         .status(500)
-        .json({ message: 'Error eliminando la solicitud de amistad', error });
+        .json({ message: 'Error eliminando la solicitud de conexión', error });
     }
   }
 
-  // Listar todas las solicitudes de amistad sin paginación (opcional)
+  // Listar todas las solicitudes de conexión sin paginación (opcional)
   static async findAllList(req: Request, res: Response): Promise<Response> {
     try {
       const { data } = await friendRequestRepository.findAll();
       return res.status(200).json(data);
     } catch (error) {
       return res.status(500).json({
-        message: 'Error obteniendo la lista de solicitudes de amistad',
+        message: 'Error obteniendo la lista de solicitudes de conexión',
         error,
       });
     }

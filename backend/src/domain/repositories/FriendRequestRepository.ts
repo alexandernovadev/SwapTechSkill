@@ -9,7 +9,7 @@ export class FriendRequestRepository {
     return await this.friendRequestRepository.save(friendRequest);
   }
 
-  // Método para obtener todas las solicitudes de amistad por receiverId
+  // Método para obtener todas las solicitudes de conexión por receiverId
   async findByReceiverId(
     receiverId: number,
     page?: number,
@@ -30,7 +30,29 @@ export class FriendRequestRepository {
     return { data: friendRequests, total };
   }
 
-  // Método para obtener todas las solicitudes de amistad por senderId sin paginación
+    // Método para obtener todas las solicitudes de conexión por receiverId
+    async findBySenderIdPaginate(
+      senderId: number,
+      page?: number,
+      perPage?: number,
+    ): Promise<{ data: FriendRequest[]; total: number }> {
+      const take = perPage || 0;
+      const skip = page ? (page - 1) * take : 0;
+  
+      const [friendRequests, total] =
+        await this.friendRequestRepository.findAndCount({
+          where: { sender: { id: senderId } },
+          skip: page ? skip : undefined,
+          take: page ? take : undefined,
+          order: { id: 'ASC' }, // Ordenar por ID ascendente
+          relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+        });
+  
+      return { data: friendRequests, total };
+    }
+
+
+  // Método para obtener todas las solicitudes de conexión por senderId sin paginación
   async findBySenderId(senderId: number): Promise<FriendRequest[]> {
     return await this.friendRequestRepository.find({
       where: { sender: { id: senderId } },
@@ -38,7 +60,7 @@ export class FriendRequestRepository {
     });
   }
 
-   // Método para obtener todas las solicitudes de amistad por senderId sin paginación
+   // Método para obtener todas las solicitudes de conexión por senderId sin paginación
    async findByRecieverdSinPag(receiverId: number): Promise<FriendRequest[]> {
     return await this.friendRequestRepository.find({
       where: { receiver: { id: receiverId } },
@@ -47,7 +69,7 @@ export class FriendRequestRepository {
   }
 
 
-  // Método para obtener todas las solicitudes de amistad con paginación
+  // Método para obtener todas las solicitudes de conexión con paginación
   async findAll(
     page?: number,
     perPage?: number,
@@ -78,7 +100,10 @@ export class FriendRequestRepository {
     updatedFriendRequest: Partial<FriendRequest>,
   ): Promise<FriendRequest | undefined> {
     await this.friendRequestRepository.update(id, updatedFriendRequest);
-    return this.findById(id);
+    return await this.friendRequestRepository.findOne({
+      where: { id },
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+    });
   }
 
   // Método para eliminar un friendRequest

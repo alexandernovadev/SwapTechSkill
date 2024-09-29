@@ -39,7 +39,7 @@ function App() {
   // Listen newFriendRequest
   useEffect(() => {
     socket?.on("newFriendRequest", (data) => {
-      showNotification("Nueva solicitud de amistad", data.message);
+      showNotification("Notificación", data.message);
     });
     return () => {
       socket?.off("newFriendRequest");

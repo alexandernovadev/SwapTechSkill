@@ -84,7 +84,7 @@ CREATE TABLE UserSkills (
     UNIQUE (user_id, skill_id)  -- Evita duplicados
 );
 
--- Tabla de Solicitudes de Amistad
+-- Tabla de Solicitudes de conexión
 CREATE TABLE FriendRequests (
     request_id SERIAL PRIMARY KEY,
     sender_id INT REFERENCES Users(user_id) ON DELETE CASCADE,
@@ -95,7 +95,7 @@ CREATE TABLE FriendRequests (
     response_at TIMESTAMP -- Momento en que se responde a la solicitud
 );
 
--- Constraint para asegurar una única solicitud de amistad pendiente entre usuarios
+-- Constraint para asegurar una única solicitud de conexión pendiente entre usuarios
 ALTER TABLE FriendRequests ADD CONSTRAINT unique_friend_request UNIQUE (sender_id, receiver_id, status);
 
 -- Tabla de Chats

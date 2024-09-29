@@ -10,6 +10,7 @@ interface FriendRequestData {
 }
 interface FriendRequestState {
   friendRequests: FriendRequest[];
+  myfriendRequestsSent: FriendRequest[];
   loading: boolean;
   error: string | null;
   fetchFriendRequests: (page?: number, perPage?: number) => Promise<void>;
@@ -17,7 +18,13 @@ interface FriendRequestState {
     receiverId: number,
     page?: number,
     perPage?: number
-  ) => Promise<void>; // Nuevo método
+  ) => Promise<void>;
+  fetchFriendRequestsBySenderId: (
+    receiverId: number,
+    page?: number,
+    perPage?: number
+  ) => Promise<void>;
+
   createFriendRequest: (request: Partial<FriendRequest>) => Promise<void>;
   updateFriendRequest: (
     id: number,
@@ -29,6 +36,7 @@ interface FriendRequestState {
 
 export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
   friendRequests: [],
+  myfriendRequestsSent: [],
   loading: false,
   error: null,
 
@@ -68,7 +76,7 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
         loading: false,
       });
 
-      // showNotification("Notificación", "Solicitudes de amistad cargadas.");
+      // showNotification("Notificación", "Solicitudes de conexión cargadas.");
     } catch (error) {
       set({
         error: "Error fetching friend requests by receiverId",
@@ -76,12 +84,45 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
       });
       showNotification(
         "Error",
-        "Error al cargar las solicitudes de amistad.",
+        "Error al cargar las solicitudes recibidas",
         "error"
       );
     }
   },
 
+
+  fetchFriendRequestsBySenderId: async (
+    senderId: number,
+    page = 1,
+    perPage = 10
+  ) => {
+    set({ loading: true });
+    const { showNotification } = useUIConfigStore.getState();
+    try {
+      const response = await axiosInstance.get(
+        `/friendrequest/sender/${senderId}`,
+        {
+          params: { page, perPage },
+        }
+      );
+      set({
+        myfriendRequestsSent: response.data.data,
+        loading: false,
+      });
+
+      // showNotification("Notificación", "Solicitudes de conexión cargadas.");
+    } catch (error) {
+      set({
+        error: "Error fetching friend requests by Sender ID",
+        loading: false,
+      });
+      showNotification(
+        "Error",
+        "Error al cargar las mis solicitudes de conexión.",
+        "error"
+      );
+    }
+  },
   // Create a new friend request
   createFriendRequest: async (request: Partial<FriendRequest>) => {
     set({ loading: true });
