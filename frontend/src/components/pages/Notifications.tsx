@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client"; // Importa socket.io-client
 import LogoNotification from "../../assets/icons/NotificationBlack.svg";
 import msgBlack from "../../assets/icons/msgBlack.svg";
@@ -8,6 +8,7 @@ import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { useAuthStore } from "../../state/authStore";
 import { Link } from "react-router-dom";
 import { URLBACKEND } from "../../config/variables";
+import { SocketContext } from "../../context/SocketContext";
 
 const socket = io(URLBACKEND); // Conexión al servidor de sockets
 
@@ -18,13 +19,15 @@ enum FriendRequestStatus {
 }
 
 export const Notifications = () => {
-  const [socketMessage, setSocketMessage] = useState<string | null>(null);
   const { showNotification } = useUIConfigStore();
+  const { socket } = useContext(SocketContext);
+
   const {
     fetchFriendRequestsByReceiverId,
     friendRequests,
     updateFriendRequest,
   } = useFriendRequestStore();
+
   const { user } = useAuthStore();
 
   const handleClick = () => {
@@ -36,32 +39,34 @@ export const Notifications = () => {
 
   useEffect(() => {
     fetchFriendRequestsByReceiverId(user?.id!);
-  }, []);
+    // Unirse a la sala del usuario por su ID
+    if (user?.id) {
+      socket?.emit("joinRoom", user.id.toString()); // Unirse a la sala con el user.id
+      console.log("ME UNI A LA SALA ", user.id);
+    }
 
-  useEffect(() => {
-    // Evento cuando el socket se conecta
-    socket.on("connect", () => {
-      console.log("Conectado al servidor de sockets");
-    });
-
-    // Escuchar evento 'mensaje-from-server'
-    socket.on("mensaje-from-server", (data: string) => {
-      console.log("Mensaje del servidor:", data);
-      setSocketMessage(data);
-    });
-
-    // Cleanup
+    // Limpiar la sala al salir
     return () => {
-      socket.off("connect");
-      socket.off("mensaje-from-server");
+      if (user?.id) {
+        socket?.emit("leaveRoom", user.id); // Abandonar la sala al desmontar el componente
+      }
     };
-  }, []);
+  }, [user?.id]);
 
-  // // Función para enviar un mensaje al servidor
-  // const sendMessage = () => {
-  //   const message = "Hola desde el frontend";
-  //   socket.emit("mensaje-to-server", message);
-  // };
+  // Listen newFriendRequest
+  useEffect(() => {
+    socket?.on("newFriendRequest", (data) => {
+      console.log("ENTEE Y REVIOCE ");
+      showNotification("Nueva solicitud de amistad", data.message);
+      // Puedes actualizar el estado de solicitudes de amistad aquí si lo necesitas
+      fetchFriendRequestsByReceiverId(user?.id!);
+    });
+    // Limpia el listener cuando el componente se desmonta
+    return () => {
+      socket?.off("newFriendRequest");
+    };
+  }, [socket]);
+
 
   const confirmNotification = async (friendRequest: any) => {
     const rta = {

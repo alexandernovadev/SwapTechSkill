@@ -12,12 +12,15 @@ export class FriendRequestController {
       const friendRequest = await friendRequestRepository.save(
         req.body as FriendRequest,
       );
+
+      const reciverIdRoom = String(friendRequest.receiver.id);
+      console.log("las sala a enviar es ", reciverIdRoom);
+      
+
       // Emitir evento de nueva solicitud de amistad al receptor
-      io.emit(
-        'new-friend-request',
-        friendRequest.receiver.toString(),
-        friendRequest,
-      );
+      io.to(reciverIdRoom).emit('newFriendRequest', {
+        message: 'Tienes una nueva solicitud de amistad',
+      });
 
       return res.status(201).json(friendRequest);
     } catch (error) {
@@ -133,6 +136,4 @@ export class FriendRequestController {
       });
     }
   }
-
-  
 }

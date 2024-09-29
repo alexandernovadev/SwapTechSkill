@@ -11,12 +11,14 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import Logo from "../../assets/LogoPng.png";
 import { useUIConfigStore } from "../../state/uiConfig";
 import { ModalCloseSession } from "../organisms/ModalCloseSession";
+import { useAuthStore } from "../../state/authStore";
 
 export const Dashboard = () => {
   const { isDisabledFooter } = useUIConfigStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [isModalCloseSession, setIsModalCloseSession] = useState(false);
+  const { user } = useAuthStore();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -83,6 +85,9 @@ export const Dashboard = () => {
                 Admin
               </Link>
             </li> */}
+            <li className=" border-b border-white text-center">
+              {user?.id} | {user?.first_name} {user?.last_name}
+            </li>
             <li className=" border-b border-white">
               <NavLink to={"/dash/home"} className={linkClasses}>
                 <img src={homeIcon} alt="Inicio" className="mr-2 w-6 h-6" />

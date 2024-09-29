@@ -25,6 +25,10 @@ export class SocketsService {
         `(${user.id}) ${user.first_name} ${user.last_name}  [conectado]`,
       );
 
+      // Unir al usuario a una sala de socket.io
+      socket.join(user.id.toString());
+
+      
       // Desconexión
       socket.on('disconnect', () => {
         console.log(`(${user.id}) Cliente desconectado`);
