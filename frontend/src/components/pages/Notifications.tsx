@@ -7,13 +7,7 @@ import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { useAuthStore } from "../../state/authStore";
 import { Link } from "react-router-dom";
 import useSocketStore from "../../state/useSocketStore";
-
-enum FriendRequestStatus {
-  PENDING = "pending",
-  ACCEPTED = "accepted",
-  REJECTED = "rejected",
-  COMPLETED = "completed",
-}
+import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 
 export const Notifications = () => {
   const { showNotification } = useUIConfigStore();

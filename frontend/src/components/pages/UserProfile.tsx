@@ -15,16 +15,9 @@ import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
 import { FriendsRequestUser } from "../../interfaces/dtos/FriendsRequestUser";
+import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 
-// Enum for Friend Request Status
-enum FriendRequestStatus {
-  PENDING = "pending",
-  ACCEPTED = "accepted",
-  REJECTED = "rejected",
-  COMPLETED = "completed",
-}
 
-// Define interfaces for user data
 
 export const UserProfile: React.FC = () => {
   const { id } = useParams(); // Extract id from URL
