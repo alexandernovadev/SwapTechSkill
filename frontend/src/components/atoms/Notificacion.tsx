@@ -11,7 +11,7 @@ interface NotificacionProps {
 }
 
 const Notificacion: React.FC<NotificacionProps> = ({
-  duration = 13000,
+  duration = 3000,
   navigateTo,
 }) => {
   const { notification, hideNotification } = useUIConfigStore((state) => ({
@@ -27,6 +27,13 @@ const Notificacion: React.FC<NotificacionProps> = ({
 
   useEffect(() => {
     if (isVisible) {
+      // Reproducir sonido
+      if (audioRef.current) {
+        audioRef.current.play().catch((error) => {
+          console.error("Error al reproducir el sonido:", error);
+        });
+      }
+
       // Resetear la barra de progreso cuando la notificación se muestra
       setProgressWidth(100);
 
@@ -103,6 +110,9 @@ const Notificacion: React.FC<NotificacionProps> = ({
           style={{ width: `${progressWidth}%` }} // Controla la barra con el estado
         ></div>
       </div>
+
+      {/* Elemento de audio */}
+      <audio ref={audioRef} src={NotificationSound} />
     </div>
   );
 };
