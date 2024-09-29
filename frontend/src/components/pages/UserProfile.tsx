@@ -226,23 +226,23 @@ export const UserProfile: React.FC = () => {
 
         <ul className="space-y-4 ">
           {userProfile.userSkills && userProfile.userSkills.length > 0 ? (
-            userProfile.userSkills.map((skill, index) => (
+            userProfile.userSkills.map(({skill}, index) => (
               <li
                 key={index}
                 className="bg-white border border-black p-1 rounded-lg"
               >
                 <div className="flex justify-between items-start">
                   <h3 className="text-lg font-semibold text-gray-800 pl-3">
-                    {skill.skill?.skillName}
+                    {skill?.skillName}
                   </h3>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() =>
-                        handleConnect(userProfile.id!, skill.skill?.skillName!)
+                        handleConnect(userProfile.id!, skill?.skillName!)
                       }
                       className="gradient-background-azulfeo text-[16px] w-[220px] h-[33px] text-white rounded-xl px-2 py-0"
                     >
-                      Conectar
+                      Conectar 
                     </button>
                     <button
                       onClick={() => {

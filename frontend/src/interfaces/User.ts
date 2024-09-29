@@ -2,6 +2,8 @@ export interface User {
   id?: number;
   first_name?: string;
   last_name?: string;
+  firstName?: string;
+  lastName?: string;
   location?: string;
   labelProfile?: string;
   email?: string;
