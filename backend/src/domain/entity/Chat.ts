@@ -8,6 +8,9 @@ export class Chat {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ name: "namechat", type: "text" })
+    namechat: string;
+
     @Column({ name: "created_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     createdAt: Date;
 

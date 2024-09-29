@@ -3,6 +3,7 @@ import axios from "axios";
 import axiosInstance from "../../services/api";
 import { Link } from "react-router-dom";
 import lupa from "../../assets/lupa.svg";
+import { useAuthStore } from "../../state/authStore";
 
 // Define interfaces for the user and profile data
 interface User {
@@ -51,6 +52,7 @@ export const Search = () => {
   const [searchTerm, setSearchTerm] = useState<string>(""); // Valor por defecto "a"
   const [users, setUsers] = useState<User[]>([]);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const { user } = useAuthStore();
 
   const handleSearch = async () => {
     try {
@@ -60,7 +62,13 @@ export const Search = () => {
           params: { keyword: searchTerm },
         }
       );
-      setUsers(response.data);
+
+      // No deberia mostra el usuario logueado
+      const usersFiltered = response.data.filter(
+        (u: User) => u.id !== user?.id
+      );
+      setUsers(usersFiltered);
+      
     } catch (error) {
       console.error("Error searching for users", error);
     }
