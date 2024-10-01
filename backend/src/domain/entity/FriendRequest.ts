@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { User } from './User';
 import { Skill } from './Skill';
+import { Chat } from './Chat';
 
 @Entity({ name: 'FriendRequests' })
 export class FriendRequest {
@@ -28,6 +29,9 @@ export class FriendRequest {
 
   @Column({ name: 'message', type: 'text', nullable: true })
   message: string;
+
+  @ManyToOne(() => Chat, { nullable: true })
+  chat: Chat;
 
   @Column({
     name: 'created_at',

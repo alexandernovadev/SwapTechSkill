@@ -1,10 +1,16 @@
+import { ChatParticipant } from './../../domain/entity/ChatParticipant';
 import { Request, Response } from 'express';
 import { FriendRequestRepository } from '../../domain/repositories/FriendRequestRepository';
 import { FriendRequest } from '../../domain/entity/FriendRequest';
 import { io } from '../../main';
 import { personalizedMessage } from '../../shared/utils/mshSolicitud';
+import { ChatRepository } from '../../domain/repositories/ChatRepository';
+import { Chat } from '../../domain/entity/Chat';
+import { ChatParticipantRepository } from '../../domain/repositories/ChatParticipantRepository';
 
 const friendRequestRepository = new FriendRequestRepository();
+const chatRepository = new ChatRepository();
+const chatParticipantRepository = new ChatParticipantRepository();
 
 export class FriendRequestController {
   // Crear una nueva solicitud de conexión
@@ -116,6 +122,7 @@ export class FriendRequestController {
   }
 
   // Actualizar una solicitud de conexión por ID
+  // Actualizar una solicitud de conexión por ID
   static async update(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseInt(req.params.id);
@@ -123,29 +130,51 @@ export class FriendRequestController {
         id,
         req.body as Partial<FriendRequest>,
       );
-      const reciverIdRoom = String(updatedFriendRequest.sender.id);
-
-      const personliazedMessage = personalizedMessage(
-        updatedFriendRequest.status,
-      );
-
-      console.log(personliazedMessage);
-
-      // Emitir evento de nueva solicitud de conexión al receptor
-      io.to(reciverIdRoom).emit('newFriendRequest', {
-        message: String(personliazedMessage),
-      });
 
       if (!updatedFriendRequest) {
         return res
           .status(404)
           .json({ message: 'Solicitud de conexión no encontrada' });
       }
+
+      // Verificar si el estado es "accepted"
+      if (updatedFriendRequest.status === 'accepted') {
+        // 1. Crear un nuevo chat
+        const chat = new Chat();
+        chat.name = `Chat between ${updatedFriendRequest.sender.id} and ${updatedFriendRequest.receiver.id}`;
+        const createdChat = await chatRepository.save(chat);
+
+        // 2. Crear participantes del chat
+        const senderParticipant = new ChatParticipant();
+        senderParticipant.chat = createdChat;
+        senderParticipant.user = updatedFriendRequest.sender;
+        await chatParticipantRepository.save(senderParticipant);
+
+        const receiverParticipant = new ChatParticipant();
+        receiverParticipant.chat = createdChat;
+        receiverParticipant.user = updatedFriendRequest.receiver;
+        await chatParticipantRepository.save(receiverParticipant);
+
+        // 3. Asociar el chat a la solicitud de conexión
+        updatedFriendRequest.chat = createdChat;
+        await friendRequestRepository.save(updatedFriendRequest); // Guardar cambios en la solicitud de amistad
+      }
+      // Emitir evento de nueva solicitud de conexión al receptor
+      const reciverIdRoom = String(updatedFriendRequest.sender.id);
+      const personalizedMessageString = personalizedMessage(
+        updatedFriendRequest.status,
+      );
+
+      io.to(reciverIdRoom).emit('newFriendRequest', {
+        message: String(personalizedMessageString),
+      });
+
       return res.status(200).json(updatedFriendRequest);
     } catch (error) {
-      return res
-        .status(500)
-        .json({ message: 'Error actualizando la solicitud de conexión', error });
+      return res.status(500).json({
+        message: 'Error actualizando la solicitud de conexión',
+        error,
+      });
     }
   }
 

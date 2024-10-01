@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitialMigration1725668784952 implements MigrationInterface {
-    name = 'InitialMigration1725668784952'
+export class InitialMigration1727814701706 implements MigrationInterface {
+    name = 'InitialMigration1727814701706'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "Roles" ("id" SERIAL NOT NULL, "role_name" character varying(50) NOT NULL, CONSTRAINT "UQ_df6dd2268273551ea42f4ee1d2b" UNIQUE ("role_name"), CONSTRAINT "PK_efba48c6a0c7a9b6260f771b165" PRIMARY KEY ("id"))`);
@@ -10,17 +10,19 @@ export class InitialMigration1725668784952 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "UserLanguages" ("id" SERIAL NOT NULL, "proficiency_level" character varying(50), "years_of_experience" integer, "userId" integer, "languageId" integer, CONSTRAINT "PK_caf82b17654815c4151b6ae1e6f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "SkillCategories" ("id" SERIAL NOT NULL, "category_name" character varying(100) NOT NULL, CONSTRAINT "UQ_7b3b08d25e73ac0ea063e401fbd" UNIQUE ("category_name"), CONSTRAINT "PK_45c54a379a91333ea713e9a844b" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "Skills" ("id" SERIAL NOT NULL, "skill_name" character varying(100) NOT NULL, "categoryId" integer, CONSTRAINT "UQ_1b36775b0eb4032b773d8bf5999" UNIQUE ("skill_name"), CONSTRAINT "PK_2f371d611f4a29288e11c9b628e" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "UserSkills" ("id" SERIAL NOT NULL, "proficiency_level" character varying(50), "years_of_experience" integer, "userId" integer, "skillId" integer, CONSTRAINT "PK_421946b3d2c7af6b2bb8a0efad4" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "FriendRequests" ("id" SERIAL NOT NULL, "status" character varying(50) NOT NULL, "message" text, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "response_at" TIMESTAMP, "senderId" integer, "receiverId" integer, CONSTRAINT "PK_7ad025745497d23f8e8f67c5115" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "UserSkills" ("id" SERIAL NOT NULL, "description" text, "years_of_experience" integer, "userId" integer, "skillId" integer, CONSTRAINT "PK_421946b3d2c7af6b2bb8a0efad4" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "FriendRequests" ("id" SERIAL NOT NULL, "status" character varying(50) NOT NULL, "message" text, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "response_at" TIMESTAMP, "senderId" integer, "receiverId" integer, "skillSenderId" integer, "skillReceiverId" integer, "chatId" integer, CONSTRAINT "PK_7ad025745497d23f8e8f67c5115" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "Meetings" ("id" SERIAL NOT NULL, "title" character varying(100) NOT NULL, "description" text, "start_time" TIMESTAMP NOT NULL, "end_time" TIMESTAMP NOT NULL, "zoom_link" character varying(255), "status" character varying(50) NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "reminder_time" TIMESTAMP, "organizerId" integer, CONSTRAINT "PK_b6bef0e8c793f404cfb5af9493d" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "MeetingParticipants" ("id" SERIAL NOT NULL, "email_sent" boolean NOT NULL DEFAULT false, "meetingId" integer, "participantId" integer, CONSTRAINT "PK_944d8f211d4b08d49d53e38bd53" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "Notifications" ("id" SERIAL NOT NULL, "message" text NOT NULL, "type" character varying(50) NOT NULL, "read" boolean NOT NULL DEFAULT false, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "userId" integer, CONSTRAINT "PK_c77268afe7d3c5568da66c5bebe" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "UserRatings" ("id" SERIAL NOT NULL, "rating" integer NOT NULL, "comment" text, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "raterId" integer, "rateeId" integer, CONSTRAINT "PK_2c6b857342213f4b295b76d8f4c" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "UserProfessionalStudies" ("study_id" SERIAL NOT NULL, "degree" character varying(100) NOT NULL, "institution" character varying(100), "start_date" date, "end_date" date, "description" text, "userId" integer, CONSTRAINT "PK_42530e2666e9d8e7cfab4314ed0" PRIMARY KEY ("study_id"))`);
-        await queryRunner.query(`CREATE TABLE "Users" ("id" SERIAL NOT NULL, "first_name" character varying(50) NOT NULL, "last_name" character varying(50) NOT NULL, "email" character varying(100) NOT NULL, "password_hash" character varying(255) NOT NULL, "profile_picture_url" character varying(255), "bio" text, "auth_provider" character varying(50), "auth_provider_id" character varying(255), CONSTRAINT "UQ_3c3ab3f49a87e6ddb607f3c4945" UNIQUE ("email"), CONSTRAINT "PK_16d4f7d636df336db11d87413e3" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "ChatParticipants" ("chatId" integer NOT NULL, "user_id" integer NOT NULL, "userId" integer, CONSTRAINT "PK_d887441a93fe6b3020419560314" PRIMARY KEY ("chatId", "user_id"))`);
-        await queryRunner.query(`CREATE TABLE "Messages" ("id" SERIAL NOT NULL, "message" text NOT NULL, "sent_at" TIMESTAMP NOT NULL DEFAULT now(), "chatId" integer, "senderId" integer, CONSTRAINT "PK_ecc722506c4b974388431745e8b" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "Chats" ("id" SERIAL NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_64c36c2b8d86a0d5de4cf64de8d" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "UserProfessionalStudies" ("study_id" SERIAL NOT NULL, "degree" character varying(100) NOT NULL, "institution" character varying(100), "start_date" date, "end_date" date, "description" text, "level_study" text, "state" text, "userId" integer, CONSTRAINT "PK_42530e2666e9d8e7cfab4314ed0" PRIMARY KEY ("study_id"))`);
+        await queryRunner.query(`CREATE TABLE "Users" ("id" SERIAL NOT NULL, "first_name" character varying(50) NOT NULL, "last_name" character varying(50) NOT NULL, "location" text, "label_profile" text, "email" character varying(100) NOT NULL, "password_hash" character varying(255) NOT NULL, "profile_picture_url" text, "bio" text, "auth_provider" character varying(50), "auth_provider_id" character varying(255), CONSTRAINT "UQ_3c3ab3f49a87e6ddb607f3c4945" UNIQUE ("email"), CONSTRAINT "PK_16d4f7d636df336db11d87413e3" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "ChatParticipants" ("id" SERIAL NOT NULL, "joined_at" TIMESTAMP NOT NULL DEFAULT now(), "chatId" integer, "userId" integer, CONSTRAINT "UQ_4cc4354726408a6b54ed4a08052" UNIQUE ("chatId", "userId"), CONSTRAINT "PK_46c1dcdd0605b07dab5bde61986" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "Messages" ("id" SERIAL NOT NULL, "content" text NOT NULL, "sent_at" TIMESTAMP NOT NULL DEFAULT now(), "chatId" integer, "senderId" integer, CONSTRAINT "PK_ecc722506c4b974388431745e8b" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "IDX_919cc5bc35e27c3c61643fd835" ON "Messages" ("chatId") `);
+        await queryRunner.query(`CREATE TYPE "public"."Chats_status_enum" AS ENUM('active', 'inactive', 'archived')`);
+        await queryRunner.query(`CREATE TABLE "Chats" ("id" SERIAL NOT NULL, "name" character varying(255) NOT NULL, "status" "public"."Chats_status_enum" NOT NULL DEFAULT 'active', "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_64c36c2b8d86a0d5de4cf64de8d" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "UserRoles" ADD CONSTRAINT "FK_a6b832f61ba4bd959c838a1953b" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "UserRoles" ADD CONSTRAINT "FK_5f1d6fdea1024424fd60b193b9f" FOREIGN KEY ("roleId") REFERENCES "Roles"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "UserLanguages" ADD CONSTRAINT "FK_ce72485aad4bcc57a16edfc4492" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
@@ -30,6 +32,9 @@ export class InitialMigration1725668784952 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "UserSkills" ADD CONSTRAINT "FK_4e8c7cdb541adc4d156def02564" FOREIGN KEY ("skillId") REFERENCES "Skills"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "FriendRequests" ADD CONSTRAINT "FK_82dd9c680bdcf15a0c1062c69cf" FOREIGN KEY ("senderId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "FriendRequests" ADD CONSTRAINT "FK_5b2f1fe0ddd7c85a61527d84ade" FOREIGN KEY ("receiverId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "FriendRequests" ADD CONSTRAINT "FK_9afa4c123ea6faaf3badbe12c6a" FOREIGN KEY ("skillSenderId") REFERENCES "Skills"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "FriendRequests" ADD CONSTRAINT "FK_fa0ad92e9df269d644101bbd1d6" FOREIGN KEY ("skillReceiverId") REFERENCES "Skills"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "FriendRequests" ADD CONSTRAINT "FK_6e0f7d42c8a91ebb5f6340b5a34" FOREIGN KEY ("chatId") REFERENCES "Chats"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "Meetings" ADD CONSTRAINT "FK_fcd8c4628cecbdbb88dc8775307" FOREIGN KEY ("organizerId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "MeetingParticipants" ADD CONSTRAINT "FK_1ab9bdc23175562f556ca7150cb" FOREIGN KEY ("meetingId") REFERENCES "Meetings"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "MeetingParticipants" ADD CONSTRAINT "FK_de54cb8412def135a02a2e6ba90" FOREIGN KEY ("participantId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
@@ -55,6 +60,9 @@ export class InitialMigration1725668784952 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "MeetingParticipants" DROP CONSTRAINT "FK_de54cb8412def135a02a2e6ba90"`);
         await queryRunner.query(`ALTER TABLE "MeetingParticipants" DROP CONSTRAINT "FK_1ab9bdc23175562f556ca7150cb"`);
         await queryRunner.query(`ALTER TABLE "Meetings" DROP CONSTRAINT "FK_fcd8c4628cecbdbb88dc8775307"`);
+        await queryRunner.query(`ALTER TABLE "FriendRequests" DROP CONSTRAINT "FK_6e0f7d42c8a91ebb5f6340b5a34"`);
+        await queryRunner.query(`ALTER TABLE "FriendRequests" DROP CONSTRAINT "FK_fa0ad92e9df269d644101bbd1d6"`);
+        await queryRunner.query(`ALTER TABLE "FriendRequests" DROP CONSTRAINT "FK_9afa4c123ea6faaf3badbe12c6a"`);
         await queryRunner.query(`ALTER TABLE "FriendRequests" DROP CONSTRAINT "FK_5b2f1fe0ddd7c85a61527d84ade"`);
         await queryRunner.query(`ALTER TABLE "FriendRequests" DROP CONSTRAINT "FK_82dd9c680bdcf15a0c1062c69cf"`);
         await queryRunner.query(`ALTER TABLE "UserSkills" DROP CONSTRAINT "FK_4e8c7cdb541adc4d156def02564"`);
@@ -65,6 +73,8 @@ export class InitialMigration1725668784952 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "UserRoles" DROP CONSTRAINT "FK_5f1d6fdea1024424fd60b193b9f"`);
         await queryRunner.query(`ALTER TABLE "UserRoles" DROP CONSTRAINT "FK_a6b832f61ba4bd959c838a1953b"`);
         await queryRunner.query(`DROP TABLE "Chats"`);
+        await queryRunner.query(`DROP TYPE "public"."Chats_status_enum"`);
+        await queryRunner.query(`DROP INDEX "public"."IDX_919cc5bc35e27c3c61643fd835"`);
         await queryRunner.query(`DROP TABLE "Messages"`);
         await queryRunner.query(`DROP TABLE "ChatParticipants"`);
         await queryRunner.query(`DROP TABLE "Users"`);

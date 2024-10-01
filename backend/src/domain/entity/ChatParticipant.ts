@@ -1,18 +1,27 @@
-import { Entity, PrimaryColumn, ManyToOne } from "typeorm";
-import { Chat } from "./Chat";
-import { User } from "./User";
+import {
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  Unique,
+} from 'typeorm';
+import { Chat } from './Chat';
+import { User } from './User';
 
-@Entity({ name: "ChatParticipants" })
+@Entity({ name: 'ChatParticipants' })
+@Unique(['chat', 'user'])
 export class ChatParticipant {
-    @PrimaryColumn()
-    chatId: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryColumn({ name: "user_id" })
-    userId: number;
+  @ManyToOne(() => Chat, (chat) => chat.participants, { onDelete: 'CASCADE' })
+  chat: Chat;
 
-    @ManyToOne(() => Chat, (chat) => chat.participants, { onDelete: "CASCADE" })
-    chat: Chat;
+  @ManyToOne(() => User, (user) => user.chatParticipants, {
+    onDelete: 'CASCADE',
+  })
+  user: User;
 
-    @ManyToOne(() => User, (user) => user.chatParticipants, { onDelete: "CASCADE" })
-    user: User;
+  @CreateDateColumn({ name: 'joined_at' })
+  joinedAt: Date;
 }

@@ -1,25 +1,44 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { ChatParticipant } from "./ChatParticipant";
-import { Message } from "./Message";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { ChatParticipant } from './ChatParticipant';
+import { Message } from './Message';
 
+export enum ChatStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  ARCHIVED = 'archived',
+}
 
-@Entity({ name: "Chats" })
+@Entity({ name: 'Chats' })
 export class Chat {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ name: "namechat", type: "text" })
-    namechat: string;
+  @Column({ name: 'name', type: 'varchar', length: 255 })
+  name: string;
 
-    @Column({ name: "created_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    createdAt: Date;
+  @Column({
+    type: 'enum',
+    enum: ChatStatus,
+    default: ChatStatus.ACTIVE,
+  })
+  status: ChatStatus;
 
-    @Column({ name: "updated_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    updatedAt: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-    @OneToMany(() => ChatParticipant, (participant) => participant.chat)
-    participants: ChatParticipant[];
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
-    @OneToMany(() => Message, (message) => message.chat)
-    messages: Message[];
+  @OneToMany(() => ChatParticipant, (participant) => participant.chat)
+  participants: ChatParticipant[];
+
+  @OneToMany(() => Message, (message) => message.chat)
+  messages: Message[];
 }

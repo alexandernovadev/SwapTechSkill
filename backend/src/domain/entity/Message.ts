@@ -1,21 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Chat } from "./Chat";
-import { User } from "./User";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  Index,
+} from 'typeorm';
+import { Chat } from './Chat';
+import { User } from './User';
 
-@Entity({ name: "Messages" })
+@Entity({ name: 'Messages' })
 export class Message {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @ManyToOne(() => Chat, (chat) => chat.messages, { onDelete: "CASCADE" })
-    chat: Chat;
+  @ManyToOne(() => Chat, (chat) => chat.messages, { onDelete: 'CASCADE' })
+  @Index()
+  chat: Chat;
 
-    @ManyToOne(() => User, (user) => user.chatParticipants, { onDelete: "CASCADE" })
-    sender: User;
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  sender: User;
 
-    @Column({ name: "message", type: "text" })
-    message: string;
+  @Column({ type: 'text' })
+  content: string;
 
-    @Column({ name: "sent_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-    sentAt: Date;
+  @CreateDateColumn({ name: 'sent_at' })
+  sentAt: Date;
 }
