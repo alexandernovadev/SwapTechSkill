@@ -4,10 +4,7 @@ import SendIcon from "../../assets/icons/send.svg";
 import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
 
 export default function Chat() {
-
-
-
-  
+ 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4 animate__animated animate__fadeIn animate__faster overflow-hidden">
       {/* Encabezado */}
@@ -81,7 +78,7 @@ export default function Chat() {
         <button className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg">
           Volver
         </button>
-      </div> 
+      </div>
     </div>
   );
 }

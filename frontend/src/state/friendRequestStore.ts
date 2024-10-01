@@ -72,8 +72,6 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
           params: { page, perPage },
         }
       );
-
-      console.log("*** response", response);
       set({
         friendRequests: response.data.data,
         loading: false,
