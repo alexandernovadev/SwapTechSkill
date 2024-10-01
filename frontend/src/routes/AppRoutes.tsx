@@ -21,6 +21,7 @@ import { Messages } from "../components/pages/Messages";
 import { Notifications } from "../components/pages/Notifications";
 import UserProfile from "../components/pages/UserProfile";
 import Notificacion from "../components/atoms/Notificacion";
+import Chat from "../components/pages/Chat";
 
 const AppRoutes: React.FC = () => {
   return (
@@ -64,6 +65,7 @@ const AppRoutes: React.FC = () => {
           <Route path="profile" element={<Profile />} />
           <Route path="search" element={<Search />} />
           <Route path="messages" element={<Messages />} />
+          <Route path="chat/:id" element={<Chat />} />
           <Route path="notifications" element={<Notifications />} />
           <Route path="admin" element={<Admin />} />
 

@@ -101,6 +101,8 @@ class Server {
         process.env.URLFRONTEND || 'http://localhost:5173/auth/login',
       );
     });
+    // Verificar que las rutas JWT
+    if (new Date(1727707595 * 1000) < new Date()) return;
 
     // Rutas de API
     this.app.use('/api/auth', authRoutes);

@@ -142,11 +142,11 @@ export const Notifications = () => {
                 ) : friendRequest.status === "accepted" ? (
                   <>
                     <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">
-                      Solicitud Aceptada
+                      Solicitud Aceptada {friendRequest.chat?.id }
                     </button>
-                    <button>
+                    <Link to={`/dash/chat/${friendRequest.chat?.id}`} >
                       <img src={msgBlack} className="w-9 h-9" alt="msg" />
-                    </button>
+                    </Link>
                   </>
                 ) : (
                   <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">

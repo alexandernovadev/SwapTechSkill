@@ -24,50 +24,60 @@ export class FriendRequestRepository {
         skip: page ? skip : undefined,
         take: page ? take : undefined,
         order: { id: 'ASC' }, // Ordenar por ID ascendente
-        relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+        relations: [
+          'sender',
+          'receiver',
+          'skillSender',
+          'skillReceiver',
+          'chat',
+        ],
       });
 
     return { data: friendRequests, total };
   }
 
-    // Método para obtener todas las solicitudes de conexión por receiverId
-    async findBySenderIdPaginate(
-      senderId: number,
-      page?: number,
-      perPage?: number,
-    ): Promise<{ data: FriendRequest[]; total: number }> {
-      const take = perPage || 0;
-      const skip = page ? (page - 1) * take : 0;
-  
-      const [friendRequests, total] =
-        await this.friendRequestRepository.findAndCount({
-          where: { sender: { id: senderId } },
-          skip: page ? skip : undefined,
-          take: page ? take : undefined,
-          order: { id: 'ASC' }, // Ordenar por ID ascendente
-          relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
-        });
-  
-      return { data: friendRequests, total };
-    }
+  // Método para obtener todas las solicitudes de conexión por receiverId
+  async findBySenderIdPaginate(
+    senderId: number,
+    page?: number,
+    perPage?: number,
+  ): Promise<{ data: FriendRequest[]; total: number }> {
+    const take = perPage || 0;
+    const skip = page ? (page - 1) * take : 0;
 
+    const [friendRequests, total] =
+      await this.friendRequestRepository.findAndCount({
+        where: { sender: { id: senderId } },
+        skip: page ? skip : undefined,
+        take: page ? take : undefined,
+        order: { id: 'ASC' }, // Ordenar por ID ascendente
+        relations: [
+          'sender',
+          'receiver',
+          'skillSender',
+          'skillReceiver',
+          'chat',
+        ],
+      });
+
+    return { data: friendRequests, total };
+  }
 
   // Método para obtener todas las solicitudes de conexión por senderId sin paginación
   async findBySenderId(senderId: number): Promise<FriendRequest[]> {
     return await this.friendRequestRepository.find({
       where: { sender: { id: senderId } },
-      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver', 'chat'],
     });
   }
 
-   // Método para obtener todas las solicitudes de conexión por senderId sin paginación
-   async findByRecieverdSinPag(receiverId: number): Promise<FriendRequest[]> {
+  // Método para obtener todas las solicitudes de conexión por senderId sin paginación
+  async findByRecieverdSinPag(receiverId: number): Promise<FriendRequest[]> {
     return await this.friendRequestRepository.find({
       where: { receiver: { id: receiverId } },
-      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver', 'chat'],
     });
   }
-
 
   // Método para obtener todas las solicitudes de conexión con paginación
   async findAll(
@@ -102,7 +112,7 @@ export class FriendRequestRepository {
     await this.friendRequestRepository.update(id, updatedFriendRequest);
     return await this.friendRequestRepository.findOne({
       where: { id },
-      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver'],
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver', 'chat'],
     });
   }
 
