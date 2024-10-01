@@ -47,6 +47,7 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
       const response = await axiosInstance.get("/friendrequest", {
         params: { page, perPage },
       });
+      
       set({
         friendRequests: response.data.data,
         loading: false,
@@ -71,6 +72,8 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
           params: { page, perPage },
         }
       );
+
+      console.log("*** response", response);
       set({
         friendRequests: response.data.data,
         loading: false,

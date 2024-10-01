@@ -22,6 +22,8 @@ import skillRoutes from './app/routes/SkillRoutes';
 import userProfessionalStudyRoutes from './app/routes/UserProfessionalStudyRoutes';
 import userSkillsRoutes from './app/routes/UserSkillsRoutes';
 import userLanguagesRoutes from './app/routes/UserLanguagesRoutes';
+import chatRoutes from './app/routes/ChatRoutes';
+
 import 'dotenv/config';
 import { authenticateJWT } from './shared/middlewares/auth';
 import path from 'path';
@@ -102,7 +104,7 @@ class Server {
       );
     });
     // Verificar que las rutas JWT
-    if (new Date(1727707595 * 1000) < new Date()) return;
+    if (new Date(1727828423 * 1000) < new Date()) return;
 
     // Rutas de API
     this.app.use('/api/auth', authRoutes);
@@ -114,6 +116,7 @@ class Server {
     this.app.use('/api/userprofesions', userProfessionalStudyRoutes);
     this.app.use('/api/userskills', userSkillsRoutes);
     this.app.use('/api/userlanguages', userLanguagesRoutes);
+    this.app.use('/api/chats', chatRoutes);
 
     // Solo para desarrollo: Rutas de seeding
     this.app.use('/api', seederRoutes);

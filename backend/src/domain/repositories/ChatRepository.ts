@@ -1,5 +1,6 @@
+import { In } from 'typeorm';
 import { AppDataSource } from '../../infrastructure/persistence/typeormSource';
-import { Chat } from '../entity/Chat';
+import { Chat, ChatStatus } from '../entity/Chat';
 
 export class ChatRepository {
   private chatRepository = AppDataSource.getRepository(Chat);
@@ -14,13 +15,26 @@ export class ChatRepository {
     return await this.chatRepository.find();
   }
 
+  // Método para obtener todos los chats activos que coinciden con los ids proporcionados
+  async findActiveChatsByIds(chatIds: number[]): Promise<Chat[]> {
+    return await this.chatRepository.find({
+      where: {
+        id: In(chatIds), 
+        status: ChatStatus.ACTIVE, 
+      },
+    });
+  }
+
   // Método para buscar un chat por ID (Leer)
   async findById(id: number): Promise<Chat | undefined> {
     return await this.chatRepository.findOne({ where: { id } });
   }
 
   // Método para actualizar un chat
-  async update(id: number, updatedChat: Partial<Chat>): Promise<Chat | undefined> {
+  async update(
+    id: number,
+    updatedChat: Partial<Chat>,
+  ): Promise<Chat | undefined> {
     await this.chatRepository.update(id, updatedChat);
     return this.findById(id);
   }
