@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import LogoNotification from "../../assets/icons/NotificationBlack.svg";
+import LogoNotification from "../../assets/icons/notificationBlack.svg";
 import msgBlack from "../../assets/icons/msgBlack.svg";
 import infoCircle from "../../assets/icons/infoCircle.svg";
 import { useUIConfigStore } from "../../state/uiConfig";
@@ -17,7 +17,6 @@ export const Notifications = () => {
 
   const [isModalConfirmConectionOpen, setIsModalConfirmConectionOpen] =
     useState(false);
-  const [isModalRejectedOpen, setIsModalRejectedOpen] = useState(false);
 
   const {
     fetchFriendRequestsByReceiverId,

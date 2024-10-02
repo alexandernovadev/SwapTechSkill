@@ -4,6 +4,15 @@ docker run --name my_postgres -e POSTGRES_USER=test -e POSTGRES_PASSWORD=test -e
 ## conect via terminal
 docker exec -it my_postgres psql -U test -d test
 
+## Run  pm2
+pm2 start npm --name "techskillback" -- start
+
+## List 
+pm2 list
+
+## pm2 delte
+pm2 delete 
+
 ## verificar 1 migration
 npx typeorm-ts-node-commonjs migration:generate ./src/infrastructure/persistence/migration/InitialMigration -d ./src/infrastructure/persistence/typeormSource.ts
 ## Make second migrate user mas
