@@ -10,7 +10,7 @@ import { ModalCloseSession } from "./ModalCloseSession";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../state/authStore";
 
-export const Sidebar = () => {
+export const Sidebar = ({width='320px'}) => {
   const [isModalCloseSession, setIsModalCloseSession] = useState(false);
   const navigate = useNavigate();
 
@@ -31,10 +31,10 @@ export const Sidebar = () => {
 
   return (
     <nav
-      className={`bg-[#5c5e62] text-white w-[320px] h-full z-10 transition-transform duration-300`}
+      className={`bg-[#5c5e62] text-white w-[${width}] h-full z-10 transition-transform duration-300`} // Se oculta en pantallas pequeñas, se muestra en md
     >
       <ModalCloseSession
-        isOpen={isModalCloseSession} 
+        isOpen={isModalCloseSession}
         onClose={() => setIsModalCloseSession(false)}
       />
       <div className="flex text-center justify-center items-center w-full">
@@ -47,12 +47,6 @@ export const Sidebar = () => {
         />
       </div>
       <ul>
-        {/* <li className="mb-4 border-b border-white pl-[30px] py-3">
-      <Link to={"/dash/admin"} className="flex items-center text-lg">
-        <FontAwesomeIcon icon={faUnlockKeyhole} className="mr-2 w-6 h-6"/> {""}
-        Admin
-      </Link>
-    </li> */}
         <li className=" border-b border-white text-center">
           {user?.id} | {user?.first_name} {user?.last_name}
         </li>
