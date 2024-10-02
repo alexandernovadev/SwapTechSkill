@@ -14,13 +14,27 @@ export class MessageRepository {
     return await this.messageRepository.find();
   }
 
+  // get all messages by chatId and userId (sender) and userId (receiver)
+  async findAllMessagesByChatId(chatId: number): Promise<Message[]> {
+    return await this.messageRepository.find({
+      where: {
+        chat: { id: chatId },
+      },
+      relations: ['sender'],
+      order: { sentAt: 'ASC' },
+    });
+  }
+
   // Método para buscar un message por ID (Leer)
   async findById(id: number): Promise<Message | undefined> {
     return await this.messageRepository.findOne({ where: { id } });
   }
 
   // Método para actualizar un message
-  async update(id: number, updatedMessage: Partial<Message>): Promise<Message | undefined> {
+  async update(
+    id: number,
+    updatedMessage: Partial<Message>,
+  ): Promise<Message | undefined> {
     await this.messageRepository.update(id, updatedMessage);
     return this.findById(id);
   }

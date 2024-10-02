@@ -43,4 +43,15 @@ export class ChatController {
       res.status(500).json({ message: error.message });
     }
   };
+
+  // get all messages by chatId and userId (sender) and userId (receiver)
+  static getAllMessages = async (req: Request, res: Response) => {
+    const { chatID } = req.params;
+    try {
+      const messages = await messageRepository.findAllMessagesByChatId(+chatID);
+      res.status(200).json({ messages });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
 }

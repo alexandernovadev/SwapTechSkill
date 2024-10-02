@@ -4,13 +4,23 @@ import SendIcon from "../../assets/icons/send.svg";
 import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
 import { Link, useParams } from "react-router-dom";
 import { useAuthStore } from "../../state/authStore";
+import { useChatStore } from "../../state/useChatStore";
+import { useEffect } from "react";
 
 export default function Chat() {
   // get id from url ith useParams
-  const { id } = useParams<{ id: string }>();
+  const { id: chatID } = useParams<{ id: string }>();
   const { user } = useAuthStore();
+  const { messages, fetchMessagesByChatId } = useChatStore();
 
-  console.log("Mi id es: ", id);
+  // TODO : Validate if chat exists
+  console.log("El chat ID es: ", chatID);
+
+  useEffect(() => {
+    if (chatID) fetchMessagesByChatId(+chatID);
+  }, [chatID]);
+
+  console.log(messages);
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4 animate__animated animate__fadeIn animate__faster overflow-hidden">
@@ -45,19 +55,23 @@ export default function Chat() {
         <div className="flex-grow border border-gray-950 p-4">
           {/* Mensajes */}
           <div className="flex flex-col space-y-4">
-            {/* Mensaje recibido */}
-            <div className="flex">
-              <div className="bg-gray-200 text-black px-4 py-2 rounded-lg max-w-xs">
-                Bien y tu ?
+            {messages.map((message) => (
+              <div
+                className={`flex ${
+                  message.sender.id === user?.id && "justify-end"
+                }`}
+              >
+                <div
+                  className={`${
+                    message.sender.id === user?.id
+                      ? "gradient-background-azulfeo text-white "
+                      : "bg-gray-200 text-black "
+                  }  px-4 py-2 rounded-lg max-w-xs`}
+                >
+                  {message.content}
+                </div>
               </div>
-            </div>
-
-            {/* Mensaje enviado */}
-            <div className="flex justify-end">
-              <div className="gradient-background-azulfeo text-white px-4 py-2 rounded-lg max-w-xs">
-                Hola, como estas?
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
