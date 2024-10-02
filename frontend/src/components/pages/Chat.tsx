@@ -54,7 +54,7 @@ export default function Chat() {
       socket.emit("join-chat", { chatId: chatID, userId: user?.id });
 
       // Escuchar mensajes nuevos enviados a la sala
-      socket.on("new-message", (newMessage: Message) => {
+      socket.on("new-message", () => {
         // Actualizar los mensajes en el frontend cuando se reciba uno nuevo
         fetchMessagesByChatId(+chatID);
       });
@@ -143,6 +143,8 @@ export default function Chat() {
           onSubmit={handleSubmit(onSubmit)} // Manejar el envío del formulario
         >
           <input
+            autoCorrect="off"
+            autoComplete="off"
             type="text"
             placeholder="Escribe un mensaje"
             className="flex-grow p-2 border border-gray-300 rounded-lg outline-none focus:bg-white focus:border-blue-500"

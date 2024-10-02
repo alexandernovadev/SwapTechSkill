@@ -47,7 +47,7 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
       const response = await axiosInstance.get("/friendrequest", {
         params: { page, perPage },
       });
-      
+
       set({
         friendRequests: response.data.data,
         loading: false,
@@ -90,7 +90,6 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
       );
     }
   },
-
 
   fetchFriendRequestsBySenderId: async (
     senderId: number,
@@ -154,22 +153,14 @@ export const useFriendRequestStore = create<FriendRequestState>((set, get) => ({
     set({ loading: true });
     const { showNotification } = useUIConfigStore.getState();
     try {
-      await axiosInstance.put(`/friendrequest/${id}`, requestData);
+      const newConection = await axiosInstance.put(
+        `/friendrequest/${id}`,
+        requestData
+      );
 
-      // just update the status of the request
       set((state) => ({
         friendRequests: state.friendRequests.map((req) =>
-          req.id === id
-            ? {
-                ...req,
-                ...requestData,
-                responseAt: requestData.responseAt
-                  ? new Date(requestData.responseAt)
-                  : req.responseAt,
-                message: requestData.message ?? req.message,
-                status: requestData.status ?? req.status,
-              }
-            : req
+          req.id === id ? newConection.data : req
         ),
         loading: false,
       }));

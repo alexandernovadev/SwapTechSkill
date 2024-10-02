@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
+  confirmNotification?: (friendRequest: any) => void;
 }
 
 interface FormValues {
@@ -13,6 +14,7 @@ interface FormValues {
 export const ModalConfirmConnection = ({
   isOpen,
   onClose,
+  confirmNotification,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -48,7 +50,7 @@ export const ModalConfirmConnection = ({
 
   const closeWithAnimation = () => {
     setIsClosing(true);
-    onClose()
+    onClose();
   };
 
   // Close modal on "Escape" key press
@@ -138,6 +140,7 @@ export const ModalConfirmConnection = ({
                     Cerrar
                   </button>
                   <button
+                    onClick={confirmNotification}
                     type="submit"
                     className="bg-gradient-to-r from-[#2A49FF] to-[#000AFF] text-white px-4 py-2 rounded-lg min-w-[150px]"
                   >
