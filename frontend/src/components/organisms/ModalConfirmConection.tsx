@@ -48,7 +48,7 @@ export const ModalConfirmConnection = ({
 
   const closeWithAnimation = () => {
     setIsClosing(true);
-    setTimeout(() => onClose(), 200);
+    onClose()
   };
 
   // Close modal on "Escape" key press
@@ -77,34 +77,32 @@ export const ModalConfirmConnection = ({
     <>
       {showModal && (
         <div
-          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-10 animate-fast ${
-            isClosing ? "animate__fadeOut" : "animate__fadeIn"
-          }`}
+          className={`absolute inset-0 flex items-center justify-center bg-gray-200 bg-opacity-40 z-10 animate-fast`}
           onClick={handleOverlayClick}
           style={{ position: "absolute", width: "100%", height: "100%" }}
         >
           <div
-            className={`bg-[#BFBFBF] border-2 border-[#2A49FF] p-6 rounded-2xl shadow-lg w-full max-w-md animate__animated animate-fast ${
+            className={`bg-[#BFBFBF] border-2 border-[#2A49FF] py-4 px-6 rounded-2xl shadow-lg w-full max-w-2xl animate__animated animate-fast ${
               isClosing ? "animate__zoomOut" : "animate__zoomIn"
             }`}
           >
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <h2 className="text-center text-xl font-bold mb-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="">
+              <h2 className="text-center text-3xl font-bold mb-4">
                 Confirmación de conexión
               </h2>
-              <p className="text-center mb-4">
+              <p className="mb-4 font-light text-xl">
                 Estás a un paso de aceptar la solicitud de conexión.
               </p>
-              <p className="text-center mb-4">
+              <p className="mb-4 font-light text-xl">
                 Juan cuenta con las siguientes habilidades:
               </p>
-              <p>
+              <p className="mb-4 font-light text-xl">
                 Selecciona una de ellas y haz clic en <b>'Aceptar'</b>. Si
                 prefieres no continuar, simplemente haz clic en <b>'Cerrar'</b>
               </p>
 
               {/* Flexbox container for the white box and buttons */}
-              <div className="flex space-x-4">
+              <div className="flex space-x-6 items-center mt-5">
                 {/* White box containing the skills and checkboxes */}
                 <div className="bg-[#f2f2f2] p-4 rounded-xl shadow-inner flex-1 border border-black max-h-[200px] overflow-auto">
                   <section className="space-y-3">
@@ -117,7 +115,7 @@ export const ModalConfirmConnection = ({
                           type="radio"
                           value={skill}
                           {...register("skill", { required: true })}
-                          className="appearance-none h-6 w-6 border-2 border-black rounded-2xl checked:bg-black transition duration-200"
+                          className="appearance-none h-6 w-6 border-2 border-black rounded-[6px] checked:bg-[#2A49FF] transition duration-200"
                         />
                         <span className="text-black">{skill}</span>
                       </label>
