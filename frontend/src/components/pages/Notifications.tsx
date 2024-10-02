@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LogoNotification from "../../assets/icons/NotificationBlack.svg";
 import msgBlack from "../../assets/icons/msgBlack.svg";
 import infoCircle from "../../assets/icons/infoCircle.svg";
@@ -8,11 +8,17 @@ import { useAuthStore } from "../../state/authStore";
 import { Link } from "react-router-dom";
 import useSocketStore from "../../state/useSocketStore";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
+import { ModalConfirmConnection } from "../organisms/ModalConfirmConection";
 
 export const Notifications = () => {
   const { showNotification } = useUIConfigStore();
   const { user } = useAuthStore();
   const { socket } = useSocketStore();
+
+  const [isModalConfirmConectionOpen, setIsModalConfirmConectionOpen] =
+    useState(false);
+  const [isModalRejectedOpen, setIsModalRejectedOpen] = useState(false);
+
   const {
     fetchFriendRequestsByReceiverId,
     fetchFriendRequestsBySenderId,
@@ -36,6 +42,8 @@ export const Notifications = () => {
       socket?.off("newFriendRequest");
     };
   }, [socket]);
+
+  const handleAccept = (friendRequest: any) => {};
 
   const confirmNotification = async (friendRequest: any) => {
     const rta = {
@@ -63,7 +71,7 @@ export const Notifications = () => {
       showNotification(
         "Notificación",
         "Se rechaza exitosamente la solicitud de conexión."
-      )
+      );
     });
   };
 
@@ -123,12 +131,18 @@ export const Notifications = () => {
                   {friendRequest?.skillSender?.skillName}
                 </span>
               </div>
+
+              <ModalConfirmConnection
+                isOpen={isModalConfirmConectionOpen}
+                onClose={() => setIsModalConfirmConectionOpen(false)}
+              />
+
               <div className="flex space-x-2">
                 {friendRequest.status === "pending" ? (
                   <>
                     <button
                       className="gradient-background-azulfeo text-white px-4 py-2 rounded-md"
-                      onClick={() => confirmNotification(friendRequest)}
+                      onClick={() => setIsModalConfirmConectionOpen(true)}
                     >
                       Aceptar
                     </button>
@@ -144,7 +158,7 @@ export const Notifications = () => {
                     <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">
                       Solicitud Aceptada
                     </button>
-                    <Link to={`/dash/chat/${friendRequest.chat?.id}`} >
+                    <Link to={`/dash/chat/${friendRequest.chat?.id}`}>
                       <img src={msgBlack} className="w-9 h-9" alt="msg" />
                     </Link>
                   </>
@@ -188,7 +202,7 @@ export const Notifications = () => {
               <div className="flex space-x-2">
                 {friendRequest.status === "pending" ? (
                   <>
-                      <button className="bg-yellow-400 text-black px-9 py-1 rounded-lg">
+                    <button className="bg-yellow-400 text-black px-9 py-1 rounded-lg">
                       Solicitud Enviada
                     </button>
                   </>

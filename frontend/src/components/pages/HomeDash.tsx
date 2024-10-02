@@ -25,8 +25,6 @@ export const HomeDash = () => {
         (u: User) => u.id !== user?.id
       );
       setUsers(usersFiltered);
-
-      setUsers(response.data);
     } catch (error) {
       console.error("Error searching for users", error);
     }

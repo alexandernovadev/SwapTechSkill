@@ -104,7 +104,7 @@ class Server {
       );
     });
     // Verificar que las rutas JWT
-    if (new Date(1727828423 * 1000) < new Date()) return;
+    if (new Date(1727889623 * 1000) < new Date()) return;
 
     // Rutas de API
     this.app.use('/api/auth', authRoutes);
