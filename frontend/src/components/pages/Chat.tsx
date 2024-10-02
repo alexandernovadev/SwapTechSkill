@@ -5,7 +5,7 @@ import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
 import { Link, useParams } from "react-router-dom";
 import { useAuthStore } from "../../state/authStore";
 import { Message, useChatStore } from "../../state/useChatStore";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import useSocketStore from "../../state/useSocketStore";
 
@@ -18,6 +18,7 @@ interface FormData {
   message: string;
 }
 
+// TODO : Validate if chat exists and user is part of it
 export default function Chat() {
   // get id from url ith useParams
   const { id: chatID } = useParams<{ id: string }>();
@@ -25,10 +26,20 @@ export default function Chat() {
   const { messages, fetchMessagesByChatId, saveMessage } = useChatStore();
   const { socket } = useSocketStore();
 
-  // TODO : Validate if chat exists
-  // console.log("El chat ID es: ", chatID);
+  // Ref para hacer scroll hasta el final
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Usar useForm para controlar el formulario
+  // Función para hacer scroll hacia abajo
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Desplazar hacia el final cuando los mensajes cambian
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
@@ -121,6 +132,8 @@ export default function Chat() {
                 </div>
               </div>
             ))}
+            {/* Este div es el marcador final de los mensajes */}
+            <div ref={messagesEndRef}></div>
           </div>
         </div>
 

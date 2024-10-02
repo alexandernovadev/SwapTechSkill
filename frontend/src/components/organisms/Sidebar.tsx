@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import homeIcon from "../../assets/icons/home.svg";
 import personIcon from "../../assets/icons/perfil.svg";
 import searchIcon from "../../assets/icons/buscar.svg";

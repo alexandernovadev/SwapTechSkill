@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Footer from "../organisms/Footer";
 import { Outlet } from "react-router-dom";
 import { useUIConfigStore } from "../../state/uiConfig";
-import { useAuthStore } from "../../state/authStore";
 import { Sidebar } from "../organisms/Sidebar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
@@ -34,7 +33,7 @@ const ModalSidebar = ({
 
 export const Dashboard = () => {
   const { isDisabledFooter } = useUIConfigStore();
-  const { user } = useAuthStore();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Controla el modal del Sidebar
 
   useEffect(() => {
