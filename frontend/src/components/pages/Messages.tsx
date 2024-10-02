@@ -49,6 +49,7 @@ export const Messages = () => {
         {chats.length > 0 &&
           chats.map((chat) => (
             <Link
+              key={chat.id}
               to={`/dash/chat/${chat.id}`}
               className="flex flex-col items-start justify-start cursor-pointer"
             >
