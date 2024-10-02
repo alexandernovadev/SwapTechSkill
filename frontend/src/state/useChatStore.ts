@@ -59,7 +59,14 @@ export const useChatStore = create<ChatState>((set) => ({
   saveMessage: async (message: Message) => {
     set({ loading: true, error: null });
     try {
-      await axiosInstance.post("/chats/saveMessage", message);
+      const lastMessage = await axiosInstance.post("/chats/saveMessage", message);
+
+      set((state) => ({
+        messages: [...state.messages, lastMessage.data.message],
+        loading: false
+      }));
+      
+      
       set({ loading: false });
     } catch (error) {
       set({ error: "Error saving message", loading: false });

@@ -6,7 +6,14 @@ export class MessageRepository {
 
   // Método para guardar un message (Crear o Actualizar)
   async save(message: Message): Promise<Message> {
-    return await this.messageRepository.save(message);
+    // Guardar el mensaje
+    const savedMessage = await this.messageRepository.save(message);
+
+    // Volver a buscar el mensaje, incluyendo las relaciones que necesitas (e.g. sender)
+    return await this.messageRepository.findOne({
+      where: { id: savedMessage.id },
+      relations: ['sender'], 
+    });
   }
 
   // Método para obtener todos los messages
