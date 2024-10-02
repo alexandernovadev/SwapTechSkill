@@ -3,15 +3,15 @@ import CalendarIcon from "../../assets/icons/calendar.svg";
 import SendIcon from "../../assets/icons/send.svg";
 import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
 import { Link, useParams } from "react-router-dom";
+import { useAuthStore } from "../../state/authStore";
 
 export default function Chat() {
-
   // get id from url ith useParams
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuthStore();
 
   console.log("Mi id es: ", id);
-  
-  
+
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4 animate__animated animate__fadeIn animate__faster overflow-hidden">
       {/* Encabezado */}

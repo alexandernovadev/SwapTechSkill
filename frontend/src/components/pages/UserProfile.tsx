@@ -34,8 +34,6 @@ export const UserProfile: React.FC = () => {
     try {
       if (id) {
         const response = await axiosInstance.get(`/users/getByIdAndSender/${id}?senderId=${user?.id}`);
-        console.log("User Profile Data:", response.data);
-        
         setUserProfile(response.data.user);
         setFriendRequest(response.data.friendsRequest);
         setError(null); // Reset any previous errors
