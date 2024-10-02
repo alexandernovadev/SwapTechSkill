@@ -9,7 +9,7 @@ interface FormSkillsProps {
   isEditing?: boolean;
 }
 
-const proficiencyLevels = ["Básico", "Intermedio", "Avanzado"];
+// const proficiencyLevels = ["Básico", "Intermedio", "Avanzado"];
 
 export const FormSkills: React.FC<FormSkillsProps> = ({
   onClose,

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import axiosInstance from "../../services/api";
 import { Link } from "react-router-dom";
 import lupa from "../../assets/lupa.svg";
@@ -43,15 +42,10 @@ interface ProfileData extends User {
   }>;
 }
 
-// Define props for the Search component
-interface SearchProps {
-  user: User | null;
-}
-
 export const Search = () => {
   const [searchTerm, setSearchTerm] = useState<string>(""); // Valor por defecto "a"
   const [users, setUsers] = useState<User[]>([]);
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [profileData] = useState<ProfileData | null>(null);
   const { user } = useAuthStore();
 
   const handleSearch = async () => {
@@ -68,7 +62,6 @@ export const Search = () => {
         (u: User) => u.id !== user?.id
       );
       setUsers(usersFiltered);
-      
     } catch (error) {
       console.error("Error searching for users", error);
     }
