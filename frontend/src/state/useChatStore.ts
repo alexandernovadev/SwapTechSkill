@@ -1,4 +1,3 @@
-import { Message } from "./../../../backend/src/domain/entity/Message";
 import { create } from "zustand";
 import axiosInstance from "../services/api";
 
@@ -10,6 +9,14 @@ interface Chat {
   updatedAt: string;
 }
 
+export interface Message {
+  id?: number;
+  chatId: number;
+  userId: number | null;
+  content: string;
+  sender?: { id: number; name: string };
+}
+
 interface ChatState {
   chats: Chat[];
   messages: Message[];
@@ -17,6 +24,7 @@ interface ChatState {
   error: string | null;
   fetchChatsByUserId: (userId: number) => Promise<void>;
   fetchMessagesByChatId: (chatId: number) => Promise<void>;
+  saveMessage: (message: Message) => Promise<void>;
 }
 
 export const useChatStore = create<ChatState>((set) => ({
@@ -46,6 +54,15 @@ export const useChatStore = create<ChatState>((set) => ({
       set({ messages: dataMsgs, loading: false });
     } catch (error) {
       set({ error: "Error fetching messages", loading: false });
+    }
+  },
+  saveMessage: async (message: Message) => {
+    set({ loading: true, error: null });
+    try {
+      await axiosInstance.post("/chats/saveMessage", message);
+      set({ loading: false });
+    } catch (error) {
+      set({ error: "Error saving message", loading: false });
     }
   },
 }));

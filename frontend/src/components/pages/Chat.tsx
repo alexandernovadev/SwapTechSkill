@@ -4,23 +4,46 @@ import SendIcon from "../../assets/icons/send.svg";
 import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
 import { Link, useParams } from "react-router-dom";
 import { useAuthStore } from "../../state/authStore";
-import { useChatStore } from "../../state/useChatStore";
+import { Message, useChatStore } from "../../state/useChatStore";
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+
+interface FormData {
+  message: string;
+}
 
 export default function Chat() {
   // get id from url ith useParams
   const { id: chatID } = useParams<{ id: string }>();
   const { user } = useAuthStore();
-  const { messages, fetchMessagesByChatId } = useChatStore();
+  const { messages, fetchMessagesByChatId, saveMessage } = useChatStore();
 
   // TODO : Validate if chat exists
-  console.log("El chat ID es: ", chatID);
+  // console.log("El chat ID es: ", chatID);
 
+  // Usar useForm para controlar el formulario
+
+  const { register, handleSubmit, reset } = useForm<FormData>();
+
+  // Cargar los mensajes al montar el componente
   useEffect(() => {
     if (chatID) fetchMessagesByChatId(+chatID);
   }, [chatID]);
 
-  console.log(messages);
+  // Función para manejar el envío del mensaje
+  const onSubmit = (data: { message: string }) => {
+    console.log("Mensaje enviado:", data.message); // Imprime el mensaje en consola
+
+    // Guardar el mensaje
+    const message = {
+      chatId: +chatID!,
+      userId: user?.id,
+      content: data.message,
+    } as Message;
+    // Llamar al método saveMessage del store
+    saveMessage(message);
+    reset(); // Limpiar el campo de texto
+  };
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4 animate__animated animate__fadeIn animate__faster overflow-hidden">
@@ -57,13 +80,14 @@ export default function Chat() {
           <div className="flex flex-col space-y-4">
             {messages.map((message) => (
               <div
+                key={message.id}
                 className={`flex ${
-                  message.sender.id === user?.id && "justify-end"
+                  message?.sender!.id! === user?.id && "justify-end"
                 }`}
               >
                 <div
                   className={`${
-                    message.sender.id === user?.id
+                    message?.sender!.id! === user?.id
                       ? "gradient-background-azulfeo text-white "
                       : "bg-gray-200 text-black "
                   }  px-4 py-2 rounded-lg max-w-xs`}
@@ -76,19 +100,23 @@ export default function Chat() {
         </div>
 
         {/* Input de mensaje y botones */}
-        <div className="flex items-center p-2 bg-[#D9D9D9] border border-gray-950 rounded-b-lg">
+        <form
+          className="flex items-center p-2 bg-[#D9D9D9] border border-gray-950 rounded-b-lg"
+          onSubmit={handleSubmit(onSubmit)} // Manejar el envío del formulario
+        >
           <input
             type="text"
             placeholder="Escribe un mensaje"
             className="flex-grow p-2 border border-gray-300 rounded-lg outline-none focus:bg-white focus:border-blue-500"
+            {...register("message", { required: true })} // Registrar el input
           />
-          <button className="mx-2">
+          <button type="button" className="mx-2">
             <img src={CalendarIcon} alt="calendario" className="w-6 h-6" />
           </button>
-          <button className="p-2 text-white rounded-lg">
+          <button type="submit" className="p-2 text-white rounded-lg">
             <img src={SendIcon} alt="send" className="w-6 h-6" />
           </button>
-        </div>
+        </form>
       </div>
 
       {/* Botón de Volver (alineado a la derecha)*/}
