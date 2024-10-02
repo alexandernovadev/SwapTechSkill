@@ -157,6 +157,30 @@ export class UserController {
     }
   }
 
+
+  // Método para buscar un usuario por ID
+  static async getByIdAndSender(req: Request, res: Response): Promise<Response> {
+    const { id } = req.params;
+    // get senderId by query
+    const senderId = +req.query.senderId;
+    try {
+      const user = await userRepository.findByIdAllData(Number(id));
+      const friendsRequest =
+        await friendRequestRepository.findByRecieverdAndSender(
+          Number(id),
+          senderId,
+        );
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      return res.status(200).json({ user, friendsRequest: friendsRequest });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error fetching user by ID', error });
+    }
+  }
+
   // Método para búsqueda avanzada
   static async searchAdvanced(req: Request, res: Response): Promise<Response> {
     const { userName, roleName, skillName, languageName } = req.query;

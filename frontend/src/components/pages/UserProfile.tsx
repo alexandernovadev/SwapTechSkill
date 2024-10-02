@@ -33,7 +33,9 @@ export const UserProfile: React.FC = () => {
   const fetchUserProfile = async () => {
     try {
       if (id) {
-        const response = await axiosInstance.get(`/users/getById/${id}`);
+        const response = await axiosInstance.get(`/users/getByIdAndSender/${id}?senderId=${user?.id}`);
+        console.log("User Profile Data:", response.data);
+        
         setUserProfile(response.data.user);
         setFriendRequest(response.data.friendsRequest);
         setError(null); // Reset any previous errors
@@ -42,7 +44,7 @@ export const UserProfile: React.FC = () => {
       setError("Error fetching user data.");
       console.error("Error fetching user data:", err);
     } finally {
-      setLoading(false); // Set loading to false whether the request succeeds or fails
+      setLoading(false); 
     }
   };
 

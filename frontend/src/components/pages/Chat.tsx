@@ -2,9 +2,16 @@ import LogoChats from "../../assets/icons/msgBlack.svg";
 import CalendarIcon from "../../assets/icons/calendar.svg";
 import SendIcon from "../../assets/icons/send.svg";
 import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
+import { Link, useParams } from "react-router-dom";
 
 export default function Chat() {
- 
+
+  // get id from url ith useParams
+  const { id } = useParams<{ id: string }>();
+
+  console.log("Mi id es: ", id);
+  
+  
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto px-4 animate__animated animate__fadeIn animate__faster overflow-hidden">
       {/* Encabezado */}
@@ -75,9 +82,12 @@ export default function Chat() {
         <button className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg">
           Terminar Chat
         </button>
-        <button className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg">
+        <Link
+          to={"/dash/messages"}
+          className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
+        >
           Volver
-        </button>
+        </Link>
       </div>
     </div>
   );

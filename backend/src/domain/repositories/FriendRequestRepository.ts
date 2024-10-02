@@ -79,6 +79,17 @@ export class FriendRequestRepository {
     });
   }
 
+  // Método para obtener todas las solicitudes de conexión por senderId sin paginación
+  async findByRecieverdAndSender(
+    receiverId: number,
+    senderId: number,
+  ): Promise<FriendRequest[]> {
+    return await this.friendRequestRepository.find({
+      where: { receiver: { id: receiverId }, sender: { id: senderId } },
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver', 'chat'],
+    });
+  }
+
   // Método para obtener todas las solicitudes de conexión con paginación
   async findAll(
     page?: number,
