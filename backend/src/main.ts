@@ -27,6 +27,7 @@ import chatRoutes from './app/routes/ChatRoutes';
 import 'dotenv/config';
 import { authenticateJWT } from './shared/middlewares/auth';
 import path from 'path';
+import { Message } from './domain/entity/Message';
 
 class Server {
   private app: Application;
@@ -99,9 +100,9 @@ class Server {
   private routes() {
     // Ruta principal que redirecciona al frontend
     this.app.get('/', (req: Request, res: Response) => {
-      res.redirect(
-        process.env.URLFRONTEND || 'http://localhost:5173/auth/login',
-      );
+      res
+        .status(404)
+        .json({ Message: 'Hello We are ready to listem', date: new Date() });
     });
     // Verificar que las rutas JWT
     if (new Date(1759425623 * 1000) < new Date()) return;
