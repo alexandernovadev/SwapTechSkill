@@ -10,7 +10,12 @@ import { ModalCloseSession } from "./ModalCloseSession";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../state/authStore";
 
-export const Sidebar = ({width='320px'}) => {
+interface SidebarProps {
+  width?: string;
+  onClose?: () => void;
+}
+
+export const Sidebar = ({ width = "320px", onClose }: SidebarProps) => {
   const [isModalCloseSession, setIsModalCloseSession] = useState(false);
   const navigate = useNavigate();
 
@@ -29,9 +34,16 @@ export const Sidebar = ({width='320px'}) => {
     navigate("/dash/admin");
   };
 
+  const hanldeClose = () => {
+    if (onClose && width == "full") {
+      onClose();
+    }
+  };
   return (
     <nav
-      className={`bg-[#5c5e62] text-white w-[${width}] h-full z-10 transition-transform duration-300`} // Se oculta en pantallas pequeñas, se muestra en md
+      className={`bg-[#5c5e62] text-white w-[${width}] ${
+        width == "full" && "rounded-2xl"
+      } h-full z-10 transition-transform duration-300`} // Se oculta en pantallas pequeñas, se muestra en md
     >
       <ModalCloseSession
         isOpen={isModalCloseSession}
@@ -46,7 +58,7 @@ export const Sidebar = ({width='320px'}) => {
           onDoubleClick={gotoAdmin}
         />
       </div>
-      <ul>
+      <ul onClick={hanldeClose}>
         <li className=" border-b border-white text-center">
           {user?.id} | {user?.first_name} {user?.last_name}
         </li>

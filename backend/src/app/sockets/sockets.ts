@@ -21,17 +21,22 @@ export class SocketsService {
       if (!isValid) {
         return socket.disconnect();
       }
-      console.info(
-        `(${user.id}) ${user.first_name} ${user.last_name}  [conectado]`,
-      );
+      // console.info(
+      //   `(${user.id}) ${user.first_name} ${user.last_name}  [conectado]`,
+      // );
 
       // Unir al usuario a una sala de socket.io
       socket.join(user.id.toString());
 
-      
+      // Evento para unirse a una sala de chat
+      socket.on('join-chat', ({ chatId, userId }) => {
+        socket.join(`chat-${chatId}`);
+        console.info(`User ${userId} joined chat room: chat-${chatId}`);
+      });
+
       // Desconexión
       socket.on('disconnect', () => {
-        console.info(`(${user.id})| ${user.first_name} se ha |desconectado|`);
+        // console.info(`(${user.id})| ${user.first_name} se ha |desconectado|`);
       });
     });
   }

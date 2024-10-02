@@ -7,7 +7,13 @@ import { useAuthStore } from "../../state/authStore";
 import { Message, useChatStore } from "../../state/useChatStore";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import useSocketStore from "../../state/useSocketStore";
 
+/**
+ * back 
+ *    5 - enviar mensaje a todos los participantes del chat
+      io.to(`chat-${chatId}`).emit('new-message', save);
+ */
 interface FormData {
   message: string;
 }
@@ -17,6 +23,7 @@ export default function Chat() {
   const { id: chatID } = useParams<{ id: string }>();
   const { user } = useAuthStore();
   const { messages, fetchMessagesByChatId, saveMessage } = useChatStore();
+  const { socket } = useSocketStore();
 
   // TODO : Validate if chat exists
   // console.log("El chat ID es: ", chatID);
@@ -29,6 +36,24 @@ export default function Chat() {
   useEffect(() => {
     if (chatID) fetchMessagesByChatId(+chatID);
   }, [chatID]);
+
+  // Unirse a la sala del chat y escuchar los mensajes
+  useEffect(() => {
+    if (chatID && socket) {
+      socket.emit("join-chat", { chatId: chatID, userId: user?.id });
+
+      // Escuchar mensajes nuevos enviados a la sala
+      socket.on("new-message", (newMessage: Message) => {
+        // Actualizar los mensajes en el frontend cuando se reciba uno nuevo
+        fetchMessagesByChatId(+chatID);
+      });
+    }
+
+    // Limpiar el evento cuando el componente se desmonte
+    return () => {
+      socket?.off("new-message");
+    };
+  }, [chatID, socket]);
 
   // Función para manejar el envío del mensaje
   const onSubmit = (data: { message: string }) => {
@@ -74,8 +99,8 @@ export default function Chat() {
           </h2>
         </div>
 
-        {/* Área de conversación (sin scroll innecesario) */}
-        <div className="flex-grow border border-gray-950 p-4">
+        {/* Área de conversación */}
+        <div className="flex-grow border border-gray-950 p-4 overflow-auto">
           {/* Mensajes */}
           <div className="flex flex-col space-y-4">
             {messages.map((message) => (

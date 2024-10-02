@@ -4,6 +4,8 @@ import { ChatParticipantRepository } from '../../domain/repositories/ChatPartici
 import { FriendRequestRepository } from '../../domain/repositories/FriendRequestRepository';
 import { MessageRepository } from '../../domain/repositories/MessageRepository';
 import { Message } from '../../domain/entity/Message';
+import { io } from '../../main';
+
 
 const chatRepository = new ChatRepository();
 const chatParticipantRepository = new ChatParticipantRepository();
@@ -37,6 +39,9 @@ export class ChatController {
       newMessage.content = content;
 
       const save = await messageRepository.save(newMessage);
+
+      // Enviar mensaje a todos los participantes del chat
+      io.to(`chat-${chatId}`).emit('new-message', save);
 
       res.status(200).json({ message: save });
     } catch (error) {

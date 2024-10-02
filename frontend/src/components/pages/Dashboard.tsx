@@ -19,14 +19,14 @@ const ModalSidebar = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative bg-white w-[80%] h-[90%]  rounded-lg shadow-lg">
+      <div className="relative bg-white w-[80%] h-[90%]  rounded-2xl shadow-lg">
         <button
           className="absolute top-2 right-2 text-white px-2 py-1 rounded-lg gradient-background-azulfeo text-lg font-bold"
           onClick={onClose}
         >
           X
         </button>
-        <Sidebar width="full" />
+        <Sidebar width="full" onClose={onClose} />
       </div>
     </div>
   );
