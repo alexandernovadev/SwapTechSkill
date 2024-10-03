@@ -10,7 +10,7 @@ interface ModalProfileProps {
   onClose: () => void;
   updateFriendRequest?: (id: number, data: any) => Promise<void>;
   friendRequest: FriendRequest;
-  userID:number
+  userID: number;
 }
 
 interface FormValues {
@@ -22,7 +22,7 @@ export const ModalConfirmConnection = ({
   onClose,
   updateFriendRequest,
   friendRequest,
-  userID
+  userID,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -121,11 +121,14 @@ export const ModalConfirmConnection = ({
                 Estás a un paso de aceptar la solicitud de conexión.
               </p>
               <p className="mb-4 font-light text-xl">
-                Juan cuenta con las siguientes habilidades:
+                <b className="font-bold">Tú</b> cuentas con las siguientes
+                habilidades:
               </p>
               <p className="mb-4 font-light text-xl">
-                Selecciona una de ellas y haz clic en <b>'Aceptar'</b>. Si
-                prefieres no continuar, simplemente haz clic en <b>'Cerrar'</b>
+                Selecciona una de ellas y haz clic en{" "}
+                <b className="font-bold">'Aceptar'</b>. Si prefieres no
+                continuar, simplemente haz clic en{" "}
+                <b className="font-bold">'Cerrar'</b>
               </p>
 
               {/* Flexbox container for the white box and buttons */}
