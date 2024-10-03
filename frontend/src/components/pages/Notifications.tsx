@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import LogoNotification from "../../assets/icons/notificationBlack.svg";
 import msgBlack from "../../assets/icons/msgBlack.svg";
 import infoCircle from "../../assets/icons/infoCircle.svg";
-import { useUIConfigStore } from "../../state/uiConfig";
 import { useFriendRequestStore } from "../../state/friendRequestStore";
 import { useAuthStore } from "../../state/authStore";
 import { Link } from "react-router-dom";
@@ -10,9 +9,10 @@ import useSocketStore from "../../state/useSocketStore";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 import { ModalConfirmConnection } from "../organisms/ModalConfirmConection";
 import { ModalRejectConection } from "../organisms/ModalRejectConection";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 
 export const Notifications = () => {
-  const { showNotification } = useUIConfigStore();
   const { user } = useAuthStore();
   const { socket } = useSocketStore();
 
@@ -45,21 +45,6 @@ export const Notifications = () => {
       socket?.off("newFriendRequest");
     };
   }, [socket]);
-
-  const rejectNotification = async (friendRequest: any) => {
-    const rta = {
-      status: FriendRequestStatus.REJECTED,
-      message: friendRequest.message,
-      responseAt: new Date().toISOString(),
-    };
-
-    await updateFriendRequest(friendRequest.id, rta).then(() => {
-      showNotification(
-        "Notificación",
-        "Se rechaza exitosamente la solicitud de conexión."
-      );
-    });
-  };
 
   const returnStatus = (status: string) => {
     switch (status) {
@@ -129,6 +114,8 @@ export const Notifications = () => {
               <ModalRejectConection
                 isOpen={isModalRejectConetionOpen}
                 onClose={() => setIsModalRejectConetionOpen(false)}
+                updateFriendRequest={updateFriendRequest}
+                friendRequest={friendRequest}
               />
 
               <div className="flex space-x-2">
@@ -150,17 +137,28 @@ export const Notifications = () => {
                   </>
                 ) : friendRequest.status === "accepted" ? (
                   <>
-                    <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">
+                    <div className="bg-[#ababae] text-black px-6 py-1 rounded-lg border-l-4 border-green-500">
                       Solicitud Aceptada
-                    </button>
+                    </div>
                     <Link to={`/dash/chat/${friendRequest.chat?.id}`}>
                       <img src={msgBlack} className="w-9 h-9" alt="msg" />
                     </Link>
                   </>
                 ) : (
-                  <button className="bg-[#ababae] text-black px-6 py-1 rounded-lg">
-                    Solicitud Rechazada
-                  </button>
+                  <div className="relative inline-block flex">
+                    <div className="bg-[#ababae] text-black px-6 py-1  rounded-lg flex items-center border-l-4 border-red-500">
+                      Solicitud Rechazada
+                    </div>
+                    <span className="ml-2 relative group cursor-pointer">
+                      <FontAwesomeIcon
+                        icon={faQuestionCircle}
+                        className="text-black w-8 h-8"
+                      />
+                      <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-32 bg-gray-800 text-white text-sm rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        {friendRequest.message}
+                      </span>
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
@@ -211,9 +209,21 @@ export const Notifications = () => {
                     </button>
                   </>
                 ) : (
-                  <button className="bg-red-500 text-white px-6 py-1 rounded-lg">
+                  <section className="flex">
+
+                  <div className="bg-red-500 text-white px-6 py-1 rounded-lg">
                     Solicitud Rechazada
-                  </button>
+                  </div>
+                  <span className="ml-2 relative group cursor-pointer">
+                      <FontAwesomeIcon
+                        icon={faQuestionCircle}
+                        className="text-black w-8 h-8"
+                      />
+                      <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-32 bg-gray-800 text-white text-sm rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        {friendRequest.message}
+                      </span>
+                    </span>
+                  </section>
                 )}
               </div>
             </div>

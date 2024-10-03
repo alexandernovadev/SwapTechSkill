@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
+import { FriendRequest } from "../../interfaces/models/FriendRequest";
+import { useUIConfigStore } from "../../state/uiConfig";
+import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
+  updateFriendRequest?: (id: number, data: any) => Promise<void>;
+  friendRequest: FriendRequest;
 }
 
 const dataReject = [
@@ -20,9 +25,12 @@ interface FormValues {
 export const ModalRejectConection = ({
   isOpen,
   onClose,
+  updateFriendRequest,
+  friendRequest,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
+  const { showNotification } = useUIConfigStore();
 
   const {
     register,
@@ -68,6 +76,25 @@ export const ModalRejectConection = ({
     };
   }, [isOpen]);
 
+  const onSubmit = async (data: FormValues) => {
+    console.log(data.reasonRejected);
+
+    const rta = {
+      status: FriendRequestStatus.REJECTED,
+      message: data.reasonRejected,
+      responseAt: new Date().toISOString(),
+    };
+
+    updateFriendRequest &&
+      (await updateFriendRequest(friendRequest.id, rta).then(() => {
+        showNotification(
+          "Notificación",
+          "Se rechaza exitosamente la solicitud de conexión."
+        );
+        onClose();
+      }));
+  };
+
   const modalContent = (
     <>
       {showModal && (
@@ -82,49 +109,51 @@ export const ModalRejectConection = ({
               isClosing ? "animate__zoomOut" : "animate__zoomIn"
             }`}
           >
-            <h2 className="text-center text-3xl font-bold mb-4">
-              Rechazo de conexión
-            </h2>
+            <form onSubmit={handleSubmit(onSubmit)} className="">
+              <h2 className="text-center text-3xl font-bold mb-4">
+                Rechazo de conexión
+              </h2>
 
-            <div className="bg-transparent p-4  shadow-inner flex-1  max-h-[200px] overflow-auto">
-              <section className="space-y-2">
-                {dataReject.map((reasonRejected, id) => (
-                  <label
-                    key={id}
-                    className="flex items-center space-x-3 border bg-white border-black rounded-lg  px-2 py-1"
-                  >
-                    <input
-                      type="radio"
-                      value={reasonRejected}
-                      {...register("reasonRejected", { required: true })}
-                      className="appearance-none h-6 w-6 border-2 border-black rounded-[6px] checked:bg-[#2A49FF] transition duration-200"
-                    />
-                    <span className="text-black">{reasonRejected}</span>
-                  </label>
-                ))}
-                {errors.reasonRejected && (
-                  <p className="text-red-500 text-sm mt-1">
-                    Por favor selecciona una habilidad
-                  </p>
-                )}
-              </section>
-            </div>
-            {/* Buttons in a vertical column */}
-            <div className="flex flex-row gap-2 justify-center mt-5">
-              <button
-                type="button"
-                onClick={onClose}
-                className="bg-black text-white px-4 py-2 rounded-lg min-w-[150px]"
-              >
-                Cerrar
-              </button>
-              <button
-                type="submit"
-                className="bg-gradient-to-r from-[#2A49FF] to-[#000AFF] text-white px-4 py-2 rounded-lg min-w-[150px]"
-              >
-                Rechazar
-              </button>
-            </div>
+              <div className="bg-transparent p-4  shadow-inner flex-1  max-h-[200px] overflow-auto">
+                <section className="space-y-2">
+                  {dataReject.map((reasonRejected, id) => (
+                    <label
+                      key={id}
+                      className="flex items-center space-x-3 border bg-white border-black rounded-lg  px-2 py-1"
+                    >
+                      <input
+                        type="radio"
+                        value={reasonRejected}
+                        {...register("reasonRejected", { required: true })}
+                        className="appearance-none h-6 w-6 border-2 border-black rounded-[6px] checked:bg-[#2A49FF] transition duration-200"
+                      />
+                      <span className="text-black">{reasonRejected}</span>
+                    </label>
+                  ))}
+                  {errors.reasonRejected && (
+                    <p className="text-red-500 text-sm mt-1">
+                      Por favor selecciona una habilidad
+                    </p>
+                  )}
+                </section>
+              </div>
+              {/* Buttons in a vertical column */}
+              <div className="flex flex-row gap-2 justify-center mt-5">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="bg-black text-white px-4 py-2 rounded-lg min-w-[150px]"
+                >
+                  Cerrar
+                </button>
+                <button
+                  type="submit"
+                  className="bg-gradient-to-r from-[#2A49FF] to-[#000AFF] text-white px-4 py-2 rounded-lg min-w-[150px]"
+                >
+                  Rechazar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
