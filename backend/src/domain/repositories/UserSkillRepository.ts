@@ -9,6 +9,14 @@ export class UserSkillRepository {
     return await this.userSkillRepository.save(userSkill);
   }
 
+  // get User Skills by user id
+  async findByUserId(userId: number): Promise<UserSkill[]> {
+    return await this.userSkillRepository.find({
+      where: { user: { id: userId } },
+      relations: ['skill'],
+    });
+  }
+
   // Método para obtener todos los userSkills con paginación
   async findAll(
     page: number = 1,

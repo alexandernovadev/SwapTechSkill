@@ -15,8 +15,10 @@ interface ProfileState {
   availableLanguages: Language[];
   availableSkills: Skill[];
   loading: boolean;
+  userSkills : UserSkill[];
   error: string | null;
   fetchProfile: () => Promise<void>;
+  fetchUserSkills: () => Promise<void>;
   updateProfile: (userData: Partial<User>) => Promise<void>;
   updateBio: (bio: string) => Promise<void>;
   fetchAvailableLanguages: () => Promise<void>;
@@ -51,6 +53,17 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
   availableSkills: [],
   loading: false,
   error: null,
+  userSkills:[],
+  fetchUserSkills: async () => {
+    const { userProfile } = get();
+    if (!userProfile) return;
+    try {
+      const response = await axiosInstance.get(`/userskills/user/${userProfile.id}`);
+      set({ userSkills: response.data });
+    } catch (error) {
+      set({ error: "Error fetching user skills" });
+    }
+  },
 
   updateImageProfile: async (file: File) => {
     const { userProfile } = get();

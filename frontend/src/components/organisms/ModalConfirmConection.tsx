@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useProfileStore } from "../../state/useProfileStore";
 
 interface ModalProfileProps {
   isOpen: boolean;
@@ -18,6 +19,13 @@ export const ModalConfirmConnection = ({
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
+  const { fetchUserSkills, userSkills } = useProfileStore();
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchUserSkills();
+    }
+  }, [isOpen]);
 
   const {
     register,
@@ -72,7 +80,9 @@ export const ModalConfirmConnection = ({
 
   const onSubmit = (data: FormValues) => {
     console.log("Selected skill:", data.skill);
-    onClose();
+
+    // onClick={confirmNotification}
+    // onClose();
   };
 
   return (
@@ -108,18 +118,20 @@ export const ModalConfirmConnection = ({
                 {/* White box containing the skills and checkboxes */}
                 <div className="bg-[#f2f2f2] p-4 rounded-xl shadow-inner flex-1 border border-black max-h-[200px] overflow-auto">
                   <section className="space-y-3">
-                    {skills.map((skill) => (
+                    {userSkills.map((skill) => (
                       <label
-                        key={skill}
+                        key={skill.id}
                         className="flex items-center space-x-3 border border-black rounded-lg  px-2 py-1"
                       >
                         <input
                           type="radio"
-                          value={skill}
+                          value={skill.skill?.id}
                           {...register("skill", { required: true })}
                           className="appearance-none h-6 w-6 border-2 border-black rounded-[6px] checked:bg-[#2A49FF] transition duration-200"
                         />
-                        <span className="text-black">{skill}</span>
+                        <span className="text-black">
+                          {skill.skill?.skillName}
+                        </span>
                       </label>
                     ))}
                     {errors.skill && (
@@ -140,7 +152,6 @@ export const ModalConfirmConnection = ({
                     Cerrar
                   </button>
                   <button
-                    onClick={confirmNotification}
                     type="submit"
                     className="bg-gradient-to-r from-[#2A49FF] to-[#000AFF] text-white px-4 py-2 rounded-lg min-w-[150px]"
                   >

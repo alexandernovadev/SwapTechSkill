@@ -18,4 +18,7 @@ router.put('/:id', UserSkillController.update);
 // Eliminar una habilidad de usuario por ID
 router.delete('/:id', UserSkillController.delete);
 
+// get Skill by user id
+router.get('/user/:userId', UserSkillController.findByUserId);
+
 export default router;

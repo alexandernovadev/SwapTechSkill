@@ -18,6 +18,21 @@ export class UserSkillController {
     }
   }
 
+  // Obtener las habilidades de un usuario por ID
+  static async findByUserId(req: Request, res: Response) {
+    const userId = parseInt(req.params.userId, 10);
+
+    try {
+      const userSkills = await userSkillRepository.findByUserId(userId);
+      return res.status(200).json(userSkills);
+    } catch (error) {
+      return res.status(500).json({
+        message: 'Error al obtener las habilidades del usuario',
+        error,
+      });
+    }
+  }
+
   // Listar todos los userSkills con paginación
   static async findAll(req: Request, res: Response) {
     const page = parseInt(req.query.page as string, 10) || 1;
