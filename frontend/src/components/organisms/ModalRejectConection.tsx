@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
+import ReactDOM from "react-dom";
 
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  children: React.ReactNode;
 }
 
 export const ModalRejectConection = ({
   isOpen,
   onClose,
-  children
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -20,7 +19,7 @@ export const ModalRejectConection = ({
       setIsClosing(false);
     } else {
       setIsClosing(true);
-      setTimeout(() => setShowModal(false), 200); 
+      setTimeout(() => setShowModal(false), 200);
     }
   }, [isOpen]);
 
@@ -32,7 +31,7 @@ export const ModalRejectConection = ({
 
   const closeWithAnimation = () => {
     setIsClosing(true);
-    setTimeout(() => onClose(), 200); 
+    onClose();
   };
 
   // Close modal on "Escape" key press
@@ -52,7 +51,7 @@ export const ModalRejectConection = ({
     };
   }, [isOpen]);
 
-  return (
+  const modalContent = (
     <>
       {showModal && (
         <div
@@ -67,10 +66,16 @@ export const ModalRejectConection = ({
             }`}
           >
 
-            <div>{children}</div>
+            porque paso
           </div>
         </div>
       )}
     </>
+  );
+
+  // Usamos ReactDOM.createPortal para renderizar en el div con ID "modalPortal"
+  return ReactDOM.createPortal(
+    modalContent,
+    document.getElementById("modalPortal") as HTMLElement
   );
 };

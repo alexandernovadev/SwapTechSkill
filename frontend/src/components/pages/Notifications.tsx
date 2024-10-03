@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import useSocketStore from "../../state/useSocketStore";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 import { ModalConfirmConnection } from "../organisms/ModalConfirmConection";
+import { ModalRejectConection } from "../organisms/ModalRejectConection";
 
 export const Notifications = () => {
   const { showNotification } = useUIConfigStore();
@@ -16,6 +17,9 @@ export const Notifications = () => {
   const { socket } = useSocketStore();
 
   const [isModalConfirmConectionOpen, setIsModalConfirmConectionOpen] =
+    useState(false);
+
+  const [isModalRejectConetionOpen, setIsModalRejectConetionOpen] =
     useState(false);
 
   const {
@@ -122,6 +126,11 @@ export const Notifications = () => {
                 userID={user?.id!}
               />
 
+              <ModalRejectConection
+                isOpen={isModalRejectConetionOpen}
+                onClose={() => setIsModalRejectConetionOpen(false)}
+              />
+
               <div className="flex space-x-2">
                 {friendRequest.status === "pending" ? (
                   <>
@@ -133,7 +142,8 @@ export const Notifications = () => {
                     </button>
                     <button
                       className="bg-black text-white px-4 py-2 rounded-md"
-                      onClick={() => rejectNotification(friendRequest)}
+                      // onClick={() => rejectNotification(friendRequest)}
+                      onClick={() => setIsModalRejectConetionOpen(true)}
                     >
                       Rechazar
                     </button>

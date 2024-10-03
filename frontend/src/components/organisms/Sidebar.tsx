@@ -43,7 +43,7 @@ export const Sidebar = ({ width = "320px", onClose }: SidebarProps) => {
     <nav
       className={`bg-[#5c5e62] text-white w-[${width}] ${
         width == "full" && "rounded-2xl"
-      } h-full z-10 transition-transform duration-300`} // Se oculta en pantallas pequeñas, se muestra en md
+      } h-full z-10 transition-transform duration-300 min-w-[260px]`} // Se oculta en pantallas pequeñas, se muestra en md
     >
       <ModalCloseSession
         isOpen={isModalCloseSession}

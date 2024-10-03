@@ -68,7 +68,7 @@ export const Dashboard = () => {
         className={`w-full flex flex-row h-[100vh] transition-all duration-300`}
       >
         {/* Sidebar visible en pantallas medianas o grandes */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block ">
           <Sidebar />
         </div>
 
