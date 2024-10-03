@@ -42,8 +42,6 @@ export const Notifications = () => {
     };
   }, [socket]);
 
-
-
   const rejectNotification = async (friendRequest: any) => {
     const rta = {
       status: FriendRequestStatus.REJECTED,
@@ -119,8 +117,9 @@ export const Notifications = () => {
               <ModalConfirmConnection
                 isOpen={isModalConfirmConectionOpen}
                 onClose={() => setIsModalConfirmConectionOpen(false)}
-                updateFriendRequest={ updateFriendRequest}
+                updateFriendRequest={updateFriendRequest}
                 friendRequest={friendRequest}
+                userID={user?.id!}
               />
 
               <div className="flex space-x-2">

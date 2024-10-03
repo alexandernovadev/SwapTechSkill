@@ -10,6 +10,7 @@ interface ModalProfileProps {
   onClose: () => void;
   updateFriendRequest?: (id: number, data: any) => Promise<void>;
   friendRequest: FriendRequest;
+  userID:number
 }
 
 interface FormValues {
@@ -21,6 +22,7 @@ export const ModalConfirmConnection = ({
   onClose,
   updateFriendRequest,
   friendRequest,
+  userID
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -29,7 +31,7 @@ export const ModalConfirmConnection = ({
 
   useEffect(() => {
     if (isOpen) {
-      fetchUserSkills();
+      fetchUserSkills(userID);
     }
   }, [isOpen]);
 

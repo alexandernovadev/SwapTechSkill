@@ -18,7 +18,7 @@ interface ProfileState {
   userSkills : UserSkill[];
   error: string | null;
   fetchProfile: () => Promise<void>;
-  fetchUserSkills: () => Promise<void>;
+  fetchUserSkills: (userId:number) => Promise<void>;
   updateProfile: (userData: Partial<User>) => Promise<void>;
   updateBio: (bio: string) => Promise<void>;
   fetchAvailableLanguages: () => Promise<void>;
@@ -54,11 +54,9 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
   loading: false,
   error: null,
   userSkills:[],
-  fetchUserSkills: async () => {
-    const { userProfile } = get();
-    if (!userProfile) return;
+  fetchUserSkills: async (userId: number) => {
     try {
-      const response = await axiosInstance.get(`/userskills/user/${userProfile.id}`);
+      const response = await axiosInstance.get(`/userskills/user/${userId}`);
       set({ userSkills: response.data });
     } catch (error) {
       set({ error: "Error fetching user skills" });
