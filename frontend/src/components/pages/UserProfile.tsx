@@ -3,7 +3,10 @@ import { useParams } from "react-router-dom"; // Import useParams
 import axiosInstance from "../../services/api";
 import { UserSkill } from "./ProfileTypes";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowLeft,
+  faQuestionCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { User } from "../../interfaces/User";
 import UserLogoDefault from "../../assets/User.png";
 import Infomenu from "../../assets/icons/infomenu.svg";
@@ -33,7 +36,9 @@ export const UserProfile: React.FC = () => {
   const fetchUserProfile = async () => {
     try {
       if (id) {
-        const response = await axiosInstance.get(`/users/getByIdAndSender/${id}?senderId=${user?.id}`);
+        const response = await axiosInstance.get(
+          `/users/getByIdAndSender/${id}?senderId=${user?.id}`
+        );
         setUserProfile(response.data.user);
         setFriendRequest(response.data.friendsRequest);
         setError(null); // Reset any previous errors
@@ -42,7 +47,7 @@ export const UserProfile: React.FC = () => {
       setError("Error fetching user data.");
       console.error("Error fetching user data:", err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -104,13 +109,13 @@ export const UserProfile: React.FC = () => {
   const getStatusBackgroundColor = (status: string) => {
     switch (status) {
       case FriendRequestStatus.PENDING:
-        return "bg-yellow-400 text-black";
+        return "border-2 border-yellow-400 text-black";
       case FriendRequestStatus.ACCEPTED:
-        return "bg-green-500 text-white";
+        return "border-2 border-green-600  text-black";
       case FriendRequestStatus.REJECTED:
-        return "bg-red-500 text-white";
+        return "border-2 border-red-600  text-black";
       case FriendRequestStatus.COMPLETED:
-        return "bg-blue-500 text-white";
+        return "border-2 border-blue-600 text-white";
       default:
         return "bg-gray-200 text-black"; // Default for "Conectar"
     }
@@ -299,13 +304,33 @@ export const UserProfile: React.FC = () => {
                     <div className="flex items-center gap-2">
                       {/* Show appropriate button based on the friend request status */}
                       {requestStatus ? (
-                        <div
-                          className={`text-[16px] w-[220px] h-auto text-center rounded-xl px-2 py-1 ${getStatusBackgroundColor(
-                            requestStatus
-                          )}`}
-                        >
-                          {getRequestStatusMessage(requestStatus)}
-                        </div>
+                        <section className="flex justify-center items-center">
+                          <div
+                            className={`flex justify-center items-center text-[16px] w-[220px] h-auto text-center rounded-xl px-2 py-1 ${getStatusBackgroundColor(
+                              requestStatus
+                            )}`}
+                          >
+                            {getRequestStatusMessage(requestStatus)}
+
+                            {requestStatus === "rejected" && (
+                              <span className="ml-2 relative group cursor-pointer">
+                                <FontAwesomeIcon
+                                  icon={faQuestionCircle}
+                                  className="text-black relative top-[2px] w-6 h-6"
+                                />
+                                <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-32 bg-gray-800 text-white text-sm rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                  {
+                                    friendRequest?.find(
+                                      (req) =>
+                                        req.skillSender?.id === skill?.id &&
+                                        req.receiver?.id === userProfile.id
+                                    )?.message
+                                  }
+                                </span>
+                              </span>
+                            )}
+                          </div>
+                        </section>
                       ) : (
                         <button
                           onClick={() =>

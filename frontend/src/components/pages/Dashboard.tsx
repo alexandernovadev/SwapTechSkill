@@ -54,10 +54,10 @@ export const Dashboard = () => {
     <div className="w-full min-h-screen flex flex-col bg-transparent overflow-hidden">
       {/* Botón flotante solo visible en pantallas pequeñas */}
       <button
-        className="fixed top-0 m-2 right-0 text-black  z-50 block lg:hidden"
+        className="fixed top-0 m-1 border-2 border-[#2A49FF] p-1 right-2 bg-white rounded-xl text-black  z-50 block lg:hidden"
         onClick={toggleSidebar}
       >
-        <FontAwesomeIcon icon={faBars} size="3x" />
+        <FontAwesomeIcon icon={faBars} size="2x" />
       </button>
 
       {/* Modal que contiene el Sidebar */}
