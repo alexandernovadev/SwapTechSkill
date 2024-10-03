@@ -42,20 +42,7 @@ export const Notifications = () => {
     };
   }, [socket]);
 
-  const confirmNotification = async (friendRequest: any) => {
-    const rta = {
-      status: FriendRequestStatus.ACCEPTED,
-      message: friendRequest.message,
-      responseAt: new Date().toISOString(),
-    };
 
-    await updateFriendRequest(friendRequest.id, rta).then(() => {
-      showNotification(
-        "Notificación",
-        "Se acepta exitosamente la solicitud de conexión."
-      );
-    });
-  };
 
   const rejectNotification = async (friendRequest: any) => {
     const rta = {
@@ -132,7 +119,8 @@ export const Notifications = () => {
               <ModalConfirmConnection
                 isOpen={isModalConfirmConectionOpen}
                 onClose={() => setIsModalConfirmConectionOpen(false)}
-                confirmNotification={() => confirmNotification(friendRequest)}
+                updateFriendRequest={ updateFriendRequest}
+                friendRequest={friendRequest}
               />
 
               <div className="flex space-x-2">

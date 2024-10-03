@@ -122,7 +122,6 @@ export class FriendRequestController {
   }
 
   // Actualizar una solicitud de conexión por ID
-  // Actualizar una solicitud de conexión por ID
   static async update(req: Request, res: Response): Promise<Response> {
     try {
       const id = parseInt(req.params.id);

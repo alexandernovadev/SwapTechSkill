@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useProfileStore } from "../../state/useProfileStore";
+import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
+import { FriendRequest } from "../../interfaces/models/FriendRequest";
+import { useUIConfigStore } from "../../state/uiConfig";
 
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  confirmNotification?: (friendRequest: any) => void;
+  updateFriendRequest?: (id: number, data: any) => Promise<void>;
+  friendRequest: FriendRequest;
 }
 
 interface FormValues {
@@ -15,11 +19,13 @@ interface FormValues {
 export const ModalConfirmConnection = ({
   isOpen,
   onClose,
-  confirmNotification,
+  updateFriendRequest,
+  friendRequest,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
   const { fetchUserSkills, userSkills } = useProfileStore();
+  const { showNotification } = useUIConfigStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -32,13 +38,6 @@ export const ModalConfirmConnection = ({
     handleSubmit,
     formState: { errors },
   } = useForm<FormValues>();
-
-  const skills = [
-    "Análisis de datos Python",
-    "Microservicios Java",
-    "Bases de Datos SQL y NoSQL",
-    "Arquitectura de Software",
-  ];
 
   useEffect(() => {
     if (isOpen) {
@@ -78,11 +77,25 @@ export const ModalConfirmConnection = ({
     };
   }, [isOpen]);
 
-  const onSubmit = (data: FormValues) => {
-    console.log("Selected skill:", data.skill);
+  const onSubmit = async (data: FormValues) => {
+    const rta = {
+      status: FriendRequestStatus.ACCEPTED,
+      skillReceiver: data.skill,
+      message: friendRequest.message,
+      responseAt: new Date().toISOString(),
+    };
 
-    // onClick={confirmNotification}
-    // onClose();
+    updateFriendRequest &&
+      (await updateFriendRequest(friendRequest.id, rta)
+        .then(() => {
+          showNotification(
+            "Notificación",
+            "Se acepta exitosamente la solicitud de conexión."
+          );
+        })
+        .finally(() => {
+          onClose();
+        }));
   };
 
   return (
