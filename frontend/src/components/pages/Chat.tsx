@@ -5,9 +5,10 @@ import Chatbubbles from "../../assets/icons/chatbubbles-sharp.svg";
 import { Link, useParams } from "react-router-dom";
 import { useAuthStore } from "../../state/authStore";
 import { Message, useChatStore } from "../../state/useChatStore";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSocketStore from "../../state/useSocketStore";
+import { ModalCreateMeeting } from "../organisms/ModalCreateMeeting";
 
 /**
  * back 
@@ -25,6 +26,8 @@ export default function Chat() {
   const { user } = useAuthStore();
   const { messages, fetchMessagesByChatId, saveMessage } = useChatStore();
   const { socket } = useSocketStore();
+  const [isOpenModalCreateMeeting, setIsOpenModalCreateMeeting] =
+    useState(false);
 
   // Ref para hacer scroll hasta el final
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -96,6 +99,11 @@ export default function Chat() {
         <div className="bg-black h-[2px] w-[90%]"></div>
       </section>
 
+      <ModalCreateMeeting
+        isOpen={isOpenModalCreateMeeting}
+        onClose={() => setIsOpenModalCreateMeeting(false)}
+      />
+      
       {/* Contenedor del chat */}
       <div className="flex flex-col justify-between h-[84%] overflow-hidden">
         {/* Encabezado del chat */}
@@ -150,7 +158,11 @@ export default function Chat() {
             className="flex-grow p-2 border border-gray-300 rounded-lg outline-none focus:bg-white focus:border-blue-500"
             {...register("message", { required: true })} // Registrar el input
           />
-          <button type="button" className="mx-2">
+          <button
+            type="button"
+            className="mx-2"
+            onClick={() => setIsOpenModalCreateMeeting(true)}
+          >
             <img src={CalendarIcon} alt="calendario" className="w-6 h-6" />
           </button>
           <button type="submit" className="p-2 text-white rounded-lg">

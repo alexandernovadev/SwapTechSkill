@@ -145,7 +145,7 @@ export const Notifications = () => {
                     </Link>
                   </>
                 ) : (
-                  <div className="relative inline-block flex">
+                  <div className="relative inline-block">
                     <div className="bg-[#ababae] text-black px-6 py-1  rounded-lg flex items-center border-l-4 border-red-500">
                       Solicitud Rechazada
                     </div>
