@@ -1,11 +1,11 @@
 // Crear usuarios
 export const usersData = [
   { 
-    firstName: 'Admina', 
-    lastName: 'NovaStart', 
+    firstName: 'Alexander', 
+    lastName: 'Nova', 
     email: 'admin@techskills.com', 
     roles: ['admin', 'mentor', 'student'],
-    bio: 'Desarrolladora experta con pasión por enseñar y guiar a la próxima generación de programadores.'
+    bio: 'Desarrollador experto con pasión por enseñar y guiar a la próxima generación de programadores.'
   },
   { 
     firstName: 'Ethan', 

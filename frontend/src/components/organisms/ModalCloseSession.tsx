@@ -80,7 +80,7 @@ export const ModalCloseSession = ({
               alt="Inicio"
               className="mr-2 w-[140px] h-[140px]"
             />
-            <h2 className="text-[36px]">Cierre de Sesión</h2>
+            <h2 className="text-[36px] text-black">Cierre de Sesión</h2>
             <p className="text-[20px] text-center" style={{ color: "#16191C" }}>
               Si deseas salir haz clic en Aceptar o en Cancelar para continuar
               trabajando
