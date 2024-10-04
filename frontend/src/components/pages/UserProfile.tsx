@@ -109,13 +109,13 @@ export const UserProfile: React.FC = () => {
   const getStatusBackgroundColor = (status: string) => {
     switch (status) {
       case FriendRequestStatus.PENDING:
-        return "border-2 border-yellow-400 text-black";
+        return "border-l-4 border-yellow-400 text-black";
       case FriendRequestStatus.ACCEPTED:
-        return "border-2 border-green-600  text-black";
+        return "border-l-4 border-green-500 text-black";
       case FriendRequestStatus.REJECTED:
-        return "border-2 border-red-600  text-black";
+        return "border-l-4 border-red-400  text-black";
       case FriendRequestStatus.COMPLETED:
-        return "border-2 border-blue-600 text-white";
+        return "border-l-4 border-blue-500 text-white";
       default:
         return "bg-gray-200 text-black"; // Default for "Conectar"
     }
@@ -321,7 +321,7 @@ export const UserProfile: React.FC = () => {
                       {requestStatus ? (
                         <section className="flex justify-center items-center">
                           <div
-                            className={`flex justify-center items-center text-[16px] w-[220px] h-auto text-center rounded-xl px-2 py-1 ${getStatusBackgroundColor(
+                            className={` bg-[#d9d9d9] flex justify-center items-center text-[16px] w-[220px] h-auto text-center rounded-xl px-2 py-1 ${getStatusBackgroundColor(
                               requestStatus
                             )}`}
                           >

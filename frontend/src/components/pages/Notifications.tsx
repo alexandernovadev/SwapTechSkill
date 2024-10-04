@@ -167,7 +167,7 @@ export const Notifications = () => {
                         icon={faQuestionCircle}
                         className="text-black w-8 h-8"
                       />
-                      <span className="absolute right-0 transform -translate-x-1/2 bottom-full mb-2 w-32 bg-gray-800 text-white text-sm rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="absolute left-[-4px] transform -translate-x-1/2 bottom-full mb-2 w-32 bg-gray-800 text-white text-sm rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                         {friendRequest.message}
                       </span>
                     </span>
