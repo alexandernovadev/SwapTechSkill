@@ -18,11 +18,10 @@
 - [x] Yo no me debo ver como usario (db)
 - [x] Eñ usario debe llegarle de aprevacion o rechazo 
 - [x] Guardar las imagenes en el servidor
-- [ ] En el userprofile cuando se aprueba o rechazo o.. deberia verse con sockets
-- [ ] Pasado 30 dias , borrar notificaciones 
-- [ ] validar solo imagenes , en profiles
-- [ ] Debo ver mi solictudes enviadas
-- [ ] Crear chats cuando haya una conexion valida
+- [x] En el userprofile cuando se aprueba o rechazo o.. deberia verse con sockets
+- [x] validar solo imagenes , en profiles
+- [x] Debo ver mi solictudes enviadas
+- [x] Crear chats cuando haya una conexion valida
 - [ ] En notificaiones cuando acepte deberia aparecer las skill del usuer del btn 3 rayas del que solicuta
 - [ ] Validar que hps paso con el rechazo 
 - [ ] Solo color en puntica de btn notification
