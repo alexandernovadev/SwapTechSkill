@@ -22,6 +22,8 @@
 - [x] validar solo imagenes , en profiles
 - [x] Debo ver mi solictudes enviadas
 - [x] Crear chats cuando haya una conexion valida
-- [ ] En notificaiones cuando acepte deberia aparecer las skill del usuer del btn 3 rayas del que solicuta
-- [ ] Validar que hps paso con el rechazo 
+- [x] En notificaiones cuando acepte deberia aparecer las skill del usuer del btn 3 rayas del que solicuta
+- [x] Validar que hps paso con el rechazo 
 - [ ] Solo color en puntica de btn notification
+- [ ] Colocar label and ubication en el seed
+- [ ] ? Make puntajes con chats y friendrequest  y skill uuyy no

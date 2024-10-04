@@ -3,12 +3,13 @@ import { useForm } from "react-hook-form";
 import { useProfileStore } from "../../state/useProfileStore";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 import { useUIConfigStore } from "../../state/uiConfig";
+import axiosInstance from "../../services/api";
 
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
   updateFriendRequest?: (id: number, data: any) => Promise<void>;
-  IDfriendRequest: number ;
+  IDfriendRequest: number;
   userID: number;
 }
 
@@ -27,7 +28,7 @@ export const ModalConfirmConnection = ({
   const [isClosing, setIsClosing] = useState(false);
   const { fetchUserSkills, userSkills } = useProfileStore();
   const { showNotification } = useUIConfigStore();
-
+  const [nameUser, setNameUser] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -61,6 +62,20 @@ export const ModalConfirmConnection = ({
     setIsClosing(true);
     onClose();
   };
+
+  // ToDO: Here there are multiple requests
+  useEffect(() => {
+    if (userID) {
+      axiosInstance.get(`users/getById/${userID}`).then((response) => {
+        setNameUser(
+          `${response.data.user.firstName} ${response.data.user.lastName}`
+        );
+      });
+    }
+    return () => {
+      setNameUser("");
+    };
+  }, [userID, isOpen]);
 
   // Close modal on "Escape" key press
   useEffect(() => {
@@ -121,8 +136,8 @@ export const ModalConfirmConnection = ({
                 Estás a un paso de aceptar la solicitud de conexión.
               </p>
               <p className="mb-4 font-light text-xl">
-                <b className="font-bold">Tú</b> cuentas con las siguientes
-                habilidades:
+                <b className="font-bold">{nameUser}</b> cuentas con las
+                siguientes habilidades:
               </p>
               <p className="mb-4 font-light text-xl">
                 Selecciona una de ellas y haz clic en{" "}
@@ -167,7 +182,7 @@ export const ModalConfirmConnection = ({
                     onClick={onClose}
                     className="bg-black text-white px-4 py-2 rounded-lg min-w-[150px]"
                   >
-                    Cerrar | {userID}
+                    Cerrar
                   </button>
                   <button
                     type="submit"
