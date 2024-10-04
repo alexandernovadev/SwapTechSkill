@@ -5,6 +5,7 @@ import { Chat, useChatStore } from "../../state/useChatStore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { DateTime } from "luxon";
+import axiosInstance from "../../services/api";
 
 // Formatear la fecha en español usando Luxon
 const formatDateInSpanish = (dateString: string): string => {

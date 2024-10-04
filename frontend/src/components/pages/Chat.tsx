@@ -9,56 +9,59 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import useSocketStore from "../../state/useSocketStore";
 import { ModalCreateMeeting } from "../organisms/ModalCreateMeeting";
+import axiosInstance from "../../services/api";
+import { DateTime } from "luxon"; // Para formatear fechas
+import { ModalRatingUseChat } from "../organisms/ModalRatingUseChat";
 
-/**
- * back 
- *    5 - enviar mensaje a todos los participantes del chat
-      io.to(`chat-${chatId}`).emit('new-message', save);
- */
 interface FormData {
   message: string;
 }
 
-// TODO : Validate if chat exists and user is part of it
 export default function Chat() {
-  // get id from url ith useParams
   const { id: chatID } = useParams<{ id: string }>();
   const { user } = useAuthStore();
   const { messages, fetchMessagesByChatId, saveMessage } = useChatStore();
   const { socket } = useSocketStore();
   const [isOpenModalCreateMeeting, setIsOpenModalCreateMeeting] =
     useState(false);
-
-  // Ref para hacer scroll hasta el final
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Función para hacer scroll hacia abajo
+  const [chatDetails, setChatDetails] = useState<any>(null);
+  const [showTooltip, setShowTooltip] = useState(false); // Tooltip para el título
+  const [isOpenRatingModal, setIsOpenRatingModal] = useState(false);
+
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  // Desplazar hacia el final cuando los mensajes cambian
+  // Obtener los detalles del chat y setear el estado
+  useEffect(() => {
+    const getChatByID = async () => {
+      const response = await axiosInstance.get(`/chats/getChatByID/${chatID}`);
+      setChatDetails(response.data.chat); // Guardar los detalles del chat correctamente
+    };
+    getChatByID();
+  }, [chatID]);
+
+  // Desplazar hacia abajo cuando cambian los mensajes
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  // Cargar los mensajes al montar el componente
+  // Cargar mensajes al montar el componente
   useEffect(() => {
     if (chatID) fetchMessagesByChatId(+chatID);
   }, [chatID]);
 
-  // Unirse a la sala del chat y escuchar los mensajes
+  // Unirse a la sala del chat y escuchar nuevos mensajes
   useEffect(() => {
     if (chatID && socket) {
       socket.emit("join-chat", { chatId: chatID, userId: user?.id });
-
-      // Escuchar mensajes nuevos enviados a la sala
       socket.on("new-message", () => {
-        // Actualizar los mensajes en el frontend cuando se reciba uno nuevo
         fetchMessagesByChatId(+chatID);
       });
     }
@@ -71,15 +74,42 @@ export default function Chat() {
 
   // Función para manejar el envío del mensaje
   const onSubmit = (data: { message: string }) => {
-    // Guardar el mensaje
     const message = {
       chatId: +chatID!,
       userId: user?.id,
       content: data.message,
     } as Message;
-    // Llamar al método saveMessage del store
     saveMessage(message);
     reset(); // Limpiar el campo de texto
+  };
+
+  // Determinar si el usuario es el remitente
+  const isSender = chatDetails?.sender.id === user?.id;
+
+  // Obtener la habilidad correcta
+  const skill = isSender
+    ? chatDetails?.skillSender?.skillName
+    : chatDetails?.skillReceiver?.skillName;
+
+  const oppositeSkill = isSender
+    ? chatDetails?.skillReceiver?.skillName // Habilidad del receptor (otro)
+    : chatDetails?.skillSender?.skillName;
+
+  // Formatear la fecha de creación usando Luxon
+  const formatDate = (dateString: string) => {
+    return DateTime.fromISO(dateString)
+      .setLocale("es")
+      .toFormat("MMMM d, yyyy");
+  };
+
+  // Determinar si el nombre es del usuario actual y mostrar "(Tú)"
+  const formatName = (
+    person: { firstName: string; lastName: string },
+    isCurrentUser: boolean
+  ) => {
+    return `${person.firstName} ${person.lastName} ${
+      isCurrentUser ? "(Tú)" : ""
+    }`;
   };
 
   return (
@@ -101,24 +131,62 @@ export default function Chat() {
         isOpen={isOpenModalCreateMeeting}
         onClose={() => setIsOpenModalCreateMeeting(false)}
       />
-      
+      <ModalRatingUseChat
+        isOpen={isOpenRatingModal}
+        onClose={() => setIsOpenRatingModal(false)}
+        idToCalificate={0}
+      />
+
       {/* Contenedor del chat */}
       <div className="flex flex-col justify-between h-[84%] overflow-hidden">
         {/* Encabezado del chat */}
-        <div className="flex items-center justify-center p-2 border border-gray-950 rounded-t-lg">
+        <div
+          className="flex items-center justify-center p-2 border border-gray-950 rounded-t-lg relative"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
           <img
             src={Chatbubbles}
             alt="icono de chat"
             className="w-6 h-6 text-blue-600 mr-2"
           />
           <h2 className="text-xl font-semibold text-center">
-            Análisis de datos Python
+            {skill} {/* Mostrar la habilidad correcta */}
           </h2>
+
+          {/* Tooltip */}
+          {showTooltip && chatDetails && (
+            <div className="absolute top-12 bg-[#D9D9D9] border-2 border-[#2A49FF] p-2  rounded-lg shadow-lg">
+              <p>
+                <strong>Remitente:</strong>{" "}
+                {formatName(
+                  chatDetails.sender,
+                  chatDetails.sender.id === user?.id
+                )}
+              </p>
+              <p>
+                <strong>Receptor:</strong>{" "}
+                {formatName(
+                  chatDetails.receiver,
+                  chatDetails.receiver.id === user?.id
+                )}
+              </p>
+              <p>
+                <strong>Habilidad solicitada:</strong> {oppositeSkill}
+              </p>
+              <p>
+                <strong>Fecha de creación:</strong>{" "}
+                {formatDate(chatDetails.createdAt)}
+              </p>
+              <p>
+                <strong>Estado:</strong> {chatDetails.status}
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Área de conversación */}
         <div className="flex-grow border border-gray-950 p-4 overflow-auto">
-          {/* Mensajes */}
           <div className="flex flex-col space-y-4">
             {messages.map((message) => (
               <div
@@ -138,7 +206,6 @@ export default function Chat() {
                 </div>
               </div>
             ))}
-            {/* Este div es el marcador final de los mensajes */}
             <div ref={messagesEndRef}></div>
           </div>
         </div>
@@ -146,7 +213,7 @@ export default function Chat() {
         {/* Input de mensaje y botones */}
         <form
           className="flex items-center p-2 bg-[#D9D9D9] border border-gray-950 rounded-b-lg"
-          onSubmit={handleSubmit(onSubmit)} // Manejar el envío del formulario
+          onSubmit={handleSubmit(onSubmit)}
         >
           <input
             autoCorrect="off"
@@ -154,7 +221,7 @@ export default function Chat() {
             type="text"
             placeholder="Escribe un mensaje"
             className="flex-grow p-2 border border-gray-300 rounded-lg outline-none focus:bg-white focus:border-blue-500"
-            {...register("message", { required: true })} // Registrar el input
+            {...register("message", { required: true })}
           />
           <button
             type="button"
@@ -169,9 +236,12 @@ export default function Chat() {
         </form>
       </div>
 
-      {/* Botón de Volver (alineado a la derecha)*/}
+      {/* Botón de Volver */}
       <div className="flex justify-end mt-4 gap-3">
-        <button className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg">
+        <button
+          onClick={() => setIsOpenRatingModal(true)}
+          className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
+        >
           Terminar Chat
         </button>
         <Link

@@ -35,6 +35,19 @@ export class ChatController {
     }
   };
 
+  static getChatByID = async (req: Request, res: Response) => {
+    try {
+      const chatID = +req.params.chatID;
+      const chat = await chatRepository.findById(chatID)
+
+      const [friendRequest] = await friendRequests.findByChatId(chat.id);      
+
+      res.status(200).json({ chat:friendRequest });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
   static getAllDataChatFriendRequest = async (req: Request, res: Response) => {
     const chatID = +req.params.chatID;
 

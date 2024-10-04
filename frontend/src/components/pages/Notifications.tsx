@@ -8,9 +8,9 @@ import { Link } from "react-router-dom";
 import useSocketStore from "../../state/useSocketStore";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 import { ModalConfirmConnection } from "../organisms/ModalConfirmConection";
-import { ModalRejectConection } from "../organisms/ModalRejectConection";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
+import { ModalRejectConection } from "../organisms/ModalRejectConection";
 
 export const Notifications = () => {
   const { user } = useAuthStore();
