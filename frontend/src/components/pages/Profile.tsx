@@ -126,7 +126,7 @@ export const Profile = () => {
               src={`${profileImage}` || UserLogoDefault}
               alt={`${userProfile.firstName} ${userProfile.lastName}`}
               className="w-52 h-52 rounded-full object-cover"
-              onError={() => setProfileImage(UserLogoDefault)} 
+              onError={() => setProfileImage(UserLogoDefault)}
             />
           </div>
           {/* Botón de edición sobre la imagen */}
@@ -156,13 +156,13 @@ export const Profile = () => {
               <p className="text-gray-500">
                 {userProfile.location ? userProfile.location : "Sin Ubicación"}
               </p>
-              <div className="flex items-center mt-2">
+              <div className="flex items-center">
                 <span
-                  className="text-black cursor-pointer"
+                  className="text-black cursor-pointer text-5xl"
                   onClick={() => setIsOpeningRating(true)}
                 >
                   ★★★★★
-                </span>{" "}
+                </span>
                 {/* Example of rating stars */}
               </div>
             </div>
@@ -339,7 +339,9 @@ export const Profile = () => {
               </li>
             ))
           ) : (
-            <li className="list-none p-0 m-0 ml-1">No hay Lenguajes disponibles</li>
+            <li className="list-none p-0 m-0 ml-1">
+              No hay Lenguajes disponibles
+            </li>
           )}
         </ul>
       </div>
@@ -423,35 +425,40 @@ export const Profile = () => {
         onClose={() => setIsOpeningRating(false)}
       >
         <h1 className="text-3xl font-bold mb-6">Resumen de opiniones</h1>
-        <div className="flex flex-row">
+        <div className="flex flex-row justify-between w-full">
           {/* Título */}
 
-          <section className="flex-1">
-            <div className="">
+          <section className="grid grid-cols-5 gap-4 w-full">
+            {" "}
+            {/* Cambié a grid-cols-5 para mejor control */}
+            <div className="col-span-4">
+              {/* Ocupa 4/5 del espacio para las barras */}
               {/* Barras de calificación */}
               {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="flex">
-                  <span className="font-bold text-2xl "> {rating}</span>
+                <div key={rating} className="flex items-center">
+                  <span className="font-bold text-2xl"> {rating}</span>
                   {/* //BARRA DE CALIFICACIÓN⁄ */}
-                  <section className="flex-grow px-2">
+                  <section className="flex-1 px-2">
                     <div
-                      className="gradient-background-azulfeo  h-6 rounded-full my-1"
+                      className="gradient-background-azulfeo h-6 rounded-full my-1"
                       style={{
-                        width: ` ${rating * 15}%`,
+                        width: `${(rating / 5) * 100}%`,
                       }}
                     ></div>
                   </section>
                 </div>
               ))}
             </div>
-
             {/* Calificación promedio */}
-            <div className="flex flex-col items-start mb-6">
-              <div className="text-[90px] font-bold m-0 mr-4">3.7</div>
+            <div className="flex flex-col items-center justify-center mb-6 col-span-1">
+              {" "}
+              {/* Ocupa 1/5 del espacio */}
+              <div className="text-[50px] font-bold m-0">3.7</div>{" "}
+              {/* Reduje el tamaño del texto */}
               <div className="flex items-center">
-                <span className=" text-3xl">★★★★★</span>
+                <span className="text-3xl">★★★★★</span>
               </div>
-              <div className="ml-4 text-lg text-gray-600">11 opiniones</div>
+              <div className="text-lg text-gray-600">11 opiniones</div>
             </div>
           </section>
         </div>
