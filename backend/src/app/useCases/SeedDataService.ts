@@ -103,7 +103,7 @@ export class UserSeederService {
     const users = [];
 
     for (const userName of usersData) {
-      const email = `${userName.firstName.toLowerCase()}.${userName.lastName.toLowerCase()}@swapskill.com`;
+      const email = `${userName.email}@swapskill.com`;
       let user = new User();
       user.firstName = userName.firstName;
       user.lastName = userName.lastName;
