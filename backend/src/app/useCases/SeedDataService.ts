@@ -17,6 +17,8 @@ import { UserRoleRepository } from '../../domain/repositories/UserRoleRepository
 import { UserSkillRepository } from '../../domain/repositories/UserSkillRepository';
 import { PasswordService } from '../../shared/utils/bcrypt';
 import { usersData } from '../../data/UsersDataSeed';
+import { getConnection } from 'typeorm';
+import { AppDataSource } from '../../infrastructure/persistence/typeormSource';
 export class UserSeederService {
   private passwordService = new PasswordService();
   private defaultPassword = process.env.DEFAULT_PASSWORD || '12345678'; // Default password for all users
@@ -80,9 +82,21 @@ export class UserSeederService {
   private async createSkills(categories: SkillCategory[]): Promise<Skill[]> {
     const skills = [];
     const skillNames = {
-      'Backend Development': ['Arquitectura de Software', 'Bases de Datos SQL y NoSQL', 'Django', 'Ruby on Rails',"Microservicios Java"],
+      'Backend Development': [
+        'Arquitectura de Software',
+        'Bases de Datos SQL y NoSQL',
+        'Django',
+        'Ruby on Rails',
+        'Microservicios Java',
+      ],
       'Frontend Development': ['React', 'Vue.js', 'Angular', 'SASS'],
-      'Data Science': ['TensorFlow', 'PyTorch', 'Pandas', 'NumPy',"Análisis de datos Python",],
+      'Data Science': [
+        'TensorFlow',
+        'PyTorch',
+        'Pandas',
+        'NumPy',
+        'Análisis de datos Python',
+      ],
       DevOps: ['Docker', 'Kubernetes', 'CI/CD', 'Jenkins'],
       'Cloud Computing': ['AWS', 'Azure', 'Google Cloud', 'OpenStack'],
     };
@@ -103,7 +117,7 @@ export class UserSeederService {
     const users = [];
 
     for (const userName of usersData) {
-      const email = `${userName.email}@swapskill.com`;
+      const email = userName.email;
       let user = new User();
       user.firstName = userName.firstName;
       user.lastName = userName.lastName;
@@ -206,7 +220,8 @@ export class UserSeederService {
         userSkill.user = user;
         userSkill.skill = skill;
         userSkill.yearsOfExperience = Math.floor(Math.random() * 6) + 2;
-        userSkill.description = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+        userSkill.description =
+          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
         return userSkill;
       });
 
@@ -217,7 +232,44 @@ export class UserSeederService {
     }
   }
 
+  // Función para truncar tablas
+  private async truncateTables(): Promise<void> {
+    const queryRunner = AppDataSource.createQueryRunner();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.query(`
+          TRUNCATE TABLE 
+            "Roles", 
+            "Languages", 
+            "UserSkills", 
+            "Skills", 
+            "SkillCategories", 
+            "FriendRequests",
+            "ChatParticipants",
+            "Messages",
+            "Chats",
+            "Meetings",
+            "UserProfessionalStudies",
+            "UserRoles",
+            "Users",
+            "UserLanguages"
+          RESTART IDENTITY CASCADE;
+        `);
+
+      await queryRunner.commitTransaction();
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw new Error(`Error truncating tables: ${error.message}`);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
   public async seed() {
+    // delete all
+    await this.truncateTables();
+
     const roles = await this.createRoles();
     const languages = await this.createLanguages();
     const categories = await this.createSkillCategories();
