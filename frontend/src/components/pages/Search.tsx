@@ -153,11 +153,21 @@ export const Search = () => {
             </h2>
             <div className="flex justify-center mb-2">
               <div className="flex items-center gap-1">
-                <span className="text-yellow-500 text-4xl">★</span>{" "}
-                <span className="text-yellow-500 text-4xl">★</span>{" "}
-                <span className="text-black text-4xl">★</span>{" "}
-                <span className="text-black text-4xl">★</span>{" "}
-                <span className="text-black text-4xl">★</span>{" "}
+                <span className="text-yellow-500 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                  ★
+                </span>
+                <span className="text-yellow-500 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                  ★
+                </span>
+                <span className="text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                  ★
+                </span>
+                <span className="text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                  ★
+                </span>
+                <span className="text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                  ★
+                </span>
               </div>
             </div>
             <div className="relative">

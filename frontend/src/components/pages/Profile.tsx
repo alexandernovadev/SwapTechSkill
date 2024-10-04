@@ -162,11 +162,21 @@ export const Profile = () => {
                   onClick={() => setIsOpeningRating(true)}
                 >
                   <div className="flex items-center gap-1">
-                    <span className="text-yellow-500 text-5xl">★</span>
-                    <span className="text-yellow-500 text-5xl">★</span>
-                    <span className="text-black text-5xl">★</span>
-                    <span className="text-black text-5xl">★</span>
-                    <span className="text-black text-5xl">★</span>
+                    <span className="text-yellow-500 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                      ★
+                    </span>
+                    <span className="text-yellow-500 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                      ★
+                    </span>
+                    <span className="text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                      ★
+                    </span>
+                    <span className="text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                      ★
+                    </span>
+                    <span className="text-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                      ★
+                    </span>
                   </div>
                 </span>
                 {/* Example of rating stars */}
