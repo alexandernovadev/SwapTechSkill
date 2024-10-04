@@ -152,7 +152,13 @@ export const Search = () => {
               {user.firstName} {user.lastName}
             </h2>
             <div className="flex justify-center mb-2">
-              <span className="text-yellow-500">★★★★★</span>
+              <div className="flex items-center gap-1">
+                <span className="text-yellow-500 text-4xl">★</span>{" "}
+                <span className="text-yellow-500 text-4xl">★</span>{" "}
+                <span className="text-black text-4xl">★</span>{" "}
+                <span className="text-black text-4xl">★</span>{" "}
+                <span className="text-black text-4xl">★</span>{" "}
+              </div>
             </div>
             <div className="relative">
               <Link

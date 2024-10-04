@@ -161,7 +161,13 @@ export const Profile = () => {
                   className="text-black cursor-pointer text-5xl"
                   onClick={() => setIsOpeningRating(true)}
                 >
-                  ★★★★★
+                  <div className="flex items-center gap-1">
+                    <span className="text-yellow-500 text-5xl">★</span>
+                    <span className="text-yellow-500 text-5xl">★</span>
+                    <span className="text-black text-5xl">★</span>
+                    <span className="text-black text-5xl">★</span>
+                    <span className="text-black text-5xl">★</span>
+                  </div>
                 </span>
                 {/* Example of rating stars */}
               </div>
@@ -456,7 +462,13 @@ export const Profile = () => {
               <div className="text-[50px] font-bold m-0">3.7</div>{" "}
               {/* Reduje el tamaño del texto */}
               <div className="flex items-center">
-                <span className="text-3xl">★★★★★</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-500 text-4xl">★</span>
+                  <span className="text-yellow-500 text-4xl">★</span>
+                  <span className="text-black text-4xl">★</span>
+                  <span className="text-black text-4xl">★</span>
+                  <span className="text-black text-4xl">★</span>
+                </div>
               </div>
               <div className="text-lg text-gray-600">11 opiniones</div>
             </div>

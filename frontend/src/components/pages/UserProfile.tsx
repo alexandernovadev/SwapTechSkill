@@ -180,8 +180,18 @@ export const UserProfile: React.FC = () => {
                 {userProfile.location ? userProfile.location : "Sin Ubicación"}
               </p>
               <div className="flex items-center mt-2">
-                <span className="text-black">★★★★★</span>{" "}
-                {/* Example of rating stars */}
+                <div className="flex items-center gap-1">
+                  <span className="text-yellow-500 text-5xl">★</span>{" "}
+                  {/* Estrella amarilla */}
+                  <span className="text-yellow-500 text-5xl">★</span>{" "}
+                  {/* Estrella amarilla */}
+                  <span className="text-black text-5xl">★</span>{" "}
+                  {/* Estrella negra */}
+                  <span className="text-black text-5xl">★</span>{" "}
+                  {/* Estrella negra */}
+                  <span className="text-black text-5xl">★</span>{" "}
+                  {/* Estrella negra */}
+                </div>
               </div>
             </div>
           </div>

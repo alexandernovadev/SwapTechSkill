@@ -62,11 +62,11 @@ export const ModalRating = ({
           onClick={handleOverlayClick}
         >
           <div
-            className={`bg-[white] border-2 border-black p-6 rounded-2xl shadow-lg w-full max-w-2xl animate__animated animate-fast ${
+            className={`bg-[white] border-2 border-black p-6 m-4 rounded-2xl shadow-lg w-full max-w-2xl animate__animated animate-fast ${
               isClosing ? "animate__zoomOut" : "animate__zoomIn"
             }`}
           >
-            <div>{children}</div>
+            <div className="m-4">{children}</div>
           </div>
         </div>
       )}
