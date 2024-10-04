@@ -4,7 +4,6 @@ import { UserLanguage } from './UserLanguage';
 import { UserSkill } from './UserSkill';
 import { FriendRequest } from './FriendRequest';
 import { ChatParticipant } from './ChatParticipant';
-import { MeetingParticipant } from './MeetingParticipant';
 import { Notification } from './Notification';
 import { UserRating } from './UserRating';
 import { UserProfessionalStudy } from './UserProfessionalStudy';
@@ -61,12 +60,6 @@ export class User {
 
   @OneToMany(() => ChatParticipant, (chatParticipant) => chatParticipant.user)
   chatParticipants: ChatParticipant[];
-
-  @OneToMany(
-    () => MeetingParticipant,
-    (meetingParticipant) => meetingParticipant.participant,
-  )
-  meetingParticipants: MeetingParticipant[];
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];

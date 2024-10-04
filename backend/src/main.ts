@@ -22,6 +22,7 @@ import skillRoutes from './app/routes/SkillRoutes';
 import userProfessionalStudyRoutes from './app/routes/UserProfessionalStudyRoutes';
 import userSkillsRoutes from './app/routes/UserSkillsRoutes';
 import userLanguagesRoutes from './app/routes/UserLanguagesRoutes';
+import meetingRoutes from './app/routes/MeetingRoutes';
 import chatRoutes from './app/routes/ChatRoutes';
 
 import 'dotenv/config';
@@ -118,6 +119,7 @@ class Server {
     this.app.use('/api/userskills', userSkillsRoutes);
     this.app.use('/api/userlanguages', userLanguagesRoutes);
     this.app.use('/api/chats', chatRoutes);
+    this.app.use('/api/meets', meetingRoutes);
 
     // Solo para desarrollo: Rutas de seeding
     this.app.use('/api', seederRoutes);
