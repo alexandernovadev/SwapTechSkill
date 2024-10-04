@@ -87,17 +87,61 @@ export class UserSeederService {
         'Django',
         'Ruby on Rails',
         'Microservicios Java',
+        'Patrones de Diseño',
+        'Optimización de Consultas',
+        'Gestión de APIs REST y GraphQL',
+        'Manejo de Transacciones',
+        'Seguridad y Autenticación',
+        'Gestión de Concurrencia',
       ],
-      'Frontend Development': ['React', 'Vue.js', 'Angular', 'SASS'],
+      'Frontend Development': [
+        'React',
+        'Accesibilidad Web (A11Y)',
+        'Optimización del Rendimiento',
+        'Responsive Design',
+        'Arquitectura de Componentes',
+        'Gestión del Estado (Redux, Vuex)',
+        'Pruebas Unitarias (Jest, Mocha)',
+        'Optimización de Carga de Imágenes',
+      ],
       'Data Science': [
         'TensorFlow',
         'PyTorch',
         'Pandas',
-        'NumPy',
         'Análisis de datos Python',
+        'Limpieza de Datos',
+        'Visualización de Datos',
+        'Modelado Predictivo',
+        'Estadística Avanzada',
+        'NumPy',
+        'Algoritmos de Machine Learning',
+        'Ingeniería de Características',
       ],
-      DevOps: ['Docker', 'Kubernetes', 'CI/CD', 'Jenkins'],
-      'Cloud Computing': ['AWS', 'Azure', 'Google Cloud', 'OpenStack'],
+      DevOps: [
+        'Docker',
+        'Kubernetes',
+        'CI/CD',
+        'Automatización de Infraestructura',
+        'Monitoreo y Loggin (Prometheus, ELK Stack)',
+        'Orquestación de Contenedores',
+        'Gestión de Configuraciones (Ansible, Puppet)',
+        'Jenkins',
+        'Balanceo de Carga',
+        'Gestión de Seguridad en DevOps',
+        'Versionado de Código',
+      ],
+      'Cloud Computing': [
+        'AWS',
+        'Google Cloud',
+        'Computación sin Servidor (Serverless)',
+        'Escalabilidad Horizontal y Vertical',
+        'Seguridad en la Nube',
+        'Planificación de Capacidad',
+        'Azure',
+        'Arquitecturas Multicloud',
+        'Gestión de Almacenamiento en la Nube',
+        'Automatización de Infraestructura en la Nube',
+      ],
     };
 
     for (const category of categories) {
@@ -121,6 +165,8 @@ export class UserSeederService {
       user.firstName = userName.firstName;
       user.lastName = userName.lastName;
       user.email = email;
+      user.labelProfile = userName.labelProfile;
+      user.location = userName.location;
       user.bio = userName.bio;
       user.passwordHash = await this.passwordService.hashPassword(
         this.defaultPassword,
