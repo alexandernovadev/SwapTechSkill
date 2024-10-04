@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
+import axiosInstance from "../../services/api"; // Asumo que estás usando este para llamadas a la API
+import { useAuthStore } from "../../state/authStore";
 
 interface ModalCreateMeetingProps {
   isOpen: boolean;
   onClose: () => void;
-  scheduleMeeting?: (data: any) => Promise<void>;
+  chatId: number; // Necesitamos saber el chat asociado
 }
 
 interface FormValues {
@@ -21,14 +23,11 @@ interface FormValues {
 export const ModalCreateMeeting = ({
   isOpen,
   onClose,
-  scheduleMeeting,
+  chatId,
 }: ModalCreateMeetingProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
-
-  // Tracks the open/close state of the AM/PM dropdowns
-  const [startAmPmOpen, setStartAmPmOpen] = useState(false);
-  const [endAmPmOpen, setEndAmPmOpen] = useState(false);
+  const { user } = useAuthStore();
 
   const {
     register,
@@ -57,15 +56,24 @@ export const ModalCreateMeeting = ({
     onClose();
   };
 
-  const onSubmit = async (data: FormValues) => {
-    const { startDate, startTime, startAmPm, endDate, endTime, endAmPm } = data;
+  // Función para crear la reunión (POST)
+  const scheduleMeeting = async (data: FormValues) => {
+    const {
+      startDate,
+      startTime,
+      startAmPm,
+      endDate,
+      endTime,
+      endAmPm,
+      message,
+    } = data;
 
-    // Convert times to 24-hour format based on AM/PM
+    // Convertir a formato de 24 horas
     const convertTo24Hour = (time: string, amPm: string) => {
       const [hours, minutes] = time.split(":").map(Number);
       let hours24 = amPm === "PM" && hours !== 12 ? hours + 12 : hours;
       if (amPm === "AM" && hours === 12) {
-        hours24 = 0; // Midnight edge case
+        hours24 = 0; // Caso especial para medianoche
       }
       return `${String(hours24).padStart(2, "0")}:${String(minutes).padStart(
         2,
@@ -73,28 +81,38 @@ export const ModalCreateMeeting = ({
       )}`;
     };
 
-    const startDateTime = new Date(
-      `${startDate}T${convertTo24Hour(startTime, startAmPm)}`
-    );
-    const endDateTime = new Date(
-      `${endDate}T${convertTo24Hour(endTime, endAmPm)}`
-    );
+    const startDateTime = `${startDate}T${convertTo24Hour(
+      startTime,
+      startAmPm
+    )}`;
+    const endDateTime = `${endDate}T${convertTo24Hour(endTime, endAmPm)}`;
 
-    if (endDateTime <= startDateTime) {
-      // Display inline error (instead of notification)
-      errors.endDate = {
-        type: "manual",
-        message:
-          "La fecha/hora de finalización debe ser posterior a la de inicio.",
-      };
-      return;
+    if (new Date(endDateTime) <= new Date(startDateTime)) {
+      return alert(
+        "La fecha/hora de finalización debe ser posterior a la de inicio."
+      );
     }
 
-    // Call the scheduleMeeting function
-    scheduleMeeting &&
-      (await scheduleMeeting(data).then(() => {
-        onClose();
-      }));
+    try {
+      // Hacer la llamada POST para crear la reunión
+      const response = await axiosInstance.post("/meets", {
+        title: "Reunión generada desde el chat", // Puedes permitir al usuario editar el título si es necesario
+        description: message,
+        startTime: startDateTime,
+        endTime: endDateTime,
+        status: "active", // Ajusta esto si es necesario
+        organizer: { id: user?.id }, // El ID del organizador, este debería obtenerse de tu estado de usuario (useAuthStore probablemente)
+        chat: { id: chatId }, // Chat al que la reunión está asociada
+      });
+
+      if (response.status === 201) {
+        alert("Reunión creada con éxito");
+        onClose(); // Cerrar modal después de crear
+      }
+    } catch (error) {
+      console.error("Error al crear la reunión", error);
+      alert("Error al crear la reunión");
+    }
   };
 
   const modalContent = (
@@ -111,7 +129,7 @@ export const ModalCreateMeeting = ({
               isClosing ? "animate__zoomOut" : "animate__zoomIn"
             }`}
           >
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(scheduleMeeting)}>
               <h2 className="text-center text-3xl font-bold mb-4">
                 Agendar Reunión
               </h2>
@@ -160,32 +178,6 @@ export const ModalCreateMeeting = ({
                       </p>
                     )}
                   </div>
-
-                  {/* AM/PM Selector with Arrow */}
-                  <div className="w-1/2 relative">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
-                      AM/PM
-                    </label>
-                    <select
-                      {...register("startAmPm", {
-                        required: "Elige AM o PM",
-                      })}
-                      onFocus={() => setStartAmPmOpen(true)}
-                      onBlur={() => setStartAmPmOpen(false)}
-                      className="shadow appearance-none border border-black bg-transparent rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    >
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                    <span className="absolute top-10 right-4 text-gray-500">
-                      {startAmPmOpen ? "▲" : "▼"}
-                    </span>
-                    {errors.startAmPm && (
-                      <p className="text-red-400 text-xs italic mt-2">
-                        {errors.startAmPm.message}
-                      </p>
-                    )}
-                  </div>
                 </div>
 
                 {/* End Date */}
@@ -227,32 +219,6 @@ export const ModalCreateMeeting = ({
                     {errors.endTime && (
                       <p className="text-red-400 text-xs italic mt-2">
                         {errors.endTime.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* AM/PM Selector with Arrow */}
-                  <div className="w-1/2 relative">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
-                      AM/PM
-                    </label>
-                    <select
-                      {...register("endAmPm", {
-                        required: "Elige AM o PM",
-                      })}
-                      onFocus={() => setEndAmPmOpen(true)}
-                      onBlur={() => setEndAmPmOpen(false)}
-                      className="shadow appearance-none border border-black bg-transparent rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    >
-                      <option value="AM">AM</option>
-                      <option value="PM">PM</option>
-                    </select>
-                    <span className="absolute top-10 right-4 text-gray-500">
-                      {endAmPmOpen ? "▲" : "▼"}
-                    </span>
-                    {errors.endAmPm && (
-                      <p className="text-red-400 text-xs italic mt-2">
-                        {errors.endAmPm.message}
                       </p>
                     )}
                   </div>

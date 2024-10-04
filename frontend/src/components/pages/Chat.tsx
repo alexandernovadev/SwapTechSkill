@@ -130,6 +130,7 @@ export default function Chat() {
       <ModalCreateMeeting
         isOpen={isOpenModalCreateMeeting}
         onClose={() => setIsOpenModalCreateMeeting(false)}
+        chatId={+chatID!}
       />
       <ModalRatingUseChat
         isOpen={isOpenRatingModal}
