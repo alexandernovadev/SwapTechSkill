@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useProfileStore } from "../../state/useProfileStore";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
-import { FriendRequest } from "../../interfaces/models/FriendRequest";
 import { useUIConfigStore } from "../../state/uiConfig";
 
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
   updateFriendRequest?: (id: number, data: any) => Promise<void>;
-  friendRequest: FriendRequest;
+  IDfriendRequest: number ;
   userID: number;
 }
 
@@ -21,13 +20,14 @@ export const ModalConfirmConnection = ({
   isOpen,
   onClose,
   updateFriendRequest,
-  friendRequest,
+  IDfriendRequest,
   userID,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
   const { fetchUserSkills, userSkills } = useProfileStore();
   const { showNotification } = useUIConfigStore();
+
 
   useEffect(() => {
     if (isOpen) {
@@ -83,12 +83,12 @@ export const ModalConfirmConnection = ({
     const rta = {
       status: FriendRequestStatus.ACCEPTED,
       skillReceiver: data.skill,
-      message: friendRequest.message,
+      message: "Solicitud aceptada exitosamente",
       responseAt: new Date().toISOString(),
     };
 
     updateFriendRequest &&
-      (await updateFriendRequest(friendRequest.id, rta)
+      (await updateFriendRequest(IDfriendRequest, rta)
         .then(() => {
           showNotification(
             "Notificación",
@@ -167,7 +167,7 @@ export const ModalConfirmConnection = ({
                     onClick={onClose}
                     className="bg-black text-white px-4 py-2 rounded-lg min-w-[150px]"
                   >
-                    Cerrar
+                    Cerrar | {userID}
                   </button>
                   <button
                     type="submit"

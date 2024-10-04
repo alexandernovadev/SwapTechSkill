@@ -22,6 +22,12 @@ export const Notifications = () => {
   const [isModalRejectConetionOpen, setIsModalRejectConetionOpen] =
     useState(false);
 
+  const [selectedFriendRequestId, setSelectedFriendRequestId] = useState<
+    number | null
+  >(null);
+
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+
   const {
     fetchFriendRequestsByReceiverId,
     fetchFriendRequestsBySenderId,
@@ -107,15 +113,15 @@ export const Notifications = () => {
                 isOpen={isModalConfirmConectionOpen}
                 onClose={() => setIsModalConfirmConectionOpen(false)}
                 updateFriendRequest={updateFriendRequest}
-                friendRequest={friendRequest}
-                userID={user?.id!}
+                IDfriendRequest={selectedFriendRequestId!}
+                userID={selectedUserId!}
               />
 
               <ModalRejectConection
                 isOpen={isModalRejectConetionOpen}
                 onClose={() => setIsModalRejectConetionOpen(false)}
                 updateFriendRequest={updateFriendRequest}
-                friendRequest={friendRequest}
+                IDfriendRequest={selectedFriendRequestId!}
               />
 
               <div className="flex space-x-2">
@@ -123,14 +129,21 @@ export const Notifications = () => {
                   <>
                     <button
                       className="gradient-background-azulfeo text-white px-4 py-2 rounded-md"
-                      onClick={() => setIsModalConfirmConectionOpen(true)}
+                      onClick={() => {
+                        setSelectedFriendRequestId(friendRequest.id);
+                        setSelectedUserId(friendRequest.sender.id);
+                        setIsModalConfirmConectionOpen(true);
+                      }}
                     >
                       Aceptar
                     </button>
                     <button
                       className="bg-black text-white px-4 py-2 rounded-md"
                       // onClick={() => rejectNotification(friendRequest)}
-                      onClick={() => setIsModalRejectConetionOpen(true)}
+                      onClick={() => {
+                        setSelectedFriendRequestId(friendRequest.id);
+                        setIsModalRejectConetionOpen(true);
+                      }}
                     >
                       Rechazar
                     </button>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
-import { FriendRequest } from "../../interfaces/models/FriendRequest";
 import { useUIConfigStore } from "../../state/uiConfig";
 import { FriendRequestStatus } from "../../interfaces/models/FriendRequestStatus";
 
@@ -9,7 +8,7 @@ interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
   updateFriendRequest?: (id: number, data: any) => Promise<void>;
-  friendRequest: FriendRequest;
+  IDfriendRequest: number;
 }
 
 const dataReject = [
@@ -26,7 +25,7 @@ export const ModalRejectConection = ({
   isOpen,
   onClose,
   updateFriendRequest,
-  friendRequest,
+  IDfriendRequest,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -86,7 +85,7 @@ export const ModalRejectConection = ({
     };
 
     updateFriendRequest &&
-      (await updateFriendRequest(friendRequest.id, rta).then(() => {
+      (await updateFriendRequest(IDfriendRequest, rta).then(() => {
         showNotification(
           "Notificación",
           "Se rechaza exitosamente la solicitud de conexión."
