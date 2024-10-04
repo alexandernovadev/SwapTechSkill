@@ -59,8 +59,8 @@ export const Sidebar = ({ width = "320px", onClose }: SidebarProps) => {
         />
       </div>
       <ul onClick={hanldeClose}>
-        <li className=" border-b border-white text-center">
-          {user?.id} | {user?.first_name} {user?.last_name}
+        <li className=" border-b py-4 border-white text-center">
+        <span className="text-xl font-medium rounded-lg px-2 text-black bg-[#D9D9D9] relative bottom-1 ">    {user?.first_name} {user?.last_name}</span>
         </li>
         <li className=" border-b border-white">
           <NavLink to={"/dash/home"} className={linkClasses}>

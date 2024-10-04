@@ -17,7 +17,6 @@ import { UserRoleRepository } from '../../domain/repositories/UserRoleRepository
 import { UserSkillRepository } from '../../domain/repositories/UserSkillRepository';
 import { PasswordService } from '../../shared/utils/bcrypt';
 import { usersData } from '../../data/UsersDataSeed';
-import { getConnection } from 'typeorm';
 import { AppDataSource } from '../../infrastructure/persistence/typeormSource';
 export class UserSeederService {
   private passwordService = new PasswordService();
