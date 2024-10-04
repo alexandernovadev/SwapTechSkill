@@ -76,8 +76,6 @@ export const ModalRejectConection = ({
   }, [isOpen]);
 
   const onSubmit = async (data: FormValues) => {
-    console.log(data.reasonRejected);
-
     const rta = {
       status: FriendRequestStatus.REJECTED,
       message: data.reasonRejected,

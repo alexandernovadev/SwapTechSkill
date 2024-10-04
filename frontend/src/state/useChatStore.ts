@@ -39,6 +39,9 @@ export const useChatStore = create<ChatState>((set) => ({
     try {
       const response = await axiosInstance.get(`/chats/getMyChats/${userId}`);
       const chats = response.data.chats;
+
+      console.log(chats);
+      
       set({ chats, loading: false });
     } catch (error) {
       set({ error: "Error fetching chats", loading: false });

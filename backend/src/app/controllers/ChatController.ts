@@ -6,7 +6,6 @@ import { MessageRepository } from '../../domain/repositories/MessageRepository';
 import { Message } from '../../domain/entity/Message';
 import { io } from '../../main';
 
-
 const chatRepository = new ChatRepository();
 const chatParticipantRepository = new ChatParticipantRepository();
 const friendRequests = new FriendRequestRepository();
@@ -22,7 +21,27 @@ export class ChatController {
       const myChats =
         await chatRepository.findActiveChatsByIds(chatParticipants);
 
-      res.status(200).json({ chats: myChats });
+      // concatenar por cada chat friendRequestRepository.findByChatId(chatID);
+      const myChatsWithFriendRequest = await Promise.all(
+        myChats.map(async (chat) => {
+          const [friendRequest] = await friendRequests.findByChatId(chat.id);
+          return { ...chat, friendRequest };
+        }),
+      );
+
+      res.status(200).json({ chats: myChatsWithFriendRequest });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  };
+
+  static getAllDataChatFriendRequest = async (req: Request, res: Response) => {
+    const chatID = +req.params.chatID;
+
+    try {
+      const dataChat = await friendRequests.findByChatId(chatID);
+
+      res.status(200).json({ dataChat });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

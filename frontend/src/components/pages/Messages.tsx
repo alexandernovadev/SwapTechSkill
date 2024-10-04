@@ -11,8 +11,9 @@ export const Messages = () => {
 
   useEffect(() => {
     fetchChatsByUserId(user?.id!);
-    console.log(chats);
   }, []);
+
+  // {{url}}/api/friendrequest/getById/2
 
   if (loading) {
     return <p>Cargando...</p>;

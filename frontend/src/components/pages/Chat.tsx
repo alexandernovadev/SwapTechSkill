@@ -71,8 +71,6 @@ export default function Chat() {
 
   // Función para manejar el envío del mensaje
   const onSubmit = (data: { message: string }) => {
-    console.log("Mensaje enviado:", data.message); // Imprime el mensaje en consola
-
     // Guardar el mensaje
     const message = {
       chatId: +chatID!,

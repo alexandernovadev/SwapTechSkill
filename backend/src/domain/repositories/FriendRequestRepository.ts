@@ -112,9 +112,19 @@ export class FriendRequestRepository {
 
   // Método para buscar un friendRequest por ID (Leer)
   async findById(id: number): Promise<FriendRequest | undefined> {
-    return await this.friendRequestRepository.findOne({ where: { id } });
+    return await this.friendRequestRepository.findOne({
+      where: { id },
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver', 'chat'],
+    });
   }
 
+  findByChatId(chatId: number): Promise<FriendRequest[]> {
+    return this.friendRequestRepository.find({
+      where: { chat: { id: chatId } },
+      relations: ['sender', 'receiver', 'skillSender', 'skillReceiver', 'chat'],
+    });
+  }
+  
   // Método para actualizar un friendRequest
   async update(
     id: number,

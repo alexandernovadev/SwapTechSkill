@@ -7,6 +7,9 @@ const router = Router();
 router.get('/getMyChats/:id', ChatController.getMyChats);
 router.post('/saveMessage', ChatController.saveMessage);
 router.get('/getAllMessages/:chatID', ChatController.getAllMessages);
-
+router.get(
+  '/getAllDataChat/:chatID',
+  ChatController.getAllDataChatFriendRequest,
+);
 
 export default router;
