@@ -145,7 +145,7 @@ export const Notifications = () => {
                     </Link>
                   </>
                 ) : (
-                  <div className="relative inline-block">
+                  <div className="relative flex">
                     <div className="bg-[#ababae] text-black px-6 py-1  rounded-lg flex items-center border-l-4 border-red-500">
                       Solicitud Rechazada
                     </div>
@@ -154,7 +154,7 @@ export const Notifications = () => {
                         icon={faQuestionCircle}
                         className="text-black w-8 h-8"
                       />
-                      <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 w-32 bg-gray-800 text-white text-sm rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="absolute right-0 transform -translate-x-1/2 bottom-full mb-2 w-32 bg-gray-800 text-white text-sm rounded-lg px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
                         {friendRequest.message}
                       </span>
                     </span>
@@ -210,11 +210,10 @@ export const Notifications = () => {
                   </>
                 ) : (
                   <section className="flex">
-
-                  <div className="bg-red-500 text-white px-6 py-1 rounded-lg">
-                    Solicitud Rechazada
-                  </div>
-                  <span className="ml-2 relative group cursor-pointer">
+                    <div className="bg-red-500 text-white px-6 py-1 rounded-lg">
+                      Solicitud Rechazada
+                    </div>
+                    <span className="ml-2 relative group cursor-pointer">
                       <FontAwesomeIcon
                         icon={faQuestionCircle}
                         className="text-black w-8 h-8"

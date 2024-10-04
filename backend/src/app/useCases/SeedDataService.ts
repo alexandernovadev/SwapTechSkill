@@ -19,7 +19,7 @@ import { PasswordService } from '../../shared/utils/bcrypt';
 import { usersData } from '../../data/UsersDataSeed';
 export class UserSeederService {
   private passwordService = new PasswordService();
-  private defaultPassword = process.env.DEFAULT_PASSWORD || 'TechSkill#24.'; // Default password for all users
+  private defaultPassword = process.env.DEFAULT_PASSWORD || '12345678'; // Default password for all users
   private roles = ['admin', 'student', 'mentor'];
   private categorySkillsData = [
     'Backend Development',
@@ -80,9 +80,9 @@ export class UserSeederService {
   private async createSkills(categories: SkillCategory[]): Promise<Skill[]> {
     const skills = [];
     const skillNames = {
-      'Backend Development': ['Node.js', 'Express', 'Django', 'Ruby on Rails'],
+      'Backend Development': ['Arquitectura de Software', 'Bases de Datos SQL y NoSQL', 'Django', 'Ruby on Rails',"Microservicios Java"],
       'Frontend Development': ['React', 'Vue.js', 'Angular', 'SASS'],
-      'Data Science': ['TensorFlow', 'PyTorch', 'Pandas', 'NumPy'],
+      'Data Science': ['TensorFlow', 'PyTorch', 'Pandas', 'NumPy',"Análisis de datos Python",],
       DevOps: ['Docker', 'Kubernetes', 'CI/CD', 'Jenkins'],
       'Cloud Computing': ['AWS', 'Azure', 'Google Cloud', 'OpenStack'],
     };
@@ -100,11 +100,10 @@ export class UserSeederService {
   }
 
   private async createUsers(): Promise<User[]> {
-    const domains = ['gmail.com', 'yahoo.com', 'outlook.com'];
     const users = [];
 
     for (const userName of usersData) {
-      const email = `${userName.firstName.toLowerCase()}.${userName.lastName.toLowerCase()}@${this.shuffleArray(domains)[0]}`;
+      const email = `${userName.firstName.toLowerCase()}.${userName.lastName.toLowerCase()}@swapskill.com`;
       let user = new User();
       user.firstName = userName.firstName;
       user.lastName = userName.lastName;

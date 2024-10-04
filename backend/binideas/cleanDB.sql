@@ -4,7 +4,17 @@ TRUNCATE TABLE
     "UserSkills", 
     "Skills", 
     "SkillCategories", 
-    "Users"
+    "Users",
+    "FriendRequests",
+    "ChatParticipants",
+    "Messages",
+    "Chats",
+    "Meetings",
+    "UserSkills",
+    "UserProfessionalStudies",
+    "UserRoles",
+    "Users",
+    "UserLanguages"
 RESTART IDENTITY CASCADE;
 
 

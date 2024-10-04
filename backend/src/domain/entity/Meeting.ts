@@ -30,10 +30,7 @@ export class Meeting {
 
     @Column({ name: "created_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
     createdAt: Date;
-
-    @Column({ name: "reminder_time", type: "timestamp", nullable: true })
-    reminderTime: Date;
-
+    
     @OneToMany(() => MeetingParticipant, (participant) => participant.meeting)
     participants: MeetingParticipant[];
 }
