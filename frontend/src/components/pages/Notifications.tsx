@@ -208,13 +208,13 @@ export const Notifications = () => {
               <div className="flex space-x-2">
                 {friendRequest.status === "pending" ? (
                   <>
-                    <button className="bg-yellow-400 text-black px-9 py-1 rounded-lg">
+                    <button className="border-l-4 border-blue-500 bg-[#ababae] text-black px-9 py-1 rounded-lg">
                       Solicitud Enviada
                     </button>
                   </>
                 ) : friendRequest.status === "accepted" ? (
                   <>
-                    <button className="bg-green-500 text-white px-6 py-1 rounded-lg">
+                    <button className="border-l-4 border-green-500 bg-[#ababae] text-black px-6 py-1 rounded-lg">
                       Solicitud Aceptada
                     </button>
                     <button>
@@ -223,7 +223,7 @@ export const Notifications = () => {
                   </>
                 ) : (
                   <section className="flex">
-                    <div className="bg-red-500 text-white px-6 py-1 rounded-lg">
+                    <div className="border-l-4 border-red-400 bg-[#ababae] text-black px-6 py-1 rounded-lg">
                       Solicitud Rechazada
                     </div>
                     <span className="ml-2 relative group cursor-pointer">
