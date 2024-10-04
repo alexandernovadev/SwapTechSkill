@@ -457,9 +457,8 @@ export const Profile = () => {
             </div>
             {/* Calificación promedio */}
             <div className="flex flex-col items-center justify-center mb-6 col-span-1">
-              {" "}
               {/* Ocupa 1/5 del espacio */}
-              <div className="text-[50px] font-bold m-0">3.7</div>{" "}
+              <div className="text-[80px] font-bold m-0">3.7</div>
               {/* Reduje el tamaño del texto */}
               <div className="flex items-center">
                 <div className="flex items-center gap-1">
@@ -470,7 +469,7 @@ export const Profile = () => {
                   <span className="text-black text-4xl">★</span>
                 </div>
               </div>
-              <div className="text-lg text-gray-600">11 opiniones</div>
+              <div className="text-md text-gray-600">11 opiniones</div>
             </div>
           </section>
         </div>
