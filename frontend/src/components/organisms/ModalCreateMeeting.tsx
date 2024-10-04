@@ -13,10 +13,8 @@ interface ModalCreateMeetingProps {
 interface FormValues {
   startDate: string;
   startTime: string;
-  startAmPm: string;
   endDate: string;
   endTime: string;
-  endAmPm: string;
   message: string;
 }
 
@@ -58,34 +56,11 @@ export const ModalCreateMeeting = ({
 
   // Función para crear la reunión (POST)
   const scheduleMeeting = async (data: FormValues) => {
-    const {
-      startDate,
-      startTime,
-      startAmPm,
-      endDate,
-      endTime,
-      endAmPm,
-      message,
-    } = data;
+    const { startDate, startTime, endDate, endTime, message } = data;
 
     // Convertir a formato de 24 horas
-    const convertTo24Hour = (time: string, amPm: string) => {
-      const [hours, minutes] = time.split(":").map(Number);
-      let hours24 = amPm === "PM" && hours !== 12 ? hours + 12 : hours;
-      if (amPm === "AM" && hours === 12) {
-        hours24 = 0; // Caso especial para medianoche
-      }
-      return `${String(hours24).padStart(2, "0")}:${String(minutes).padStart(
-        2,
-        "0"
-      )}`;
-    };
-
-    const startDateTime = `${startDate}T${convertTo24Hour(
-      startTime,
-      startAmPm
-    )}`;
-    const endDateTime = `${endDate}T${convertTo24Hour(endTime, endAmPm)}`;
+    const startDateTime = `${startDate}T${startTime}`;
+    const endDateTime = `${endDate}T${endTime}`;
 
     if (new Date(endDateTime) <= new Date(startDateTime)) {
       return alert(
@@ -96,11 +71,11 @@ export const ModalCreateMeeting = ({
     try {
       // Hacer la llamada POST para crear la reunión
       const response = await axiosInstance.post("/meets", {
-        title: "Reunión generada desde el chat", // Puedes permitir al usuario editar el título si es necesario
+        title: "Reunión generada desde el chat",
         description: message,
         startTime: startDateTime,
         endTime: endDateTime,
-        status: "active", // Ajusta esto si es necesario
+        status: "active",
         organizer: { id: user?.id }, // El ID del organizador, este debería obtenerse de tu estado de usuario (useAuthStore probablemente)
         chat: { id: chatId }, // Chat al que la reunión está asociada
       });
@@ -135,9 +110,9 @@ export const ModalCreateMeeting = ({
               </h2>
 
               {/* Grid layout */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-12 gap-4 mb-4">
                 {/* Start Date */}
-                <div>
+                <div className="col-span-8">
                   <label className="block text-gray-700 text-sm font-bold mb-2">
                     Fecha inicial
                   </label>
@@ -158,30 +133,30 @@ export const ModalCreateMeeting = ({
                 </div>
 
                 {/* Start Time */}
-                <div className="flex space-x-2">
-                  <div className="w-1/2">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
-                      Hora inicial
-                    </label>
-                    <input
-                      type="time"
-                      {...register("startTime", {
-                        required: "La hora inicial es requerida.",
-                      })}
-                      className={`shadow appearance-none border border-black bg-transparent rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                        errors.startTime ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.startTime && (
-                      <p className="text-red-400 text-xs italic mt-2">
-                        {errors.startTime.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="col-span-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Hora inicial
+                  </label>
+                  <input
+                    type="time"
+                    {...register("startTime", {
+                      required: "La hora inicial es requerida.",
+                    })}
+                    className={`shadow appearance-none border border-black bg-transparent rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      errors.startTime ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.startTime && (
+                    <p className="text-red-400 text-xs italic mt-2">
+                      {errors.startTime.message}
+                    </p>
+                  )}
                 </div>
+              </div>
 
+              <div className="grid grid-cols-12 gap-4 mb-4">
                 {/* End Date */}
-                <div>
+                <div className="col-span-8">
                   <label className="block text-gray-700 text-sm font-bold mb-2">
                     Fecha final
                   </label>
@@ -202,26 +177,24 @@ export const ModalCreateMeeting = ({
                 </div>
 
                 {/* End Time */}
-                <div className="flex space-x-2">
-                  <div className="w-1/2">
-                    <label className="block text-gray-700 text-sm font-bold mb-2">
-                      Hora final
-                    </label>
-                    <input
-                      type="time"
-                      {...register("endTime", {
-                        required: "La hora final es requerida.",
-                      })}
-                      className={`shadow appearance-none border border-black bg-transparent rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-                        errors.endTime ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.endTime && (
-                      <p className="text-red-400 text-xs italic mt-2">
-                        {errors.endTime.message}
-                      </p>
-                    )}
-                  </div>
+                <div className="col-span-4">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
+                    Hora final
+                  </label>
+                  <input
+                    type="time"
+                    {...register("endTime", {
+                      required: "La hora final es requerida.",
+                    })}
+                    className={`shadow appearance-none border border-black bg-transparent rounded-xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                      errors.endTime ? "border-red-500" : ""
+                    }`}
+                  />
+                  {errors.endTime && (
+                    <p className="text-red-400 text-xs italic mt-2">
+                      {errors.endTime.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
