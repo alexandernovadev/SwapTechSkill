@@ -218,7 +218,9 @@ export const Notifications = () => {
                       Solicitud Aceptada
                     </button>
                     <button>
-                      <img src={msgBlack} className="w-9 h-9" alt="msg" />
+                      <Link to={`/dash/chat/${friendRequest.chat?.id}`}>
+                        <img src={msgBlack} className="w-9 h-9" alt="msg" />
+                      </Link>
                     </button>
                   </>
                 ) : (

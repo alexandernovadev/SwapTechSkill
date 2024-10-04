@@ -1,12 +1,44 @@
 import { create } from "zustand";
 import axiosInstance from "../services/api";
 
-interface Chat {
+export interface FriendRequest {
+  id: number;
+  status: string;
+  message: string;
+  createdAt: Date;
+  responseAt: Date;
+  sender: Receiver;
+  receiver: Receiver;
+  skillSender: Skill;
+  skillReceiver: Skill;
+  chat: Chat;
+}
+
+export interface Receiver {
+  id: number;
+  firstName: string;
+  lastName: string;
+  location: null;
+  labelProfile: null;
+  email: string;
+  passwordHash: string;
+  profilePictureUrl: null;
+  bio: string;
+  authProvider: null;
+  authProviderId: null;
+}
+
+export interface Skill {
+  id: number;
+  skillName: string;
+}
+export interface Chat {
   id: number;
   name: string;
   status: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
+  friendRequest?: FriendRequest;
 }
 
 export interface Message {
@@ -39,9 +71,6 @@ export const useChatStore = create<ChatState>((set) => ({
     try {
       const response = await axiosInstance.get(`/chats/getMyChats/${userId}`);
       const chats = response.data.chats;
-
-      console.log(chats);
-      
       set({ chats, loading: false });
     } catch (error) {
       set({ error: "Error fetching chats", loading: false });
@@ -62,14 +91,16 @@ export const useChatStore = create<ChatState>((set) => ({
   saveMessage: async (message: Message) => {
     set({ loading: true, error: null });
     try {
-      const lastMessage = await axiosInstance.post("/chats/saveMessage", message);
+      const lastMessage = await axiosInstance.post(
+        "/chats/saveMessage",
+        message
+      );
 
       set((state) => ({
         messages: [...state.messages, lastMessage.data.message],
-        loading: false
+        loading: false,
       }));
-      
-      
+
       set({ loading: false });
     } catch (error) {
       set({ error: "Error saving message", loading: false });
