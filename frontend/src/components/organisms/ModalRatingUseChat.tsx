@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
 import ReactStars from "react-stars";
+import axiosInstance from "../../services/api";
 
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  idToCalificate: number;
+  idToCalificate: number; // ID del usuario o entidad a calificar
 }
 
 interface FormValues {
@@ -29,10 +30,10 @@ export const ModalRatingUseChat = ({
     setValue,
     getValues,
     trigger,
-    reset, // <-- Añadido para poder resetear el formulario
+    reset,
   } = useForm<FormValues>({
     defaultValues: {
-      rating: 0.5, // Establecer valor inicial a 1 en lugar de 0
+      rating: 0.5, // Establecer valor inicial a 0.5
     },
   });
 
@@ -73,31 +74,35 @@ export const ModalRatingUseChat = ({
     };
   }, [isOpen]);
 
-  // Función para validar que el rating sea mayor que 0
   const validateRating = (value: number) => {
     if (value && value >= 1) {
-      return true; // Válido si la calificación es mayor o igual a 1
+      return true;
     }
-    return "Debes seleccionar al menos una estrella"; // Mensaje de error si no hay calificación válida
+    return "Debes seleccionar al menos una estrella";
   };
 
   const onSubmit = async (data: FormValues) => {
-    const isRatingValid = await trigger("rating"); // Validar manualmente el campo de rating
+    const isRatingValid = await trigger("rating");
 
-    if (!isRatingValid) return; // No proceder si la calificación es inválida
+    if (!isRatingValid) return;
 
     const rta = {
       rating: data.rating,
       comment: data.comment,
-      responseAt: new Date().toISOString(),
+      chatParticipantId: idToCalificate, // Incluye el ID del participante del chat
     };
 
-    console.log("Datos enviados:", rta);
+    try {
+      // Realiza la solicitud POST utilizando la instancia de axios configurada
+      const response = await axiosInstance.post("/rating", rta);
+      console.log("Calificación creada exitosamente:", response.data);
 
-    // Resetear el formulario después de enviarlo
-    reset({ rating: 1, comment: "" }); // Establecer valores por defecto para rating y comentario
-
-    closeWithAnimation();
+      // Resetear el formulario después de enviarlo
+      reset({ rating: 1, comment: "" });
+      closeWithAnimation();
+    } catch (error) {
+      console.error("Error al crear la calificación:", error);
+    }
   };
 
   const modalContent = (
@@ -125,20 +130,19 @@ export const ModalRatingUseChat = ({
                   <ReactStars
                     count={5}
                     size={36}
-                    half={true} // Habilitar media estrella
+                    half={true}
                     value={getValues("rating")}
                     onChange={(value) => {
-                      setValue("rating", value); // Actualiza la calificación
-                      trigger("rating"); // Valida inmediatamente después de seleccionar la calificación
+                      setValue("rating", value);
+                      trigger("rating");
                     }}
                     color2={"#ffd700"}
                   />
                 </div>
-                {/* Validar el rating utilizando la función validateRating */}
                 <input
                   type="hidden"
                   {...register("rating", {
-                    validate: validateRating, // Usar la función validateRating para validar el rating
+                    validate: validateRating,
                   })}
                 />
                 {errors.rating && (
@@ -147,7 +151,7 @@ export const ModalRatingUseChat = ({
                   </p>
                 )}
 
-                {/* Campo de texto para comentarios */}
+                {/* Comentario */}
                 <textarea
                   {...register("comment", {
                     required: "El comentario es obligatorio",
@@ -161,7 +165,6 @@ export const ModalRatingUseChat = ({
                 )}
               </div>
 
-              {/* Botones */}
               <div className="flex flex-row gap-2 justify-center mt-5">
                 <button
                   type="button"
