@@ -4,7 +4,6 @@ import { UserLanguage } from './UserLanguage';
 import { UserSkill } from './UserSkill';
 import { FriendRequest } from './FriendRequest';
 import { ChatParticipant } from './ChatParticipant';
-import { Notification } from './Notification';
 import { UserProfessionalStudy } from './UserProfessionalStudy';
 
 @Entity({ name: 'Users' })
@@ -59,9 +58,6 @@ export class User {
 
   @OneToMany(() => ChatParticipant, (chatParticipant) => chatParticipant.user)
   chatParticipants: ChatParticipant[];
-
-  @OneToMany(() => Notification, (notification) => notification.user)
-  notifications: Notification[];
 
   @OneToMany(
     () => UserProfessionalStudy,
