@@ -7,7 +7,8 @@ import axiosInstance from "../../services/api";
 interface ModalProfileProps {
   isOpen: boolean;
   onClose: () => void;
-  idToCalificate: number; // ID del usuario o entidad a calificar
+  chatID: number; // ID del usuario o entidad a calificar
+  userID: number; // ID del usuario o entidad a calificar
 }
 
 interface FormValues {
@@ -18,7 +19,8 @@ interface FormValues {
 export const ModalRatingUseChat = ({
   isOpen,
   onClose,
-  idToCalificate,
+  chatID,
+  userID
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -89,7 +91,8 @@ export const ModalRatingUseChat = ({
     const rta = {
       rate: data.rating,
       message: data.comment,
-      chatParticipantId: idToCalificate, // Incluye el ID del participante del chat
+      chatID: chatID, 
+      userID: userID
     };
 
     try {

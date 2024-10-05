@@ -135,7 +135,8 @@ export default function Chat() {
       <ModalRatingUseChat
         isOpen={isOpenRatingModal}
         onClose={() => setIsOpenRatingModal(false)}
-        idToCalificate={0}
+        chatID={+chatID!}
+        userID={+user?.id!}
       />
 
       {/* Contenedor del chat */}

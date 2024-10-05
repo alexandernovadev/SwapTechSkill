@@ -7,7 +7,10 @@ export class RatingController {
   // Crear un nuevo rating
   static async create(req: Request, res: Response) {
     const ratingData = req.body;
+    const { idUser, idChat } = req.query;
 
+    console.log(ratingData);
+    
     try {
       const rating = await ratingRepository.save(ratingData);
       return res.status(201).json(rating);
