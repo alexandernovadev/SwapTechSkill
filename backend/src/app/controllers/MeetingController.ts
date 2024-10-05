@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { MeetingRepository } from '../../domain/repositories/MeetingRepository';
+import { transporter } from '../useCases/Mail';
 
 const meetingRepository = new MeetingRepository();
 
@@ -10,6 +11,26 @@ export class MeetingController {
 
     try {
       const meeting = await meetingRepository.create(meetingData);
+
+      // Configuración del correo
+      let mailOptions = {
+        from: 'titoantifa69@gmail.com', // Remitente
+        to: 'alexsk88.dev@gmail.com', // Destinatario
+        subject: 'Asunto del correo', // Asunto del correo
+        // text: 'Este es el contenido del correo en texto plano.', 
+        html: '<h1>Este es el contenido del correo en HTML.</h1>'  // También puedes enviar contenido en formato HTML
+      };
+
+      // Enviar el correo
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return res
+            .status(500)
+            .json({ message: 'Error al crear la reunión', error });
+        }
+        console.log('Correo enviado: ' + info.response);
+      });
+
       return res.status(201).json(meeting);
     } catch (error) {
       return res
