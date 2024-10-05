@@ -87,8 +87,8 @@ export const ModalRatingUseChat = ({
     if (!isRatingValid) return;
 
     const rta = {
-      rating: data.rating,
-      comment: data.comment,
+      rate: data.rating,
+      message: data.comment,
       chatParticipantId: idToCalificate, // Incluye el ID del participante del chat
     };
 
