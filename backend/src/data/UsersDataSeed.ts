@@ -1,18 +1,18 @@
 // Crear usuarios
 export const usersData = [
   {
-    firstName: 'Alexander',
-    lastName: 'Nova',
-    email: 'titoantifa69@gmail.com',
+    firstName: 'Brayan',
+    lastName: 'Peña',
+    email: 'brayancurrea6@gmail.com',
     roles: ['admin', 'mentor', 'student'],
     bio: 'Desarrollador experto con pasión por enseñar y guiar a la próxima generación de programadores.',
     labelProfile: 'Desarrollador Full Stack',
     location: 'Bogotá, Colombia',
   },
   {
-    firstName: 'Elon',
-    lastName: 'Arevalo',
-    email: 'alexsk88.dev@gmail.com',
+    firstName: 'Diego',
+    lastName: 'Florez',
+    email: 'trabajo.grado.uc@gmail.com',
     roles: ['student'],
     bio: 'Desarrollador full-stack en formación, ansioso por aprender y crecer en un entorno colaborativo.',
     labelProfile: 'Desarrollador Full Stack Jr.',
