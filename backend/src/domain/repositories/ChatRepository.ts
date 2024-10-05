@@ -1,6 +1,6 @@
 import { In } from 'typeorm';
 import { AppDataSource } from '../../infrastructure/persistence/typeormSource';
-import { Chat, ChatStatus } from '../entity/Chat';
+import { Chat } from '../entity/Chat';
 
 export class ChatRepository {
   private chatRepository = AppDataSource.getRepository(Chat);
@@ -19,8 +19,8 @@ export class ChatRepository {
   async findActiveChatsByIds(chatIds: number[]): Promise<Chat[]> {
     return await this.chatRepository.find({
       where: {
-        id: In(chatIds), 
-        status: ChatStatus.ACTIVE, 
+        id: In(chatIds),
+        status: 'active'
       },
     });
   }

@@ -9,11 +9,6 @@ import {
 import { ChatParticipant } from './ChatParticipant';
 import { Message } from './Message';
 
-export enum ChatStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  ARCHIVED = 'archived',
-}
 
 @Entity({ name: 'Chats' })
 export class Chat {
@@ -23,12 +18,8 @@ export class Chat {
   @Column({ name: 'name', type: 'varchar', length: 255 })
   name: string;
 
-  @Column({
-    type: 'enum',
-    enum: ChatStatus,
-    default: ChatStatus.ACTIVE,
-  })
-  status: ChatStatus;
+  @Column(({ name: 'status', type: 'varchar', length: 255 }))
+  status: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
