@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { MeetingRepository } from '../../domain/repositories/MeetingRepository';
 import { transporter } from '../useCases/Mail';
+import { DateTime } from 'luxon';
+import { createEvent } from 'ics';
 
 const meetingRepository = new MeetingRepository();
 
@@ -12,26 +14,55 @@ export class MeetingController {
     try {
       const meeting = await meetingRepository.create(meetingData);
 
-      // Configuración del correo
-      let mailOptions = {
-        from: 'titoantifa69@gmail.com', // Remitente
-        to: 'alexsk88.dev@gmail.com', // Destinatario
-        subject: 'Asunto del correo', // Asunto del correo
-        // text: 'Este es el contenido del correo en texto plano.', 
-        html: '<h1>Este es el contenido del correo en HTML.</h1>'  // También puedes enviar contenido en formato HTML
+      // Obtén la fecha de hoy y establece la hora del evento (10 PM a 11 PM)
+      const now = DateTime.local();
+      const start = now.set({ hour: 22, minute: 0 });
+      const end = now.set({ hour: 23, minute: 0 });
+
+      // Crear el evento ICS
+      const event = {
+        start: [start.year, start.month, start.day, start.hour, start.minute],
+        end: [end.year, end.month, end.day, end.hour, end.minute],
+        title: 'Reunión Programada',
+        description: 'Este es un evento de prueba para la reunión',
+        location: 'Online',
+        status: 'CONFIRMED',
+        organizer: { name: 'Organizador', email: 'titoantifa69@gmail.com' },
+        attendees: [
+          { name: 'Alex', email: 'alexsk88.dev@gmail.com', rsvp: true }
+        ]
       };
 
-      // Enviar el correo
-      transporter.sendMail(mailOptions, (error, info) => {
+      // @ts-ignore
+      createEvent(event, (error, value) => {
         if (error) {
-          return res
-            .status(500)
-            .json({ message: 'Error al crear la reunión', error });
+          return res.status(500).json({ message: 'Error al crear el evento de calendario', error });
         }
-        console.log('Correo enviado: ' + info.response);
-      });
 
-      return res.status(201).json(meeting);
+        // Configuración del correo con el archivo ICS adjunto
+        let mailOptions = {
+          from: 'titoantifa69@gmail.com', // Remitente
+          to: 'alexsk88.dev@gmail.com', // Destinatario
+          subject: 'Invitación de reunión', // Asunto del correo
+          html: '<h1>Te invitamos a una reunión programada.</h1>',  // Contenido del correo
+          icalEvent: {
+            content: value,
+            method: 'REQUEST'
+          }
+        };
+
+        // Enviar el correo
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            return res
+              .status(500)
+              .json({ message: 'Error al enviar la invitación', error });
+          }
+          console.log('Correo enviado: ' + info.response);
+        });
+
+        return res.status(201).json(meeting);
+      });
     } catch (error) {
       return res
         .status(500)
