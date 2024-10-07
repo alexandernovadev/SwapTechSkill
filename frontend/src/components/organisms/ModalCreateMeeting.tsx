@@ -106,7 +106,7 @@ export const ModalCreateMeeting = ({
 
       if (response.status === 201) {
         alert("Reunión creada con éxito");
-        // onClose(); // Cerrar modal después de crear
+        onClose(); // Cerrar modal después de crear
       }
     } catch (error) {
       console.error("Error al crear la reunión", error);

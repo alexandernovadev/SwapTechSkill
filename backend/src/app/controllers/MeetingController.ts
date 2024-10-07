@@ -34,13 +34,17 @@ export class MeetingController {
           dateEnd.minute,
         ],
         title: 'Reunión Programada',
-        description: 'Este es un evento de prueba para la reunión',
+        description: meetingData.description,
         location: 'Online',
         status: 'CONFIRMED',
         organizer: { name: 'Organizador', email: 'titoantifa69@gmail.com' },
         attendees: [
           { name: 'Participante 1', email: meetingData.myemail, rsvp: true },
-          { name: 'Participante 2', email: meetingData.requestMail , rsvp: true },
+          {
+            name: 'Participante 2',
+            email: meetingData.requestMail,
+            rsvp: true,
+          },
         ],
       };
 
@@ -57,10 +61,13 @@ export class MeetingController {
           from: 'titoantifa69@gmail.com', // Remitente
           to: meetingData.requestMail, // Destinatario
           subject: 'Invitación de reunión de conocimientos', // Asunto del correo
-          html: '<h1>Te invitamos a una reunión programada.</h1>', // Contenido del correo
+          html: `<h1>Te invitamos a una reunión programada.</h1>
+          <p>Por favor, revisa el archivo adjunto para más detalles.</p>
+          <p> ${meetingData.description} </p>
+          `, // Contenido del correo
           icalEvent: {
             content: value,
-            method: 'ADD',
+            method: 'REQUEST',
           },
         };
 
