@@ -50,4 +50,23 @@ export class RatingRepository {
       relations: ['chatParticipant'],
     });
   }
+
+  // Método para obtener todas las calificaciones de un ownerCalificateId específico
+  async getAllRatingsByOwnerCalificateId(
+    ownerCalificateId: number,
+  ): Promise<Rating[]> {
+    console.log(
+      `Fetching all ratings for ownerCalificateId: ${ownerCalificateId}`,
+    );
+
+    // Realiza la consulta utilizando el repositorio
+    return await this.ratingRepository.find({
+      where: {
+        ownerCalificate: {
+          id: ownerCalificateId,
+        },
+      },
+      relations: ['calificator'], // Incluir relaciones si es necesario
+    });
+  }
 }

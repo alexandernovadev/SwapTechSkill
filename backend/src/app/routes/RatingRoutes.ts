@@ -17,8 +17,12 @@ router.put('/:id', RatingController.update);
 
 // Ruta para eliminar una calificación por ID
 router.delete('/:id', RatingController.delete);
+router.get('/findMyRatings/:userId', RatingController.findMyRatings);
 
 // Ruta para obtener una calificación por chatParticipantId
-router.get('/participant/:chatParticipantId', RatingController.findByChatParticipantId);
+router.get(
+  '/participant/:chatParticipantId',
+  RatingController.findByChatParticipantId,
+);
 
 export default router;

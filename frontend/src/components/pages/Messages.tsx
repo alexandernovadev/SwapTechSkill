@@ -180,7 +180,11 @@ export const Messages = () => {
                                 onClose={() => setIsOpenRatingModal(false)}
                                 chatID={IdsParaRating.chatId}
                                 userID={IdsParaRating.userId}
+                                ownerCalification={
+                                  chat.friendRequest?.sender.id
+                                }
                               />
+
                               {rating.rating ? (
                                 <div
                                   className="relative flex justify-center items-center cursor-pointer"

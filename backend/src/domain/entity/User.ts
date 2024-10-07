@@ -63,6 +63,9 @@ export class User {
   @OneToMany(() => Rating, (rating) => rating.ownerCalificate)
   ratings: Rating[];
 
+  @OneToMany(() => User, (user) => user.calificator, { onDelete: 'CASCADE' })
+  calificator: User;
+
   @OneToMany(
     () => UserProfessionalStudy,
     (userProfessionalStudy) => userProfessionalStudy.user,

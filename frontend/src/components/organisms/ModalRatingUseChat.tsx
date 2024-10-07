@@ -96,6 +96,7 @@ export const ModalRatingUseChat = ({
       chatID: chatID,
       userID: userID,
       ownerCalificate: { id: ownerCalification },
+      calificator: { id: userID },
     };
 
     console.log("Calificación a enviar:", rta);

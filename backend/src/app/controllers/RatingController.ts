@@ -122,4 +122,18 @@ export class RatingController {
       });
     }
   }
+
+  static async findMyRatings(req: Request, res: Response) {
+    const userId = parseInt(req.params.userId, 10);
+
+    try {
+      const ratings =
+        await ratingRepository.getAllRatingsByOwnerCalificateId(userId);
+      return res.status(200).json(ratings);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ message: 'Error al obtener las calificaciones', error });
+    }
+  }
 }

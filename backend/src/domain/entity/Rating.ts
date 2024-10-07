@@ -30,6 +30,9 @@ export class Rating {
   @ManyToOne(() => User, (user) => user.ratings, { onDelete: 'CASCADE' })
   ownerCalificate: User;
 
+  @ManyToOne(() => User, (user) => user.ratings, { onDelete: 'CASCADE' })
+  calificator: User;
+
   // Relación OneToOne con ChatParticipant
   @OneToOne(
     () => ChatParticipant,
