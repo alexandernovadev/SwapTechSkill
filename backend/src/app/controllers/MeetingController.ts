@@ -16,8 +16,8 @@ export class MeetingController {
 
       // Obtén la fecha de hoy y establece la hora del evento (10 PM a 11 PM)
       const now = DateTime.local();
-      const start = now.set({ hour: 22, minute: 0 });
-      const end = now.set({ hour: 23, minute: 0 });
+      const start = now.set({ hour: 23, minute: 10 });
+      const end = now.set({ hour: 23, minute: 30 });
 
       // Crear el evento ICS
       const event = {
