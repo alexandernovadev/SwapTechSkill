@@ -14,41 +14,54 @@ export class MeetingController {
     try {
       const meeting = await meetingRepository.create(meetingData);
 
-      // Obtén la fecha de hoy y establece la hora del evento (10 PM a 11 PM)
-      const now = DateTime.local();
-      const start = now.set({ hour: 23, minute: 10 });
-      const end = now.set({ hour: 23, minute: 30 });
+      const dateStart = DateTime.fromISO(meetingData.startTime);
+      const dateEnd = DateTime.fromISO(meetingData.endTime);
 
       // Crear el evento ICS
       const event = {
-        start: [start.year, start.month, start.day, start.hour, start.minute],
-        end: [end.year, end.month, end.day, end.hour, end.minute],
+        start: [
+          dateStart.year,
+          dateStart.month,
+          dateStart.day,
+          dateStart.hour,
+          dateStart.minute,
+        ],
+        end: [
+          dateEnd.year,
+          dateEnd.month,
+          dateEnd.day,
+          dateEnd.hour,
+          dateEnd.minute,
+        ],
         title: 'Reunión Programada',
         description: 'Este es un evento de prueba para la reunión',
         location: 'Online',
         status: 'CONFIRMED',
         organizer: { name: 'Organizador', email: 'titoantifa69@gmail.com' },
         attendees: [
-          { name: 'Alex', email: 'alexsk88.dev@gmail.com', rsvp: true }
-        ]
+          { name: 'Participante 1', email: meetingData.myemail, rsvp: true },
+          { name: 'Participante 2', email: meetingData.requestMail , rsvp: true },
+        ],
       };
 
       // @ts-ignore
       createEvent(event, (error, value) => {
         if (error) {
-          return res.status(500).json({ message: 'Error al crear el evento de calendario', error });
+          return res
+            .status(500)
+            .json({ message: 'Error al crear el evento de calendario', error });
         }
 
         // Configuración del correo con el archivo ICS adjunto
         let mailOptions = {
           from: 'titoantifa69@gmail.com', // Remitente
-          to: 'alexsk88.dev@gmail.com', // Destinatario
-          subject: 'Invitación de reunión', // Asunto del correo
-          html: '<h1>Te invitamos a una reunión programada.</h1>',  // Contenido del correo
+          to: meetingData.requestMail, // Destinatario
+          subject: 'Invitación de reunión de conocimientos', // Asunto del correo
+          html: '<h1>Te invitamos a una reunión programada.</h1>', // Contenido del correo
           icalEvent: {
             content: value,
-            method: 'REQUEST'
-          }
+            method: 'ADD',
+          },
         };
 
         // Enviar el correo
