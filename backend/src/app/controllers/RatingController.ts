@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import { RatingRepository } from '../../domain/repositories/RatingRepository';
 import { ChatParticipantRepository } from '../../domain/repositories/ChatParticipantRepository';
+import { ChatRepository } from '../../domain/repositories/ChatRepository';
+import { ChatStatus } from '../../domain/entity/Chat';
 
 const ratingRepository = new RatingRepository();
 const chatParticipantRepository = new ChatParticipantRepository();
+const chatRepository = new ChatRepository();
 
 export class RatingController {
   // Crear un nuevo rating
@@ -21,6 +24,12 @@ export class RatingController {
 
       chatParticipant.rating = rating;
       await chatParticipantRepository.save(chatParticipant);
+
+      // Change chat status to completed
+      const chat = await chatRepository.findById(ratingData.chatID);
+      chat.status = ChatStatus.INACTIVE;
+
+      await chatRepository.save(chat);
 
       return res.status(201).json(rating);
     } catch (error) {

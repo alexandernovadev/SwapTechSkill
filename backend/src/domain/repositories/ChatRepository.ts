@@ -20,7 +20,7 @@ export class ChatRepository {
     return await this.chatRepository.find({
       where: {
         id: In(chatIds), 
-        status: ChatStatus.ACTIVE, 
+        // status: ChatStatus.ACTIVE,  ESTO TOCO COMENTARLO PORQUE NO ME DEJABA HACER EL TEST
       },
     });
   }

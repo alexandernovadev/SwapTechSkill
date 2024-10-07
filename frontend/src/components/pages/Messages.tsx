@@ -221,7 +221,7 @@ export const Messages = () => {
                                   }}
                                   className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
                                 >
-                                  Calificar a {receiverName}
+                                  Calificar Chat
                                 </button>
                               )}
                             </div>
