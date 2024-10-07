@@ -40,7 +40,7 @@ export class ChatParticipantRepository {
       where: {
         user: { id: userId }, // Condición para filtrar por el id del usuario
       },
-      relations: ['chat'], // Solo necesitamos cargar la relación de Chat
+      relations: ['chat','rating'], // Solo necesitamos cargar la relación de Chat
     });
 
     // Extraer los ids de los chats

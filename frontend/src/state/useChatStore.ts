@@ -39,8 +39,15 @@ export interface Chat {
   createdAt: Date;
   updatedAt: Date;
   friendRequest?: FriendRequest;
+  rating?: Rating;
 }
 
+export interface Rating {
+  id: number;
+  rate: string;
+  message: string;
+  createdAt: Date;
+}
 export interface Message {
   id?: number;
   chatId: number;

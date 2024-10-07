@@ -21,11 +21,18 @@ export class ChatController {
       const myChats =
         await chatRepository.findActiveChatsByIds(chatParticipants);
 
+      console.log(chatParticipants);
+
       // concatenar por cada chat friendRequestRepository.findByChatId(chatID);
       const myChatsWithFriendRequest = await Promise.all(
         myChats.map(async (chat) => {
           const [friendRequest] = await friendRequests.findByChatId(chat.id);
-          return { ...chat, friendRequest };
+          const { rating } =
+            await chatParticipantRepository.findByChatIdAndUserId(
+              chat.id,
+              userId,
+            );
+          return { ...chat, friendRequest, rating };
         }),
       );
 
@@ -38,11 +45,11 @@ export class ChatController {
   static getChatByID = async (req: Request, res: Response) => {
     try {
       const chatID = +req.params.chatID;
-      const chat = await chatRepository.findById(chatID)
+      const chat = await chatRepository.findById(chatID);
 
-      const [friendRequest] = await friendRequests.findByChatId(chat.id);      
+      const [friendRequest] = await friendRequests.findByChatId(chat.id);
 
-      res.status(200).json({ chat:friendRequest });
+      res.status(200).json({ chat: friendRequest });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

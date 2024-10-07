@@ -5,7 +5,7 @@ import { Chat, useChatStore } from "../../state/useChatStore";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { DateTime } from "luxon";
-import axiosInstance from "../../services/api";
+import ReactStars from "react-stars";
 
 // Formatear la fecha en español usando Luxon
 const formatDateInSpanish = (dateString: string): string => {
@@ -17,7 +17,16 @@ const formatDateInSpanish = (dateString: string): string => {
 export const Messages = () => {
   const { chats, fetchChatsByUserId, error, loading } = useChatStore();
   const { user } = useAuthStore();
-  const [showTooltip, setShowTooltip] = useState<{ [key: number]: boolean }>({});
+
+  // Estado para controlar el tooltip del icono Chatbubbles
+  const [showTooltipChatbubble, setShowTooltipChatbubble] = useState<{
+    [key: number]: boolean;
+  }>({});
+
+  // Estado para controlar el tooltip de las estrellas
+  const [showTooltipStars, setShowTooltipStars] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   useEffect(() => {
     fetchChatsByUserId(user?.id!);
@@ -39,13 +48,22 @@ export const Messages = () => {
     return { senderName, receiverName };
   };
 
-  // Mostrar/ocultar tooltip en hover del icono
-  const handleMouseEnter = (chatId: number) => {
-    setShowTooltip((prev) => ({ ...prev, [chatId]: true }));
+  // Mostrar/ocultar tooltip del icono Chatbubbles
+  const handleMouseEnterChatbubble = (chatId: number) => {
+    setShowTooltipChatbubble((prev) => ({ ...prev, [chatId]: true }));
   };
 
-  const handleMouseLeave = (chatId: number) => {
-    setShowTooltip((prev) => ({ ...prev, [chatId]: false }));
+  const handleMouseLeaveChatbubble = (chatId: number) => {
+    setShowTooltipChatbubble((prev) => ({ ...prev, [chatId]: false }));
+  };
+
+  // Mostrar/ocultar tooltip de las estrellas
+  const handleMouseEnterStars = (chatId: number) => {
+    setShowTooltipStars((prev) => ({ ...prev, [chatId]: true }));
+  };
+
+  const handleMouseLeaveStars = (chatId: number) => {
+    setShowTooltipStars((prev) => ({ ...prev, [chatId]: false }));
   };
 
   if (loading) {
@@ -87,6 +105,10 @@ export const Messages = () => {
               ? chat.friendRequest?.skillSender.skillName
               : chat.friendRequest?.skillReceiver.skillName;
 
+              const oppositeSkill =  !isSender(chat)
+              ? chat.friendRequest?.skillSender.skillName
+              : chat.friendRequest?.skillReceiver.skillName;
+
             return (
               <div
                 key={chat.id}
@@ -95,8 +117,8 @@ export const Messages = () => {
                 <section className="flex flex-row items-center justify-center">
                   <div
                     className="relative flex items-center mt-2"
-                    onMouseEnter={() => handleMouseEnter(chat.id)}
-                    onMouseLeave={() => handleMouseLeave(chat.id)}
+                    onMouseEnter={() => handleMouseEnterChatbubble(chat.id)}
+                    onMouseLeave={() => handleMouseLeaveChatbubble(chat.id)}
                   >
                     <img
                       src={Chatbubbles}
@@ -104,9 +126,9 @@ export const Messages = () => {
                       className="w-9 h-9 cursor-pointer"
                     />
 
-                    {/* Tooltip solo visible al pasar el mouse */}
-                    {showTooltip[chat.id] && (
-                      <div className="absolute w-[250px] top-0 left-12 bg-white border border-black text-black text-sm p-2 rounded-md shadow-md z-10">
+                    {/* Tooltip solo visible al pasar el mouse sobre el icono */}
+                    {showTooltipChatbubble[chat.id] && (
+                      <div className="absolute w-[250px] top-0 left-12 bg-[#bfbfbf] border-2 border-[#2A49FF] text-black text-sm p-2 rounded-md shadow-md z-10">
                         <p>
                           <strong>Remitente:</strong> {senderName}
                         </p>
@@ -114,11 +136,11 @@ export const Messages = () => {
                           <strong>Receptor:</strong> {receiverName}
                         </p>
                         <p>
-                          <strong>Habilidad solicitada:</strong> {skill}
+                          <strong>Habilidad solicitada:</strong> {oppositeSkill}
                         </p>
                         <p>
-                          {/* @ts-ignore */}
-                          <strong>Fecha de creación:</strong> {formatDateInSpanish(chat.createdAt)}
+                          <strong>Fecha de creación:</strong> {/* @ts-ignore */}
+                          {formatDateInSpanish(chat.createdAt)}
                         </p>
                         <p>
                           <strong>Estado:</strong> {chat.status}
@@ -128,21 +150,41 @@ export const Messages = () => {
                   </div>
 
                   {/* Mensaje que cambia según si soy el remitente o receptor */}
-                  <h2 className="text-2xl font-semibold ml-4">
-                    {/* {isSender(chat)
-                      ? `YO solicité ${skill}`
-                      : `YO recibo ${skill}`} */}
-                      {skill}
-                  </h2>
+                  <h2 className="text-2xl font-semibold ml-4">{skill}</h2>
                 </section>
 
-                {/* Botón para abrir el chat */}
-                <div className="mt-4">
-                  <Link to={`/dash/chat/${chat.id}`}>
-                    <button className="px-4 py-2 gradient-background-azulfeo text-white rounded-md hover:bg-blue-900">
-                      Ir al chat
-                    </button>
-                  </Link>
+                {/* Botón para abrir el chat o mostrar las estrellas con tooltip */}
+                <div className="flex">
+                  {chat.rating ? (
+                    <div
+                      className="relative"
+                      onMouseEnter={() => handleMouseEnterStars(chat.id)}
+                      onMouseLeave={() => handleMouseLeaveStars(chat.id)}
+                    >
+                      <ReactStars
+                        count={5}
+                        className="cursor-pointer"
+                        value={+chat.rating.rate}
+                        size={24}
+                        edit={false} // Solo lectura
+                      />
+                      {/* Tooltip para el mensaje de calificación de las estrellas */}
+                      {showTooltipStars[chat.id] && (
+                        <div className="absolute top-10 left-0 bg-[#bfbfbf] border-2 border-[#2A49FF] text-black text-sm p-2 rounded-md shadow-md z-10">
+                          <p>Ya has calificado este chat</p>
+                          <p>
+                            <strong>Mensaje:</strong> {chat.rating.message}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link to={`/dash/chat/${chat.id}`}>
+                      <button className="px-4 py-2 gradient-background-azulfeo text-white rounded-md hover:bg-blue-900">
+                        Ir al chat
+                      </button>
+                    </Link>
+                  )}
                 </div>
               </div>
             );
