@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { DateTime } from "luxon";
 import ReactStars from "react-stars";
+import { ModalRatingUseChat } from "../organisms/ModalRatingUseChat";
 
 // Formatear la fecha en español usando Luxon
 const formatDateInSpanish = (dateString: string): string => {
@@ -22,11 +23,16 @@ export const Messages = () => {
   const [showTooltipChatbubble, setShowTooltipChatbubble] = useState<{
     [key: number]: boolean;
   }>({});
-
   // Estado para controlar el tooltip de las estrellas
   const [showTooltipStars, setShowTooltipStars] = useState<{
     [key: number]: boolean;
   }>({});
+
+  const [isOpenRatingModal, setIsOpenRatingModal] = useState(false);
+  const [IdsParaRating, setIdParaRating] = useState({
+    chatId: 0,
+    userId: 0,
+  });
 
   useEffect(() => {
     fetchChatsByUserId(user?.id!);
@@ -105,7 +111,7 @@ export const Messages = () => {
               ? chat.friendRequest?.skillSender.skillName
               : chat.friendRequest?.skillReceiver.skillName;
 
-              const oppositeSkill =  !isSender(chat)
+            const oppositeSkill = !isSender(chat)
               ? chat.friendRequest?.skillSender.skillName
               : chat.friendRequest?.skillReceiver.skillName;
 
@@ -155,34 +161,73 @@ export const Messages = () => {
 
                 {/* Botón para abrir el chat o mostrar las estrellas con tooltip */}
                 <div className="flex">
-                  {chat.rating ? (
-                    <div
-                      className="relative"
-                      onMouseEnter={() => handleMouseEnterStars(chat.id)}
-                      onMouseLeave={() => handleMouseLeaveStars(chat.id)}
-                    >
-                      <ReactStars
-                        count={5}
-                        className="cursor-pointer"
-                        value={+chat.rating.rate}
-                        size={24}
-                        edit={false} // Solo lectura
-                      />
-                      {/* Tooltip para el mensaje de calificación de las estrellas */}
-                      {showTooltipStars[chat.id] && (
-                        <div className="absolute top-10 left-0 bg-[#bfbfbf] border-2 border-[#2A49FF] text-black text-sm p-2 rounded-md shadow-md z-10">
-                          <p>Ya has calificado este chat</p>
-                          <p>
-                            <strong>Mensaje:</strong> {chat.rating.message}
-                          </p>
+                  {chat.ratings.map((rating, index) => {
+                    // Si soy yo quien ha dado la calificación
+                    if (rating.userId === user?.id) {
+                      return (
+                        <div key={index}>
+                          <ModalRatingUseChat
+                            isOpen={isOpenRatingModal}
+                            onClose={() => setIsOpenRatingModal(false)}
+                            chatID={IdsParaRating.chatId}
+                            userID={IdsParaRating.userId}
+                          />
+                          {rating.rating ? (
+                            <div
+                              className="relative flex justify-center items-center cursor-pointer"
+                              onMouseEnter={() =>
+                                handleMouseEnterStars(chat.id)
+                              }
+                              onMouseLeave={() =>
+                                handleMouseLeaveStars(chat.id)
+                              }
+                            >
+                              ({+rating.rating.rate})
+                              <ReactStars
+                                count={5}
+                                className="cursor-pointer"
+                                value={+rating.rating.rate}
+                                size={24}
+                                edit={false} // Solo lectura
+                              />
+                              {/* Tooltip para el mensaje de calificación de las estrellas */}
+                              {showTooltipStars[chat.id] && (
+                                <div className="absolute top-10 left-0 bg-[#bfbfbf] border-2 border-[#2A49FF] text-black text-sm p-2 rounded-md shadow-md z-10">
+                    
+                                  <p>
+                                    <strong>Tú  Calificaión:</strong>{" "}
+                                    {rating.rating.message}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            // Si no he calificado, mostrar que está pendiente
+                            <button
+                              onClick={() => {
+                                setIsOpenRatingModal(true);
+                                setIdParaRating({
+                                  chatId: chat.id,
+                                  userId: user?.id!,
+                                });
+                              }}
+                              className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
+                            >
+                              Terminar Chat
+                            </button>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  ) : (
-                    <Link to={`/dash/chat/${chat.id}`}>
-                      <button className="px-4 py-2 gradient-background-azulfeo text-white rounded-md hover:bg-blue-900">
-                        Ir al chat
-                      </button>
+                      );
+                    }
+                    return null;
+                  })}
+
+                  {chat.ratings.every((rating) => !rating.rating) && (
+                    <Link
+                      to={`/dash/chat/${chat.id}`}
+                      className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
+                    >
+                      Ir al Chat
                     </Link>
                   )}
                 </div>

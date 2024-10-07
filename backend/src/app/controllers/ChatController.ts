@@ -21,21 +21,26 @@ export class ChatController {
       const myChats =
         await chatRepository.findActiveChatsByIds(chatParticipants);
 
-      console.log(chatParticipants);
-
       // concatenar por cada chat friendRequestRepository.findByChatId(chatID);
       const myChatsWithFriendRequest = await Promise.all(
         myChats.map(async (chat) => {
           const [friendRequest] = await friendRequests.findByChatId(chat.id);
-          const { rating } =
-            await chatParticipantRepository.findByChatIdAndUserId(
+
+          const ratings =
+            await chatParticipantRepository.getChatsParticipantByChatId(
               chat.id,
-              userId,
             );
-          return { ...chat, friendRequest, rating };
+
+          // Just retrunt id user and rating
+          const cleanData = ratings.map((rating) => {
+            return { userId: rating.user.id, rating: rating.rating };
+          });
+
+          return { ...chat, friendRequest, ratings: cleanData };
         }),
       );
 
+      /**chatParticipantRepository.findByChatIdAndUserId */
       res.status(200).json({ chats: myChatsWithFriendRequest });
     } catch (error) {
       res.status(500).json({ message: error.message });

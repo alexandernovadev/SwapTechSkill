@@ -24,7 +24,19 @@ export class ChatParticipantRepository {
     });
   }
 
-  findByChatIdAndUserId(chatId: number, userId: number): Promise<ChatParticipant | undefined> {
+  async getChatsParticipantByChatId(
+    id: number,
+  ): Promise<ChatParticipant[] | undefined> {
+    return await this.chatParticipantRepository.find({
+      where: { chat: { id } },
+      relations: ['user', 'rating'],
+    });
+  }
+
+  findByChatIdAndUserId(
+    chatId: number,
+    userId: number,
+  ): Promise<ChatParticipant | undefined> {
     return this.chatParticipantRepository.findOne({
       where: {
         chat: { id: chatId },
@@ -40,7 +52,7 @@ export class ChatParticipantRepository {
       where: {
         user: { id: userId }, // Condición para filtrar por el id del usuario
       },
-      relations: ['chat','rating'], // Solo necesitamos cargar la relación de Chat
+      relations: ['chat', 'rating'], // Solo necesitamos cargar la relación de Chat
     });
 
     // Extraer los ids de los chats
