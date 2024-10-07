@@ -49,11 +49,11 @@ export const Admin: React.FC = () => {
     await axiosInstance
       .get("/admin/deleleAllDataRequest/")
       .then((res) => {
-        console.log(res);
+        console.info(res);
         alert("Se han borrado todas las solicitudes");
       })
       .catch((error) => {
-        console.log(error);
+        console.info(error);
         alert("Error al borrar las solicitudes");
       });
   };

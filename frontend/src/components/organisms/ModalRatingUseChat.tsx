@@ -97,8 +97,7 @@ export const ModalRatingUseChat = ({
 
     try {
       // Realiza la solicitud POST utilizando la instancia de axios configurada
-      const response = await axiosInstance.post("/rating", rta);
-      console.log("Calificación creada exitosamente:", response.data);
+      await axiosInstance.post("/rating", rta);
 
       // Resetear el formulario después de enviarlo
       reset({ rating: 1, comment: "" });

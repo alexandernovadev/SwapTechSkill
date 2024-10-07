@@ -78,7 +78,7 @@ export class MeetingController {
               .status(500)
               .json({ message: 'Error al enviar la invitación', error });
           }
-          console.log('Correo enviado: ' + info.response);
+          console.info('Correo enviado: ' + info.response);
         });
 
         return res.status(201).json(meeting);
