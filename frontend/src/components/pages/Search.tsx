@@ -143,7 +143,8 @@ export const Search = () => {
           >
             <div className="w-auto h-auto rounded-full mx-auto mt-8">
               <img
-                src={`https://api.dicebear.com/9.x/initials/svg?seed=${user.firstName}-${user.lastName}`}
+                // @ts-ignore
+                src={user.profilePictureUrl ||`https://api.dicebear.com/9.x/initials/svg?seed=${user.firstName}-${user.lastName}`}
                 alt={`${user.firstName} ${user.lastName}`}
                 className="w-full h-full object-cover rounded-full"
               />

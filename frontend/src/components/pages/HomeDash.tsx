@@ -46,7 +46,11 @@ export const HomeDash = () => {
           >
             <div className="w-32 h-32 rounded-full mx-auto mt-8">
               <img
-                src={`https://api.dicebear.com/9.x/initials/svg?seed=${user.firstName}-${user.lastName}`}
+                // @ts-ignore
+                src={
+                  user.profilePictureUrl ||
+                  `https://api.dicebear.com/9.x/initials/svg?seed=${user.firstName}-${user.lastName}`
+                }
                 alt={`${user.firstName} ${user.lastName}`}
                 className="w-full h-full object-cover rounded-full"
               />
@@ -56,21 +60,11 @@ export const HomeDash = () => {
             </h2>
             <div className="flex justify-center mb-2">
               <div className="flex items-center gap-1">
-                <span className="text-yellow-500 text-2xl">
-                  ★
-                </span>
-                <span className="text-yellow-500 text-2xl">
-                  ★
-                </span>
-                <span className="text-black text-2xl">
-                  ★
-                </span>
-                <span className="text-black text-2xl">
-                  ★
-                </span>
-                <span className="text-black text-2xl">
-                  ★
-                </span>
+                <span className="text-yellow-500 text-2xl">★</span>
+                <span className="text-yellow-500 text-2xl">★</span>
+                <span className="text-black text-2xl">★</span>
+                <span className="text-black text-2xl">★</span>
+                <span className="text-black text-2xl">★</span>
               </div>
             </div>
             <div className="relative">

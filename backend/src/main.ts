@@ -25,11 +25,12 @@ import userLanguagesRoutes from './app/routes/UserLanguagesRoutes';
 import meetingRoutes from './app/routes/MeetingRoutes';
 import ratingRoutes from './app/routes/RatingRoutes';
 import chatRoutes from './app/routes/ChatRoutes';
+import adminRoutes from './app/routes/AdminRoutes';
 
 import 'dotenv/config';
 import { authenticateJWT } from './shared/middlewares/auth';
 import path from 'path';
-import { Message } from './domain/entity/Message';
+
 
 class Server {
   private app: Application;
@@ -122,6 +123,7 @@ class Server {
     this.app.use('/api/chats', chatRoutes);
     this.app.use('/api/meets', meetingRoutes);
     this.app.use('/api/rating', ratingRoutes);
+    this.app.use('/api/admin', adminRoutes);
 
     // Solo para desarrollo: Rutas de seeding
     this.app.use('/api', seederRoutes);
