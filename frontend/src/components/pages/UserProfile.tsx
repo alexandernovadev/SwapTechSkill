@@ -161,9 +161,9 @@ export const UserProfile: React.FC = () => {
       <div className="flex items-center border border-[#1E2126] rounded-sm p-6 mb-2 relative">
         <div className="w-[225px] h-[231px] flex-shrink-0 mr-6 flex flex-row">
           <img
-            src={UserLogoDefault}
+            src={userProfile.profilePictureUrl || UserLogoDefault}
             alt={`${userProfile.firstName} ${userProfile.lastName}`}
-            className=""
+            className="w-full h-full object-cover rounded-full"
           />
           <div className="border-l border-black h-[90%] mx-6"></div>
         </div>

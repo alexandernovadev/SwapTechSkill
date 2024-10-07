@@ -3,11 +3,13 @@ import ReactDOM from "react-dom";
 import { useForm } from "react-hook-form";
 import axiosInstance from "../../services/api"; // Asumo que estás usando este para llamadas a la API
 import { useAuthStore } from "../../state/authStore";
+import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
 
 interface ModalCreateMeetingProps {
   isOpen: boolean;
   onClose: () => void;
   chatId: number; // Necesitamos saber el chat asociado
+  requestMail: string;
 }
 
 interface FormValues {
@@ -22,6 +24,7 @@ export const ModalCreateMeeting = ({
   isOpen,
   onClose,
   chatId,
+  requestMail,
 }: ModalCreateMeetingProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -31,7 +34,25 @@ export const ModalCreateMeeting = ({
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
+    watch,
   } = useForm<FormValues>();
+
+  // Establecer la fecha y hora por defecto
+  useEffect(() => {
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const formatDate = (date: Date) => date.toISOString().split("T")[0]; // YYYY-MM-DD
+    const formatTime = (date: Date) => date.toTimeString().slice(0, 5); // HH:MM
+
+    // Establecer valores por defecto para las fechas y horas
+    setValue("startDate", formatDate(now)); // Fecha de inicio es hoy
+    setValue("startTime", formatTime(now)); // Hora de inicio es la hora actual
+    setValue("endDate", formatDate(tomorrow)); // Fecha de fin es mañana
+    setValue("endTime", formatTime(new Date(now.getTime() + 30 * 60000))); // 30 minutos más tarde por defecto
+  }, [setValue]);
 
   useEffect(() => {
     if (isOpen) {
@@ -76,19 +97,26 @@ export const ModalCreateMeeting = ({
         startTime: startDateTime,
         endTime: endDateTime,
         status: "active",
+        nameOrganizer: user?.firstName,
+        myemail: user?.email,
+        requestMail: requestMail,
         organizer: { id: user?.id }, // El ID del organizador, este debería obtenerse de tu estado de usuario (useAuthStore probablemente)
         chat: { id: chatId }, // Chat al que la reunión está asociada
       });
 
       if (response.status === 201) {
         alert("Reunión creada con éxito");
-        onClose(); // Cerrar modal después de crear
+        // onClose(); // Cerrar modal después de crear
       }
     } catch (error) {
       console.error("Error al crear la reunión", error);
       alert("Error al crear la reunión");
     }
   };
+
+  // Observa los cambios en las fechas usando watch
+  const startDateValue = watch("startDate");
+  const endDateValue = watch("endDate");
 
   const modalContent = (
     <>
@@ -114,7 +142,13 @@ export const ModalCreateMeeting = ({
                 {/* Start Date */}
                 <div className="col-span-8">
                   <label className="block text-gray-700 text-sm font-bold mb-2">
-                    Fecha inicial
+                    Fecha inicial {" "}
+                    <span className="text-blue-700 text-[13px]">
+                      ({startDateValue
+                        ? formatDateInSpanish(startDateValue)
+                        : ""}
+                      )
+                    </span>
                   </label>
                   <input
                     type="date"
@@ -158,7 +192,10 @@ export const ModalCreateMeeting = ({
                 {/* End Date */}
                 <div className="col-span-8">
                   <label className="block text-gray-700 text-sm font-bold mb-2">
-                    Fecha final
+                    Fecha final{" "}
+                    <span className="text-blue-700 text-[13px]">
+                      ({endDateValue ? formatDateInSpanish(endDateValue) : ""})
+                    </span>
                   </label>
                   <input
                     type="date"
