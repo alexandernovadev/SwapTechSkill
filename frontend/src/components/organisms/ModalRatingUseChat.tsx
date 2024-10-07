@@ -20,7 +20,7 @@ export const ModalRatingUseChat = ({
   isOpen,
   onClose,
   chatID,
-  userID
+  userID,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -91,8 +91,8 @@ export const ModalRatingUseChat = ({
     const rta = {
       rate: data.rating,
       message: data.comment,
-      chatID: chatID, 
-      userID: userID
+      chatID: chatID,
+      userID: userID,
     };
 
     try {
@@ -105,6 +105,8 @@ export const ModalRatingUseChat = ({
       closeWithAnimation();
     } catch (error) {
       console.error("Error al crear la calificación:", error);
+    } finally {
+      window.location.href = "/dash/messages";
     }
   };
 

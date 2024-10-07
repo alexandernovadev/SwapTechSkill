@@ -161,74 +161,75 @@ export const Messages = () => {
 
                 {/* Botón para abrir el chat o mostrar las estrellas con tooltip */}
                 <div className="flex">
-                  {chat.ratings.map((rating, index) => {
-                    // Si soy yo quien ha dado la calificación
-                    if (rating.userId === user?.id) {
-                      return (
-                        <div key={index}>
-                          <ModalRatingUseChat
-                            isOpen={isOpenRatingModal}
-                            onClose={() => setIsOpenRatingModal(false)}
-                            chatID={IdsParaRating.chatId}
-                            userID={IdsParaRating.userId}
-                          />
-                          {rating.rating ? (
-                            <div
-                              className="relative flex justify-center items-center cursor-pointer"
-                              onMouseEnter={() =>
-                                handleMouseEnterStars(chat.id)
-                              }
-                              onMouseLeave={() =>
-                                handleMouseLeaveStars(chat.id)
-                              }
-                            >
-                              ({+rating.rating.rate})
-                              <ReactStars
-                                count={5}
-                                className="cursor-pointer"
-                                value={+rating.rating.rate}
-                                size={24}
-                                edit={false} // Solo lectura
-                              />
-                              {/* Tooltip para el mensaje de calificación de las estrellas */}
-                              {showTooltipStars[chat.id] && (
-                                <div className="absolute top-10 left-0 bg-[#bfbfbf] border-2 border-[#2A49FF] text-black text-sm p-2 rounded-md shadow-md z-10">
-                    
-                                  <p>
-                                    <strong>Tú  Calificaión:</strong>{" "}
-                                    {rating.rating.message}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            // Si no he calificado, mostrar que está pendiente
-                            <button
-                              onClick={() => {
-                                setIsOpenRatingModal(true);
-                                setIdParaRating({
-                                  chatId: chat.id,
-                                  userId: user?.id!,
-                                });
-                              }}
-                              className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
-                            >
-                              Terminar Chat
-                            </button>
-                          )}
-                        </div>
-                      );
-                    }
-                    return null;
-                  })}
-
-                  {chat.ratings.every((rating) => !rating.rating) && (
+                  {chat.ratings.every((rating) => !rating.rating) ? (
                     <Link
                       to={`/dash/chat/${chat.id}`}
                       className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
                     >
                       Ir al Chat
                     </Link>
+                  ) : (
+                    <>
+                      {chat.ratings.map((rating, index) => {
+                        // Si soy yo quien ha dado la calificación
+                        if (rating.userId === user?.id) {
+                          return (
+                            <div key={index}>
+                              <ModalRatingUseChat
+                                isOpen={isOpenRatingModal}
+                                onClose={() => setIsOpenRatingModal(false)}
+                                chatID={IdsParaRating.chatId}
+                                userID={IdsParaRating.userId}
+                              />
+                              {rating.rating ? (
+                                <div
+                                  className="relative flex justify-center items-center cursor-pointer"
+                                  onMouseEnter={() =>
+                                    handleMouseEnterStars(chat.id)
+                                  }
+                                  onMouseLeave={() =>
+                                    handleMouseLeaveStars(chat.id)
+                                  }
+                                >
+                                  ({+rating.rating.rate})
+                                  <ReactStars
+                                    count={5}
+                                    className="cursor-pointer"
+                                    value={+rating.rating.rate}
+                                    size={24}
+                                    edit={false} // Solo lectura
+                                  />
+                                  {/* Tooltip para el mensaje de calificación de las estrellas */}
+                                  {showTooltipStars[chat.id] && (
+                                    <div className="absolute top-10 left-0 bg-[#bfbfbf] border-2 border-[#2A49FF] text-black text-sm p-2 rounded-md shadow-md z-10">
+                                      <p>
+                                        <strong>Tú Calificaión:</strong>{" "}
+                                        {rating.rating.message}
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                // Si no he calificado, mostrar que está pendiente
+                                <button
+                                  onClick={() => {
+                                    setIsOpenRatingModal(true);
+                                    setIdParaRating({
+                                      chatId: chat.id,
+                                      userId: user?.id!,
+                                    });
+                                  }}
+                                  className="px-4 py-2 gradient-background-azulfeo text-white rounded-lg"
+                                >
+                                  Calificar a {receiverName}
+                                </button>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                    </>
                   )}
                 </div>
               </div>
