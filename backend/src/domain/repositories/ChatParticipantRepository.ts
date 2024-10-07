@@ -24,6 +24,16 @@ export class ChatParticipantRepository {
     });
   }
 
+  findByChatIdAndUserId(chatId: number, userId: number): Promise<ChatParticipant | undefined> {
+    return this.chatParticipantRepository.findOne({
+      where: {
+        chat: { id: chatId },
+        user: { id: userId },
+      },
+      relations: ['chat', 'user', 'rating'],
+    });
+  }
+
   // Método para obtener un array de IDs de chats únicos que coinciden con el id del usuario
   async findUniqueChatIdsByUserId(userId: number): Promise<number[]> {
     const chatParticipants = await this.chatParticipantRepository.find({

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { RatingRepository } from '../../domain/repositories/RatingRepository';
+import { ChatParticipantRepository } from '../../domain/repositories/ChatParticipantRepository';
 
 const ratingRepository = new RatingRepository();
+const chatParticipantRepository = new ChatParticipantRepository();
 
 export class RatingController {
   // Crear un nuevo rating
@@ -10,9 +12,19 @@ export class RatingController {
     const { idUser, idChat } = req.query;
 
     console.log(ratingData);
-    
+
     try {
       const rating = await ratingRepository.save(ratingData);
+
+      const chatParticipant =
+        await chatParticipantRepository.findByChatIdAndUserId(
+          parseInt(ratingData.chatID as string, 10),
+          parseInt(ratingData.userID as string, 10),
+        );
+
+      chatParticipant.rating = rating;
+      await chatParticipantRepository.save(chatParticipant);
+
       return res.status(201).json(rating);
     } catch (error) {
       return res
@@ -92,20 +104,16 @@ export class RatingController {
       const rating =
         await ratingRepository.findByChatParticipantId(chatParticipantId);
       if (!rating) {
-        return res
-          .status(404)
-          .json({
-            message: 'Calificación no encontrada para el participante del chat',
-          });
+        return res.status(404).json({
+          message: 'Calificación no encontrada para el participante del chat',
+        });
       }
       return res.status(200).json(rating);
     } catch (error) {
-      return res
-        .status(500)
-        .json({
-          message: 'Error al obtener la calificación del participante del chat',
-          error,
-        });
+      return res.status(500).json({
+        message: 'Error al obtener la calificación del participante del chat',
+        error,
+      });
     }
   }
 }
