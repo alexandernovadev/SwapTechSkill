@@ -138,8 +138,8 @@ export default function Chat() {
         onClose={() => setIsOpenRatingModal(false)}
         chatID={+chatID!}
         userID={+user?.id!}
+        ownerCalification={chatDetails?.receiver.id}
       />
-
       {/* Contenedor del chat */}
       <div className="flex flex-col justify-between h-[84%] overflow-hidden">
         {/* Encabezado del chat */}

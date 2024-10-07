@@ -9,6 +9,7 @@ interface ModalProfileProps {
   onClose: () => void;
   chatID: number; // ID del usuario o entidad a calificar
   userID: number; // ID del usuario o entidad a calificar
+  ownerCalification?: number; // Calificación del dueño del chat
 }
 
 interface FormValues {
@@ -21,6 +22,7 @@ export const ModalRatingUseChat = ({
   onClose,
   chatID,
   userID,
+  ownerCalification,
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
@@ -93,7 +95,10 @@ export const ModalRatingUseChat = ({
       message: data.comment,
       chatID: chatID,
       userID: userID,
+      ownerCalificate: { id: ownerCalification },
     };
+
+    console.log("Calificación a enviar:", rta);
 
     try {
       // Realiza la solicitud POST utilizando la instancia de axios configurada
@@ -105,7 +110,7 @@ export const ModalRatingUseChat = ({
     } catch (error) {
       console.error("Error al crear la calificación:", error);
     } finally {
-      window.location.href = "/dash/messages";
+      // window.location.href = "/dash/messages";
     }
   };
 

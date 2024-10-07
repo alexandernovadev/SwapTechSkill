@@ -5,6 +5,7 @@ import { UserSkill } from './UserSkill';
 import { FriendRequest } from './FriendRequest';
 import { ChatParticipant } from './ChatParticipant';
 import { UserProfessionalStudy } from './UserProfessionalStudy';
+import { Rating } from './Rating';
 
 @Entity({ name: 'Users' })
 export class User {
@@ -58,6 +59,9 @@ export class User {
 
   @OneToMany(() => ChatParticipant, (chatParticipant) => chatParticipant.user)
   chatParticipants: ChatParticipant[];
+
+  @OneToMany(() => Rating, (rating) => rating.ownerCalificate)
+  ratings: Rating[];
 
   @OneToMany(
     () => UserProfessionalStudy,

@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import { ChatParticipant } from './ChatParticipant';
+import { User } from './User';
 
 @Entity({ name: 'Ratings' })
 export class Rating {
@@ -23,6 +25,10 @@ export class Rating {
   // Fecha de creación de la calificación
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  // Relación ManyToOne con la entidad User (usuario que realiza la calificación)
+  @ManyToOne(() => User, (user) => user.ratings, { onDelete: 'CASCADE' })
+  ownerCalificate: User;
 
   // Relación OneToOne con ChatParticipant
   @OneToOne(
