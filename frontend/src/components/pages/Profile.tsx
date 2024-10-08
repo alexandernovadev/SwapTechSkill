@@ -75,18 +75,37 @@ export const Profile = () => {
   );
 
   const [ratings, setRatings] = useState<Ratings[]>([]);
+  const [averageRating, setAverageRating] = useState<number | null>(null);
+  const [ratingCounts, setRatingCounts] = useState<number[]>([0, 0, 0, 0, 0]);
 
   useEffect(() => {
-    // Load rating data
     const getRatingData = async () => {
-      await axiosInstance
-        .get(`/rating/findMyRatings/${user?.id}/`)
-        .then((response) => {
-          setRatings(response.data);
+      const response = await axiosInstance.get(
+        `/rating/findMyRatings/${user?.id}/`
+      );
+      setRatings(response.data);
+
+      if (response.data.length > 0) {
+        // Calcular el promedio
+        const sum = response.data.reduce(
+          (acc: number, rating: Ratings) => acc + parseInt(rating.rate),
+          0
+        );
+        const average = sum / response.data.length;
+        setAverageRating(average);
+
+        // Contar opiniones por cada calificación (5, 4, 3, 2, 1)
+        const counts = [0, 0, 0, 0, 0];
+        response.data.forEach((rating: Ratings) => {
+          counts[parseInt(rating.rate) - 1] += 1; // Aumenta el conteo basado en la calificación
         });
+        setRatingCounts(counts);
+      } else {
+        setAverageRating(null); // Sin opiniones
+      }
     };
     getRatingData();
-  }, []);
+  }, [user?.id]);
 
   // Put image caouse is base64
   useEffect(() => {
@@ -481,97 +500,313 @@ export const Profile = () => {
         onClose={() => setIsOpeningRating(false)}
       >
         <h1 className="text-3xl font-bold mb-6">Resumen de opiniones</h1>
-        <div className="flex flex-row justify-between w-full">
-          {/* Título */}
+        {averageRating !== null ? (
+          <div className="flex flex-row justify-between w-full">
+            <section className="grid grid-cols-5 gap-4 w-full overflow-x-hidden overflow-y-auto px-10 max-h-[400px]">
+              <div className="col-span-4">
+                {/* Barras de calificación */}
+                {[5, 4, 3, 2, 1].map((rating, index) => (
+                  <div key={rating} className="flex items-center">
+                    <span className="font-bold text-2xl">{rating}</span>
+                    <section className="flex-1 px-2">
+                      <div
+                        className="gradient-background-azulfeo h-6 rounded-full my-1"
+                        style={{
+                          width: `${
+                            (ratingCounts[5 - rating] / ratings.length) * 100
+                          }%`, // Porcentaje basado en la cantidad de opiniones
+                        }}
+                      ></div>
+                    </section>
+                  </div>
+                ))}
+              </div>
 
-          <section className="grid grid-cols-5 gap-4 w-full">
-            {" "}
-            {/* Cambié a grid-cols-5 para mejor control */}
-            <div className="col-span-4">
-              {/* Ocupa 4/5 del espacio para las barras */}
-              {/* Barras de calificación */}
-              {[5, 4, 3, 2, 1].map((rating) => (
-                <div key={rating} className="flex items-center">
-                  <span className="font-bold text-2xl"> {rating}</span>
-                  {/* //BARRA DE CALIFICACIÓN⁄ */}
-                  <section className="flex-1 px-2">
-                    <div
-                      className="gradient-background-azulfeo h-6 rounded-full my-1"
-                      style={{
-                        width: `${(rating / 5) * 100}%`,
-                      }}
-                    ></div>
-                  </section>
+              {/* Promedio de calificación */}
+              <div className="flex flex-col items-center justify-center col-span-1">
+                <div className="text-[80px] font-bold m-0">
+                  {averageRating.toFixed(1)}
                 </div>
-              ))}
-            </div>
-            {/* Calificación promedio */}
-            <div className="flex flex-col items-center justify-center mb-6 col-span-1">
-              {/* Ocupa 1/5 del espacio */}
-              <div className="text-[80px] font-bold m-0">3.7</div>
-              {/* Reduje el tamaño del texto */}
-              <div className="flex items-center">
                 <div className="flex items-center gap-1">
-                  <span className="text-yellow-500 text-2xl">★</span>
-                  <span className="text-yellow-500 text-2xl">★</span>
-                  <span className="text-black text-2xl">★</span>
-                  <span className="text-black text-2xl">★</span>
-                  <span className="text-black text-2xl">★</span>
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <span
+                      key={index}
+                      className={`text-2xl ${
+                        index < Math.round(averageRating)
+                          ? "text-yellow-500"
+                          : "text-black"
+                      }`}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <div className="text-md text-gray-600">
+                  {ratings.length}{" "}
+                  {ratings.length > 1 ? "Opiniones" : "Opinión"}
                 </div>
               </div>
-              <div className="text-md text-gray-600">
-                {ratings.length} {ratings.length > 0 ? "Opiniones" : "Opinión"}
-              </div>
-            </div>
-            {/* Listado de opiniones */}
-            <section className="col-span-5">
-              {ratings.map((rating) => (
-                <div
-                  key={rating.id}
-                  className="border border-[#1E2126] rounded-sm p-4 mb-2"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8">
+
+              {/* Listado de opiniones */}
+              <section className="col-span-5">
+                {ratings.map((rating) => (
+                  <div key={rating.id} className="border p-4 mb-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
                         <img
                           src={
                             rating.calificator.profilePictureUrl ||
                             UserLogoDefault
                           }
                           alt=""
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 rounded-full"
                         />
+                        <section className="flex flex-col">
+                          <h3 className="text-lg font-semibold">
+                            {rating.calificator.firstName}{" "}
+                            {rating.calificator.lastName}
+                          </h3>
+                          <p className="text-sm text-gray-400">
+                            {rating.calificator.labelProfile}
+                          </p>
+                        </section>
                       </div>
-                      <section className="flex flex-col">
-                        <h3 className="text-lg font-semibold text-gray-800">
-                          {rating.calificator.firstName}{" "}
-                          {rating.calificator.lastName}
-                        </h3>
-                        <p className="text-sm text-gray-400 mt-1">
-                          {rating.calificator.labelProfile}
+                      <div className="ml-4 text-right">
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: 5 }, (_, index) => (
+                            <span
+                              key={index}
+                              className={`text-2xl ${
+                                index < parseInt(rating.rate)
+                                  ? "text-yellow-500"
+                                  : "text-black"
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          {/* @ts-ignore */}
+                          {formatDateInSpanish(rating.createdAt)}
                         </p>
-                      </section>
-                    </div>
-                    <div className="ml-4 text-right">
-                      <div className="flex items-center gap-1">
-                        <span className="text-yellow-500 text-2xl">★</span>
-                        <span className="text-yellow-500 text-2xl">★</span>
-                        <span className="text-black text-2xl">★</span>
-                        <span className="text-black text-2xl">★</span>
-                        <span className="text-black text-2xl">★</span>
                       </div>
-                      <p className="text-sm text-gray-400 mt-1">
-                        {/* @ts-ignore */}
-                        {formatDateInSpanish(rating.createdAt)}
-                      </p>
                     </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {rating.message}
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-400 mt-1">{rating.message}</p>
-                </div>
-              ))}
+                ))}
+              </section>
+                     {/* Listado de opiniones */}
+                     <section className="col-span-5">
+                {ratings.map((rating) => (
+                  <div key={rating.id} className="border p-4 mb-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={
+                            rating.calificator.profilePictureUrl ||
+                            UserLogoDefault
+                          }
+                          alt=""
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <section className="flex flex-col">
+                          <h3 className="text-lg font-semibold">
+                            {rating.calificator.firstName}{" "}
+                            {rating.calificator.lastName}
+                          </h3>
+                          <p className="text-sm text-gray-400">
+                            {rating.calificator.labelProfile}
+                          </p>
+                        </section>
+                      </div>
+                      <div className="ml-4 text-right">
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: 5 }, (_, index) => (
+                            <span
+                              key={index}
+                              className={`text-2xl ${
+                                index < parseInt(rating.rate)
+                                  ? "text-yellow-500"
+                                  : "text-black"
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          {/* @ts-ignore */}
+                          {formatDateInSpanish(rating.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {rating.message}
+                    </p>
+                  </div>
+                ))}
+              </section>
+                     {/* Listado de opiniones */}
+                     <section className="col-span-5">
+                {ratings.map((rating) => (
+                  <div key={rating.id} className="border p-4 mb-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={
+                            rating.calificator.profilePictureUrl ||
+                            UserLogoDefault
+                          }
+                          alt=""
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <section className="flex flex-col">
+                          <h3 className="text-lg font-semibold">
+                            {rating.calificator.firstName}{" "}
+                            {rating.calificator.lastName}
+                          </h3>
+                          <p className="text-sm text-gray-400">
+                            {rating.calificator.labelProfile}
+                          </p>
+                        </section>
+                      </div>
+                      <div className="ml-4 text-right">
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: 5 }, (_, index) => (
+                            <span
+                              key={index}
+                              className={`text-2xl ${
+                                index < parseInt(rating.rate)
+                                  ? "text-yellow-500"
+                                  : "text-black"
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          {/* @ts-ignore */}
+                          {formatDateInSpanish(rating.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {rating.message}
+                    </p>
+                  </div>
+                ))}
+              </section>
+                     {/* Listado de opiniones */}
+                     <section className="col-span-5">
+                {ratings.map((rating) => (
+                  <div key={rating.id} className="border p-4 mb-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={
+                            rating.calificator.profilePictureUrl ||
+                            UserLogoDefault
+                          }
+                          alt=""
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <section className="flex flex-col">
+                          <h3 className="text-lg font-semibold">
+                            {rating.calificator.firstName}{" "}
+                            {rating.calificator.lastName}
+                          </h3>
+                          <p className="text-sm text-gray-400">
+                            {rating.calificator.labelProfile}
+                          </p>
+                        </section>
+                      </div>
+                      <div className="ml-4 text-right">
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: 5 }, (_, index) => (
+                            <span
+                              key={index}
+                              className={`text-2xl ${
+                                index < parseInt(rating.rate)
+                                  ? "text-yellow-500"
+                                  : "text-black"
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          {/* @ts-ignore */}
+                          {formatDateInSpanish(rating.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {rating.message}
+                    </p>
+                  </div>
+                ))}
+              </section>
+                     {/* Listado de opiniones */}
+                     <section className="col-span-5">
+                {ratings.map((rating) => (
+                  <div key={rating.id} className="border p-4 mb-2">
+                    <div className="flex justify-between items-start">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={
+                            rating.calificator.profilePictureUrl ||
+                            UserLogoDefault
+                          }
+                          alt=""
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <section className="flex flex-col">
+                          <h3 className="text-lg font-semibold">
+                            {rating.calificator.firstName}{" "}
+                            {rating.calificator.lastName}
+                          </h3>
+                          <p className="text-sm text-gray-400">
+                            {rating.calificator.labelProfile}
+                          </p>
+                        </section>
+                      </div>
+                      <div className="ml-4 text-right">
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: 5 }, (_, index) => (
+                            <span
+                              key={index}
+                              className={`text-2xl ${
+                                index < parseInt(rating.rate)
+                                  ? "text-yellow-500"
+                                  : "text-black"
+                              }`}
+                            >
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-sm text-gray-400">
+                          {/* @ts-ignore */}
+                          {formatDateInSpanish(rating.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-400 mt-1">
+                      {rating.message}
+                    </p>
+                  </div>
+                ))}
+              </section>
             </section>
-          </section>
-        </div>
+          </div>
+        ) : (
+          <div className="text-center text-lg">Sin opiniones</div>
+        )}
       </ModalRating>
     </div>
   );
