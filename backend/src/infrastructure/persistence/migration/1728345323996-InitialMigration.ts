@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class InitialMigration1728343503944 implements MigrationInterface {
-    name = 'InitialMigration1728343503944'
+export class InitialMigration1728345323996 implements MigrationInterface {
+    name = 'InitialMigration1728345323996'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TABLE "Roles" ("id" SERIAL NOT NULL, "role_name" character varying(50) NOT NULL, CONSTRAINT "UQ_df6dd2268273551ea42f4ee1d2b" UNIQUE ("role_name"), CONSTRAINT "PK_efba48c6a0c7a9b6260f771b165" PRIMARY KEY ("id"))`);
@@ -10,7 +10,7 @@ export class InitialMigration1728343503944 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "UserLanguages" ("id" SERIAL NOT NULL, "proficiency_level" character varying(50), "years_of_experience" integer, "userId" integer, "languageId" integer, CONSTRAINT "PK_caf82b17654815c4151b6ae1e6f" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "SkillCategories" ("id" SERIAL NOT NULL, "category_name" character varying(100) NOT NULL, CONSTRAINT "UQ_7b3b08d25e73ac0ea063e401fbd" UNIQUE ("category_name"), CONSTRAINT "PK_45c54a379a91333ea713e9a844b" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "Skills" ("id" SERIAL NOT NULL, "skill_name" character varying(100) NOT NULL, "categoryId" integer, CONSTRAINT "UQ_1b36775b0eb4032b773d8bf5999" UNIQUE ("skill_name"), CONSTRAINT "PK_2f371d611f4a29288e11c9b628e" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "Ratings" ("id" SERIAL NOT NULL, "rate" numeric(2,1) NOT NULL DEFAULT '0', "message" text, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "ownerCalificateId" integer, CONSTRAINT "PK_ee6436ff188c9bb00cc70fc447a" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "Ratings" ("id" SERIAL NOT NULL, "rate" numeric(2,1) NOT NULL DEFAULT '0', "message" text, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "ownerCalificateId" integer, "calificatorId" integer, CONSTRAINT "PK_ee6436ff188c9bb00cc70fc447a" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "ChatParticipants" ("id" SERIAL NOT NULL, "joined_at" TIMESTAMP NOT NULL DEFAULT now(), "chatId" integer, "userId" integer, "ratingId" integer, CONSTRAINT "UQ_4cc4354726408a6b54ed4a08052" UNIQUE ("chatId", "userId"), CONSTRAINT "REL_95d55c01c3b2c5b4ced682e052" UNIQUE ("ratingId"), CONSTRAINT "PK_46c1dcdd0605b07dab5bde61986" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "Messages" ("id" SERIAL NOT NULL, "content" text NOT NULL, "sent_at" TIMESTAMP NOT NULL DEFAULT now(), "chatId" integer, "senderId" integer, CONSTRAINT "PK_ecc722506c4b974388431745e8b" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "IDX_919cc5bc35e27c3c61643fd835" ON "Messages" ("chatId") `);
@@ -26,6 +26,7 @@ export class InitialMigration1728343503944 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "UserLanguages" ADD CONSTRAINT "FK_2d690db4ec3877d6fa3dcbdcbad" FOREIGN KEY ("languageId") REFERENCES "Languages"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "Skills" ADD CONSTRAINT "FK_7099f63afdcc7e4cfd738c342a8" FOREIGN KEY ("categoryId") REFERENCES "SkillCategories"("id") ON DELETE SET NULL ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "Ratings" ADD CONSTRAINT "FK_e6c6bfe4d971a7bde56add08964" FOREIGN KEY ("ownerCalificateId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "Ratings" ADD CONSTRAINT "FK_09140a724ea25f3f0d410b84d07" FOREIGN KEY ("calificatorId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "ChatParticipants" ADD CONSTRAINT "FK_e596e3776d98d2d57a023a837d8" FOREIGN KEY ("chatId") REFERENCES "Chats"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "ChatParticipants" ADD CONSTRAINT "FK_ecde36473541f84b52f7f907e14" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "ChatParticipants" ADD CONSTRAINT "FK_95d55c01c3b2c5b4ced682e0524" FOREIGN KEY ("ratingId") REFERENCES "Ratings"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
@@ -59,6 +60,7 @@ export class InitialMigration1728343503944 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "ChatParticipants" DROP CONSTRAINT "FK_95d55c01c3b2c5b4ced682e0524"`);
         await queryRunner.query(`ALTER TABLE "ChatParticipants" DROP CONSTRAINT "FK_ecde36473541f84b52f7f907e14"`);
         await queryRunner.query(`ALTER TABLE "ChatParticipants" DROP CONSTRAINT "FK_e596e3776d98d2d57a023a837d8"`);
+        await queryRunner.query(`ALTER TABLE "Ratings" DROP CONSTRAINT "FK_09140a724ea25f3f0d410b84d07"`);
         await queryRunner.query(`ALTER TABLE "Ratings" DROP CONSTRAINT "FK_e6c6bfe4d971a7bde56add08964"`);
         await queryRunner.query(`ALTER TABLE "Skills" DROP CONSTRAINT "FK_7099f63afdcc7e4cfd738c342a8"`);
         await queryRunner.query(`ALTER TABLE "UserLanguages" DROP CONSTRAINT "FK_2d690db4ec3877d6fa3dcbdcbad"`);

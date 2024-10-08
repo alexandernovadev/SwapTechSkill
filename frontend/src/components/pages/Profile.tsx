@@ -13,6 +13,30 @@ import { FormSkills } from "../organisms/Profile/FormSkills";
 import { getImageLanguagedevrepo } from "../../utils/getImageLanguagedevrepo";
 import { ModalRating } from "../organisms/ModalRating";
 import { formatDateInSpanish } from "../../helpers/formatDateSpanish";
+import { useAuthStore } from "../../state/authStore";
+import axiosInstance from "../../services/api";
+
+export interface Ratings {
+  id: number;
+  rate: string;
+  message: string;
+  createdAt: Date;
+  calificator: Calificator;
+}
+
+export interface Calificator {
+  id: number;
+  firstName: string;
+  lastName: string;
+  location: string;
+  labelProfile: string;
+  email: string;
+  passwordHash: string;
+  profilePictureUrl: null;
+  bio: string;
+  authProvider: null;
+  authProviderId: null;
+}
 
 export const Profile = () => {
   const {
@@ -27,6 +51,8 @@ export const Profile = () => {
     deleteSkill,
     updateImageProfile,
   } = useProfileStore();
+
+  const { user } = useAuthStore();
 
   const [isModalMyDataOpen, setIsModalMyDataOpen] = useState(false);
   const [isModalMyBioOpen, setIsModalMyBioOpen] = useState(false);
@@ -47,6 +73,20 @@ export const Profile = () => {
   const [profileImage, setProfileImage] = useState<string | null>(
     userProfile?.profilePictureUrl || null
   );
+
+  const [ratings, setRatings] = useState<Ratings[]>([]);
+
+  useEffect(() => {
+    // Load rating data
+    const getRatingData = async () => {
+      await axiosInstance
+        .get(`/rating/findMyRatings/${user?.id}/`)
+        .then((response) => {
+          setRatings(response.data);
+        });
+    };
+    getRatingData();
+  }, []);
 
   // Put image caouse is base64
   useEffect(() => {
@@ -472,15 +512,64 @@ export const Profile = () => {
               {/* Reduje el tamaño del texto */}
               <div className="flex items-center">
                 <div className="flex items-center gap-1">
-                  <span className="text-yellow-500 text-4xl">★</span>
-                  <span className="text-yellow-500 text-4xl">★</span>
-                  <span className="text-black text-4xl">★</span>
-                  <span className="text-black text-4xl">★</span>
-                  <span className="text-black text-4xl">★</span>
+                  <span className="text-yellow-500 text-2xl">★</span>
+                  <span className="text-yellow-500 text-2xl">★</span>
+                  <span className="text-black text-2xl">★</span>
+                  <span className="text-black text-2xl">★</span>
+                  <span className="text-black text-2xl">★</span>
                 </div>
               </div>
-              <div className="text-md text-gray-600">11 opiniones</div>
+              <div className="text-md text-gray-600">
+                {ratings.length} {ratings.length > 0 ? "Opiniones" : "Opinión"}
+              </div>
             </div>
+            {/* Listado de opiniones */}
+            <section className="col-span-5">
+              {ratings.map((rating) => (
+                <div
+                  key={rating.id}
+                  className="border border-[#1E2126] rounded-sm p-4 mb-2"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8">
+                        <img
+                          src={
+                            rating.calificator.profilePictureUrl ||
+                            UserLogoDefault
+                          }
+                          alt=""
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      </div>
+                      <section className="flex flex-col">
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {rating.calificator.firstName}{" "}
+                          {rating.calificator.lastName}
+                        </h3>
+                        <p className="text-sm text-gray-400 mt-1">
+                          {rating.calificator.labelProfile}
+                        </p>
+                      </section>
+                    </div>
+                    <div className="ml-4 text-right">
+                      <div className="flex items-center gap-1">
+                        <span className="text-yellow-500 text-2xl">★</span>
+                        <span className="text-yellow-500 text-2xl">★</span>
+                        <span className="text-black text-2xl">★</span>
+                        <span className="text-black text-2xl">★</span>
+                        <span className="text-black text-2xl">★</span>
+                      </div>
+                      <p className="text-sm text-gray-400 mt-1">
+                        {/* @ts-ignore */}
+                        {formatDateInSpanish(rating.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-400 mt-1">{rating.message}</p>
+                </div>
+              ))}
+            </section>
           </section>
         </div>
       </ModalRating>

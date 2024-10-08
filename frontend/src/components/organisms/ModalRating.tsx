@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import axiosInstance from "../../services/api";
+import { useAuthStore } from "../../state/authStore";
 
 interface ModalProfileProps {
   isOpen: boolean;
@@ -13,6 +15,7 @@ export const ModalRating = ({
 }: ModalProfileProps) => {
   const [showModal, setShowModal] = useState(isOpen);
   const [isClosing, setIsClosing] = useState(false);
+
 
   useEffect(() => {
     if (isOpen) {
