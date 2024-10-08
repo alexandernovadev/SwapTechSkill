@@ -111,7 +111,7 @@ export const ModalRatingUseChat = ({
     } catch (error) {
       console.error("Error al crear la calificación:", error);
     } finally {
-      // window.location.href = "/dash/messages";
+      window.location.href = "/dash/messages";
     }
   };
 
