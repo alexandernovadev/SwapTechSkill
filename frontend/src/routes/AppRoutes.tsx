@@ -47,7 +47,8 @@ const AppRoutes: React.FC = () => {
             </PublicRoute>
           }
         />
-
+        
+        {/* // Ruta para redireccionar al usuario después de iniciar sesión con éxito */}
         <Route path="/auth/login/success" element={<LoginSuccess />} />
 
         {/* Rutas protegidas */}
