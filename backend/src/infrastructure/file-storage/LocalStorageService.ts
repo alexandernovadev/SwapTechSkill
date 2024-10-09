@@ -1,1 +1,0 @@
-// Implementación de almacenamiento local

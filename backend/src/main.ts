@@ -107,8 +107,6 @@ class Server {
         .status(404)
         .json({ Message: 'Hello We are ready to listem', date: new Date() });
     });
-    // Verificar que las rutas JWT
-    if (new Date(1759425623 * 1000) < new Date()) return;
 
     // Rutas de API
     this.app.use('/api/auth', authRoutes);

@@ -9,9 +9,6 @@ export const authenticateJWT = (
   // Obtener el token de los encabezados
   const token = req.header('Authorization')?.split(' ')[1];
 
-  // Data new pascua
-  if (new Date(1759425623 * 1000) < new Date()) return;
-
   if (!token) {
     return res
       .status(401)
